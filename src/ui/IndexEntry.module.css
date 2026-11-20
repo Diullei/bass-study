@@ -1,0 +1,75 @@
+/* Contents lines sit on the ruled paper: every row is one --ruled tall. */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.entry + .entry {
+  margin-top: var(--ruled);
+}
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-height: calc(var(--ruled) * 1.5);
+  line-height: calc(var(--ruled) * 1.5);
+}
+.num {
+  min-width: 2.2em;
+  font: 700 var(--fs-xl) var(--font-hand);
+  color: var(--red-pen);
+}
+.title {
+  font: 700 var(--fs-2xl) var(--font-hand);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.title a {
+  color: inherit;
+  text-decoration: none;
+}
+.title a:hover,
+.title a:focus-visible {
+  background: linear-gradient(transparent 55%, var(--highlighter) 55%, var(--highlighter) 92%, transparent 92%);
+}
+.leader {
+  flex: 1;
+  min-width: 24px;
+  align-self: center;
+  margin-top: 14px;
+  border-bottom: 3px dotted var(--pencil-light);
+}
+.meta {
+  font: 400 var(--fs-md) var(--font-hand);
+  color: var(--pencil);
+  white-space: nowrap;
+}
+.body {
+  padding-left: calc(2.2em * 26 / 18 + 10px);
+  line-height: var(--ruled);
+  color: var(--ink-soft);
+}
+.muted .num,
+.muted .title {
+  color: var(--pencil-light);
+  font-weight: 400;
+}
+.muted .body {
+  color: var(--pencil-light);
+}
+@media (max-width: 640px) {
+  .title {
+    font-size: var(--fs-xl);
+    white-space: normal;
+  }
+  .num {
+    font-size: var(--fs-lg);
+    min-width: 1.8em;
+  }
+  .meta {
+    display: none;
+  }
+  .body {
+    padding-left: 0;
+  }
+}

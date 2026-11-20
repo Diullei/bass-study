@@ -1,0 +1,94 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
+  gap: var(--sp-5);
+  align-items: start;
+}
+.side {
+  position: sticky;
+  top: 76px;
+}
+.work {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  min-width: 0;
+}
+.seed {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.transport {
+  align-items: center;
+}
+.slider {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.slider b {
+  color: var(--ink);
+}
+
+/* which pen means what */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink-soft);
+}
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* the clicked note's story, written in the margin */
+.margin {
+  min-height: 64px;
+  padding: 8px 12px 10px;
+  border-left: 3px solid var(--margin-line);
+  background: linear-gradient(90deg, var(--red-pen-soft), transparent 70%);
+}
+.marginHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.marginHead b {
+  color: var(--ink);
+  font-size: var(--fs-md);
+}
+.role {
+  color: var(--red-pen);
+}
+.margin p {
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.empty {
+  color: var(--pencil);
+}
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .side {
+    position: static;
+  }
+}

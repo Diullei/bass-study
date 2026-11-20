@@ -1,0 +1,201 @@
+/* The notebook lying open on the desk: the cover on the left, the contents page on the right. */
+.desk {
+  min-height: 100vh;
+  padding: var(--sp-7) var(--sp-5);
+}
+.spread {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ---------- the cover: cloth board with an elastic band ---------- */
+.cover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+  min-height: 640px;
+  padding: var(--sp-7) var(--sp-6);
+  border-radius: 12px 4px 4px 12px;
+  background-color: var(--cover);
+  background-image:
+    radial-gradient(ellipse at 28% 18%, rgba(255, 255, 255, 0.1), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.07) 0 2px, transparent 2px 4px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset -18px 0 24px -16px rgba(0, 0, 0, 0.55),
+    0 14px 40px -14px rgba(40, 30, 10, 0.55);
+}
+.band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 30px;
+  width: 13px;
+  background: linear-gradient(90deg, var(--cover-shade), var(--elastic) 30%, var(--elastic) 70%, var(--cover-shade));
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+.label {
+  width: 100%;
+  max-width: 330px;
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  border-radius: var(--wobble-3);
+  outline: 2px solid var(--ink-soft);
+  outline-offset: -9px;
+  text-align: center;
+}
+.vol {
+  display: block;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.title {
+  font-size: 52px;
+  color: var(--ink);
+  transform: rotate(-1.5deg);
+}
+.staff {
+  display: block;
+  width: 100%;
+  margin: var(--sp-2) 0;
+}
+.clef {
+  font-size: 40px;
+  fill: var(--ink);
+}
+.fields {
+  margin: 0;
+  text-align: left;
+}
+.fields div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  border-bottom: 1px solid var(--rule);
+  padding: 2px 0;
+}
+.fields dt {
+  font: 400 var(--fs-xs) var(--font-hand);
+  color: var(--pencil);
+  min-width: 56px;
+}
+.fields dd {
+  margin: 0;
+  font: 400 var(--fs-md) var(--font-hand);
+  color: var(--ink-soft);
+}
+.imprint {
+  font: 700 var(--fs-sm) var(--font-hand);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cover-ink);
+}
+
+/* ---------- wire binding across the seam (inside the contents page) ---------- */
+.rings {
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: -22px;
+  width: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 3;
+  pointer-events: none;
+}
+.rings span {
+  height: 12px;
+  border: 3px solid var(--wire);
+  border-radius: 8px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* ---------- the contents page ---------- */
+.contents {
+  max-width: none;
+  min-height: 640px;
+  margin: 0;
+  padding-top: var(--sp-6);
+  padding-right: calc(var(--sp-7) + var(--sp-5));
+  border-radius: 2px 6px 6px 2px;
+}
+/* the wire binding replaces the punched holes */
+.contents::after {
+  display: none;
+}
+.head {
+  margin-bottom: var(--sp-5);
+}
+.appendix {
+  margin-top: calc(var(--ruled) * 2);
+  line-height: var(--ruled);
+}
+
+/* coloured index tabs, tucked between the pages: the contents page (z-index 1) covers their inner end */
+.contents {
+  position: relative;
+  z-index: 1;
+}
+.tabs {
+  position: absolute;
+  z-index: 0;
+  top: 80px;
+  right: -32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tab {
+  writing-mode: vertical-rl;
+  padding: 14px 7px 14px 21px;
+  min-height: 110px;
+  border-radius: 0 10px 10px 0;
+  font: 700 var(--fs-sm) var(--font-hand);
+  color: var(--ink-soft);
+  text-decoration: none;
+  text-align: center;
+  box-shadow: 2px 2px 4px -1px rgba(60, 45, 20, 0.3);
+  transition: transform 0.15s;
+}
+.tab:hover {
+  transform: translateX(4px);
+}
+
+/* ---------- phone: the cover sits on top of the page ---------- */
+@media (max-width: 860px) {
+  .desk {
+    padding: var(--sp-4) 0 0;
+  }
+  .spread {
+    grid-template-columns: 1fr;
+  }
+  .cover {
+    min-height: 0;
+    padding: var(--sp-6) var(--sp-5) var(--sp-5);
+    border-radius: 10px 10px 4px 4px;
+    gap: var(--sp-4);
+    margin: 0 var(--sp-4);
+  }
+  .band {
+    right: 22px;
+  }
+  .title {
+    font-size: 42px;
+  }
+  .rings,
+  .tabs {
+    display: none;
+  }
+  .contents {
+    min-height: 0;
+    padding-right: var(--sp-4);
+  }
+}

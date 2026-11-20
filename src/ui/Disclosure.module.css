@@ -1,0 +1,29 @@
+.details {
+  border: var(--stroke) dashed var(--pencil-light);
+  border-radius: var(--wobble-2);
+  background: color-mix(in srgb, var(--paper-sheet) 70%, transparent);
+}
+.summary {
+  padding: 10px 16px;
+  cursor: pointer;
+  font: 700 var(--fs-md) var(--font-hand);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.summary::-webkit-details-marker {
+  display: none;
+}
+.summary::before {
+  content: '▸';
+  display: inline-block;
+  transition: transform 0.15s;
+  color: var(--pencil);
+}
+.details[open] > .summary::before {
+  transform: rotate(90deg);
+}
+.body {
+  padding: 4px 16px 18px;
+}

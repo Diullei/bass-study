@@ -1,0 +1,17 @@
+.box {
+  margin-top: var(--sp-2);
+}
+.prompt {
+  font: 700 var(--fs-lg) / 1.35 var(--font-hand);
+  margin: 6px 0;
+}
+.staff {
+  max-width: 340px;
+  margin-top: 6px;
+}
+.why {
+  font-size: var(--fs-sm);
+  color: var(--red-pen);
+  min-height: 1.4em;
+  margin-top: 8px;
+}

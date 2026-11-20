@@ -1,0 +1,217 @@
+.count {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.goLink {
+  font: 700 var(--fs-md) var(--font-hand);
+  color: var(--red-pen);
+  text-decoration: none;
+}
+.picker {
+  max-width: min(58vw, 400px);
+}
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.para {
+  max-width: 72ch;
+  line-height: var(--ruled);
+}
+
+/* practice */
+.drill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.transport,
+.backing {
+  align-items: center;
+}
+.slider {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.slider b {
+  color: var(--ink);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink-soft);
+}
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.example {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.example figcaption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 700 var(--fs-md) var(--font-hand);
+}
+.shape {
+  margin: 0;
+}
+
+/* the altitude ladder: highest rung on top */
+.ladder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--paper-sheet);
+  border: 1px solid var(--paper-edge);
+  box-shadow: var(--shadow-sheet);
+  border-radius: 3px;
+}
+.ladderHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 20px;
+}
+.ladderTitle {
+  font: 400 var(--fs-md) var(--font-hand);
+  color: var(--pencil);
+  padding-bottom: 6px;
+}
+.ladderTitle b {
+  color: var(--ink);
+  font-size: var(--fs-lg);
+}
+.rungs {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 18px;
+  border-left: 3px double var(--ink-soft);
+}
+.rung {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  border-bottom: 1px solid var(--rule);
+}
+/* a ladder rung drawn across the rail */
+.rung::before {
+  content: '';
+  position: absolute;
+  left: -21px;
+  top: 22px;
+  width: 16px;
+  border-top: 3px solid var(--ink-soft);
+}
+.rungMain {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'pen name notes' '. ivs ivs' '. say say';
+  align-items: center;
+  gap: 2px 10px;
+  padding: 8px 6px;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--wobble-1);
+}
+.rungMain:hover {
+  background: var(--highlighter);
+}
+.rungOn .rungMain {
+  background: linear-gradient(transparent 0, var(--sticky) 0);
+  outline: 2px solid var(--ink-soft);
+  outline-offset: -2px;
+}
+.rungOut .rungName {
+  color: var(--purple-pen);
+}
+.rungMain > svg {
+  grid-area: pen;
+}
+.rungName {
+  grid-area: name;
+  font: 700 var(--fs-md) var(--font-hand);
+}
+.rungRole {
+  font-weight: 400;
+  font-size: var(--fs-sm);
+  color: var(--pencil);
+}
+.rungNotes {
+  grid-area: notes;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+  white-space: nowrap;
+}
+.rungIvs {
+  grid-area: ivs;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.iv {
+  min-width: 30px;
+  padding: 0 6px;
+  text-align: center;
+  font: 700 var(--fs-md) var(--font-hand);
+  border: 1.5px solid var(--ink-soft);
+  border-radius: var(--wobble-2);
+}
+/* grounding notes (R, 3rds) in pencil; colours in ink */
+.ivGround {
+  color: var(--pencil);
+  border-style: dashed;
+  border-color: var(--pencil-light);
+}
+.rungSay {
+  grid-area: say;
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+}
+.neck {
+  overflow-x: auto;
+}
+.neck svg[role='img'] {
+  min-width: 620px;
+}
+
+/* quiz */
+.quiz {
+  margin-top: var(--sp-3);
+}
+.prompt {
+  font: 700 var(--fs-lg) var(--font-hand);
+  margin-bottom: var(--sp-3);
+}
+.why {
+  min-height: 1.5em;
+  margin-top: var(--sp-2);
+  color: var(--red-pen);
+  font-family: var(--font-hand);
+}
+
+@media (max-width: 640px) {
+  .rungMain {
+    grid-template-areas: 'pen name' '. notes' '. ivs' '. say';
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,66 @@
+.button {
+  --b-fg: var(--ink);
+  --b-bg: transparent;
+  --b-border: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 3px 15px 2px;
+  font: 700 17px/1.2 var(--font-hand);
+  color: var(--b-fg);
+  background: var(--b-bg);
+  border: var(--stroke) solid var(--b-border);
+  border-radius: var(--wobble-1);
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.button:nth-of-type(2n) {
+  border-radius: var(--wobble-2);
+}
+.button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--highlighter) 55%, var(--b-bg));
+}
+.button:active:not(:disabled) {
+  transform: translate(1px, 1px) rotate(-0.4deg);
+}
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ink {
+  --b-fg: var(--paper);
+  --b-bg: var(--ink);
+  box-shadow: 2px 3px 0 -1px var(--ink-soft);
+}
+.ink:hover:not(:disabled) {
+  background: var(--ink-soft);
+}
+
+.pencil {
+  --b-fg: var(--ink-soft);
+  --b-border: var(--pencil-light);
+  border-style: dashed;
+}
+
+.ghost {
+  --b-border: transparent;
+  padding-inline: 8px;
+  text-decoration: underline;
+  text-decoration-color: var(--pencil-light);
+  text-underline-offset: 4px;
+}
+
+.small {
+  min-height: 30px;
+  padding: 1px 10px 0;
+  font-size: 15px;
+}
+.icon {
+  min-width: 38px;
+  padding-inline: 6px;
+}

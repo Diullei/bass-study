@@ -1,0 +1,149 @@
+/* Classes emitted by notation/renderScore.ts */
+svg.score {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--ink);
+  overflow: visible;
+}
+svg.score text {
+  fill: currentColor;
+  font-family: var(--font-hand);
+}
+svg.score .ln {
+  stroke: var(--staff);
+  stroke-width: 0.9;
+}
+svg.score .ink {
+  stroke: currentColor;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+svg.score .inkf {
+  fill: currentColor;
+  stroke: none;
+}
+svg.score .nh {
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+svg.score .nh.f {
+  fill: currentColor;
+}
+svg.score .nh.o {
+  fill: var(--paper-sheet);
+}
+svg.score .csym {
+  font-weight: 700;
+  font-size: 20px;
+}
+svg.score .sm {
+  font-size: 12.5px;
+  fill: var(--pencil);
+}
+svg.score .sm.faint {
+  opacity: 0.7;
+}
+svg.score .rn {
+  font-size: 14px;
+  fill: var(--pencil);
+}
+svg.score .fing {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--pencil);
+}
+svg.score .fret {
+  font-size: 14px;
+  font-weight: 700;
+}
+svg.score .tabbg {
+  fill: var(--paper-sheet);
+}
+svg.score .tabl {
+  font: 700 10px var(--font-mono);
+  fill: var(--staff);
+}
+svg.score .ttl {
+  font-size: 22px;
+  font-weight: 700;
+}
+svg.score .tsig {
+  font-weight: 700;
+  font-size: 25px;
+}
+svg.score .swing {
+  font-weight: 700;
+  font-size: 16px;
+}
+svg.score .volta {
+  font-size: 15px;
+  font-weight: 700;
+}
+svg.score .tuplet {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* playback highlight: the red pen follows along */
+svg.score g.hl .nh,
+svg.score g.hl .ink {
+  stroke: var(--red-pen);
+}
+svg.score g.hl .nh.f,
+svg.score g.hl .inkf {
+  fill: var(--red-pen);
+}
+svg.score g.hl text,
+svg.score text.hl {
+  fill: var(--red-pen);
+}
+
+/* clickable notes (Staff onNoteClick) */
+[data-clickable] svg.score g[data-e] {
+  cursor: pointer;
+}
+[data-clickable] svg.score g[data-e]:hover .nh {
+  stroke-width: 2.6;
+}
+svg.score g.picked .nh {
+  stroke: var(--red-pen);
+  stroke-width: 2.6;
+}
+
+/* pens: what a note is doing, written in a different pen */
+svg.score g.pen-pencil {
+  color: var(--pencil);
+}
+svg.score g.pen-green {
+  color: var(--green-pen);
+}
+/* outside / chromatic notes. Not red: red is the playback cursor */
+svg.score g.pen-purple {
+  color: var(--purple-pen);
+}
+svg.score g.pen-blue {
+  color: var(--blue-pen);
+}
+/* highlighter / soft red marker behind the notehead */
+svg.score g.pen-marker .nh,
+svg.score g.pen-tension .nh {
+  paint-order: stroke;
+  stroke-width: 7;
+  stroke-linejoin: round;
+}
+svg.score g.pen-marker .nh {
+  stroke: var(--highlighter);
+}
+svg.score g.pen-tension .nh {
+  stroke: var(--marker-pink);
+}
+/* ghost note: hollow, faint */
+svg.score g.pen-ghost {
+  color: var(--pencil-light);
+}
+svg.score g.pen-ghost .nh.f {
+  fill: var(--paper-sheet);
+  stroke-dasharray: 2 2;
+}

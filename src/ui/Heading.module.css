@@ -1,0 +1,43 @@
+.unit {
+  font: 700 var(--fs-sm) / 1.2 var(--font-hand);
+  color: var(--pencil);
+  letter-spacing: 0.02em;
+}
+.title {
+  font-size: var(--fs-2xl);
+  line-height: 1.15;
+  margin: 2px 0 var(--sp-2);
+}
+.title .num {
+  color: var(--red-pen);
+  margin-right: 0.25em;
+}
+.section {
+  display: inline-block;
+  position: relative;
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--sp-2);
+  padding-bottom: 2px;
+}
+/* a pen underline, slightly crooked */
+.section::after {
+  content: '';
+  position: absolute;
+  left: -3px;
+  right: -8px;
+  bottom: -2px;
+  height: 6px;
+  background: no-repeat center / 100% 100%
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 6' preserveAspectRatio='none'%3E%3Cpath d='M1 4 Q 50 1 100 3.5 T 199 2.5' fill='none' stroke='%231d2540' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.tags {
+  display: inline-flex;
+  gap: 6px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+@media (max-width: 560px) {
+  .title {
+    font-size: var(--fs-xl);
+  }
+}

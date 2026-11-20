@@ -1,0 +1,24 @@
+.note {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 14px;
+  background: var(--sticky);
+  border-bottom: 1px solid var(--sticky-edge);
+  box-shadow: var(--shadow-note);
+  transform: rotate(-0.6deg);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+}
+.success {
+  background: var(--sticky-green);
+  border-color: var(--sticky-green-edge);
+}
+.title {
+  font: 700 var(--fs-lg) var(--font-hand);
+}
+.body {
+  flex: 1 1 220px;
+}

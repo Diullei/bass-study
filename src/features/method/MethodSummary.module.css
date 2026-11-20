@@ -1,0 +1,32 @@
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+}
+/* a bar drawn in pen, filled with highlighter */
+.progress {
+  position: relative;
+  width: 140px;
+  height: 14px;
+  border: 2px solid var(--ink-soft);
+  border-radius: var(--wobble-2);
+  overflow: hidden;
+}
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--highlighter-strong);
+}
+.count {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.go {
+  font: 700 var(--fs-md) var(--font-hand);
+  color: var(--red-pen);
+  text-decoration: none;
+}
+.go:hover {
+  background: var(--highlighter);
+}

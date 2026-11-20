@@ -1,0 +1,55 @@
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: var(--sp-2);
+}
+.choice {
+  position: relative;
+  min-width: 54px;
+  min-height: 40px;
+  padding: 2px 14px 1px;
+  font: 700 var(--fs-md) var(--font-hand);
+  color: var(--ink);
+  background: var(--paper-sheet);
+  border: var(--stroke) solid var(--ink-soft);
+  border-radius: var(--wobble-3);
+  cursor: pointer;
+  transition: transform 0.08s;
+}
+.choice:nth-child(2n) {
+  border-radius: var(--wobble-1);
+}
+.choice:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--highlighter) 60%, var(--paper-sheet));
+}
+.choice:active:not(:disabled) {
+  transform: translate(1px, 1px);
+}
+.choice:disabled {
+  cursor: default;
+}
+/* right: circled in green */
+.right {
+  color: var(--green-pen);
+  border-color: var(--green-pen);
+  background: var(--green-pen-soft);
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 4.5px var(--green-pen);
+}
+/* wrong: crossed out in red */
+.wrong {
+  color: var(--red-pen);
+  border-color: var(--red-pen);
+  background: var(--red-pen-soft);
+}
+.wrong::after {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 50%;
+  height: 3px;
+  background: var(--red-pen);
+  border-radius: 2px;
+  transform: rotate(-6deg);
+}

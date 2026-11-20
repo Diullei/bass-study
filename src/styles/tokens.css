@@ -1,0 +1,93 @@
+/*
+ * Design tokens — "the practice notebook".
+ * Cream manuscript paper, fountain-pen ink, pencil for helpers,
+ * red pen for corrections, a yellow highlighter, sticky notes and tape.
+ */
+:root {
+  color-scheme: light;
+
+  /* paper */
+  --desk: #e7dfcc;
+  --desk-shade: #d9cfb8;
+  --paper: #fdfaf2;
+  --paper-sheet: #fffdf8;
+  --paper-edge: #e9e1cf;
+  --rule: #c9d6ea;
+  --rule-faint: #dfe7f3;
+  --margin-line: #e4a3a3;
+  --hole: #e7dfcc;
+
+  /* ink */
+  --ink: #1d2540;
+  --ink-soft: #3b4466;
+  --pencil: #6e6c69;
+  --pencil-light: #9d9a94;
+  --staff: #a9abb0;
+  --red-pen: #c8323c;
+  --red-pen-soft: #f6dcdc;
+  --green-pen: #2f7d4f;
+  --green-pen-soft: #dcefe2;
+  --blue-pen: #2c5aa0;
+  /* outside notes; red stays free for the playback cursor */
+  --purple-pen: #7b3f9e;
+  --highlighter: #fff07a;
+  --highlighter-strong: #ffe34d;
+  --marker-pink: #f4b3b8;
+  --sticky: #fff3a8;
+  --sticky-edge: #efdc7c;
+  --sticky-green: #dff3d1;
+  --sticky-green-edge: #b7d9a2;
+  --tape: rgba(236, 222, 170, 0.72);
+
+  /* the cover: cloth-bound board, elastic band, wire binding */
+  --cover: #23304f;
+  --cover-shade: #172036;
+  --cover-ink: rgba(255, 253, 248, 0.42);
+  --elastic: #9b2c33;
+  --wire: #b8b4ac;
+
+  /* scrollbars: a pencil stroke on the desk */
+  --scroll-track: var(--desk);
+  --scroll-thumb: var(--pencil-light);
+  --scroll-thumb-hover: var(--pencil);
+
+  /* index tabs, one colour per section of the notebook */
+  --tab-blue: #bcd3ee;
+  --tab-green: #c9e6c0;
+  --tab-pink: #f3c9cf;
+  --tab-orange: #f6d6a8;
+
+  /* type */
+  --font-hand: 'Kalam', 'Patrick Hand', 'Comic Sans MS', cursive;
+  --font-body: 'Patrick Hand', 'Kalam', 'Segoe Print', cursive;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --fs-xs: 13px;
+  --fs-sm: 15px;
+  --fs-md: 18px;
+  --fs-lg: 21px;
+  --fs-xl: 26px;
+  --fs-2xl: 34px;
+
+  /* shape — irregular radii read as "drawn with a pen" */
+  --wobble-1: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --wobble-2: 15px 255px 15px 225px / 225px 15px 255px 15px;
+  --wobble-3: 125px 10px 20px 185px / 25px 205px 205px 25px;
+  --stroke: 2px;
+
+  --shadow-sheet: 0 1px 1px rgba(60, 45, 20, 0.08), 0 8px 24px -10px rgba(60, 45, 20, 0.28);
+  --shadow-note: 2px 6px 14px -6px rgba(60, 45, 20, 0.35);
+  --shadow-press: 1px 2px 0 var(--ink);
+
+  /* spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  /* ruled-paper line height: text sits on the lines */
+  --ruled: 32px;
+}

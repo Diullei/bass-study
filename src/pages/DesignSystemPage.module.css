@@ -1,0 +1,146 @@
+.layout {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: var(--sp-6);
+  padding-top: var(--sp-5);
+}
+.toc {
+  position: sticky;
+  top: var(--sp-4);
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font: 400 var(--fs-md) var(--font-hand);
+}
+.toc a {
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding: 2px 0;
+}
+.toc a:hover {
+  text-decoration: underline;
+}
+.tocGroup {
+  margin-top: var(--sp-3);
+  font: 700 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.intro {
+  max-width: 760px;
+}
+.group {
+  margin-top: var(--sp-7);
+  padding-top: var(--sp-2);
+  border-top: 3px double var(--ink-soft);
+}
+.group > h2 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--sp-2);
+}
+.spec {
+  margin: var(--sp-6) 0;
+  scroll-margin-top: var(--sp-4);
+}
+.specHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+.specHead h3 {
+  font-size: var(--fs-xl);
+}
+.path {
+  font: 400 var(--fs-xs) var(--font-mono);
+  color: var(--pencil);
+}
+.specText {
+  max-width: 760px;
+  margin: 4px 0 var(--sp-3);
+}
+.demo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 18px;
+  padding: var(--sp-4) 0;
+}
+.col {
+  flex-direction: column;
+  align-items: stretch;
+}
+.caption {
+  font: 400 var(--fs-xs) var(--font-hand);
+  color: var(--pencil);
+  display: block;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+.swatch {
+  font: 400 var(--fs-sm) var(--font-hand);
+}
+.chip {
+  height: 54px;
+  border: 1.5px solid var(--ink-soft);
+  border-radius: var(--wobble-3);
+  margin-bottom: 4px;
+}
+.swatch code {
+  font: 400 11px var(--font-mono);
+  color: var(--pencil);
+}
+
+.typeRow {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.typeRow code {
+  font: 400 12px var(--font-mono);
+  color: var(--pencil);
+}
+
+.shapes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.shape {
+  width: 130px;
+  height: 80px;
+  border: var(--stroke) solid var(--ink);
+  display: grid;
+  place-items: center;
+  font: 400 12px var(--font-mono);
+  color: var(--pencil);
+  background: var(--paper-sheet);
+}
+
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .toc {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+  }
+  .tocGroup {
+    width: 100%;
+    margin-top: var(--sp-2);
+  }
+  .typeRow {
+    grid-template-columns: 1fr;
+  }
+}

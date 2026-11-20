@@ -1,0 +1,22 @@
+/* A rubber-stamp label. */
+.tag {
+  display: inline-block;
+  font: 700 11px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 7px 3px;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  transform: rotate(-3deg);
+  opacity: 0.85;
+  color: var(--pencil);
+}
+.red {
+  color: var(--red-pen);
+}
+.blue {
+  color: var(--ink-soft);
+}
+.green {
+  color: var(--green-pen);
+}

@@ -1,0 +1,7 @@
+.select {
+  max-width: min(58vw, 400px);
+}
+.overall {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}

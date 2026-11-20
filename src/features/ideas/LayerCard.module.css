@@ -1,0 +1,93 @@
+/* A ruled index card: blue lines, a red line under the heading. */
+.card {
+  position: relative;
+  background-color: var(--paper-sheet);
+  background-image: linear-gradient(to bottom, transparent 27px, var(--rule) 27px, var(--rule) 28px, transparent 28px);
+  background-size: 100% 28px;
+  background-position: 0 44px;
+  border: 1px solid var(--paper-edge);
+  border-radius: 3px;
+  box-shadow: var(--shadow-sheet);
+  padding: 10px 14px 14px;
+  transform: rotate(-0.4deg);
+}
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  border-bottom: 2px solid var(--margin-line);
+}
+.head h3 {
+  font-size: var(--fs-lg);
+}
+.count {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.layer {
+  padding: 3px 0;
+}
+.name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font: 400 var(--fs-md) var(--font-hand);
+  color: var(--pencil);
+}
+.num {
+  font-weight: 700;
+  color: var(--red-pen);
+  opacity: 0.55;
+}
+.on .name {
+  color: var(--ink);
+  font-weight: 700;
+}
+.on .num {
+  opacity: 1;
+}
+.next .name {
+  color: var(--ink-soft);
+}
+.next .name::after {
+  content: '← next';
+  margin-left: 6px;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--red-pen);
+}
+.think {
+  margin: 2px 0 6px 30px;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.next .think {
+  color: var(--pencil);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+@media (max-width: 560px) {
+  .card {
+    transform: none;
+  }
+}
+/* on small screens only the next layer explains itself, so the staff stays close */
+@media (max-width: 900px) {
+  .on .think {
+    display: none;
+  }
+}

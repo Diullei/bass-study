@@ -1,0 +1,45 @@
+.board {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--ink);
+}
+.board .wire {
+  stroke: var(--staff);
+  stroke-width: 1.4;
+  fill: none;
+}
+.board .nut {
+  stroke: var(--ink-soft);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.board .string {
+  stroke: var(--ink-soft);
+  fill: none;
+  opacity: 0.7;
+}
+.board .sname,
+.board .fnum {
+  font: 700 11px var(--font-hand);
+  fill: var(--pencil);
+}
+.board .inlay {
+  font-size: 10px;
+  fill: var(--pencil-light);
+}
+.board .dot {
+  fill: var(--paper-sheet);
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+.board .dlab {
+  font: 700 10.5px var(--font-hand);
+  fill: currentColor;
+}
+.board .root .dot {
+  fill: currentColor;
+}
+.board .root .dlab {
+  fill: var(--paper-sheet);
+}

@@ -1,0 +1,46 @@
+/* The notebook page: ruled lines, red margin line, punched holes. */
+.page {
+  position: relative;
+  max-width: 1120px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image: linear-gradient(to bottom, transparent calc(var(--ruled) - 1px), var(--rule-faint) calc(var(--ruled) - 1px));
+  background-size: 100% var(--ruled);
+  background-position: 0 6px;
+  box-shadow: 0 0 0 1px var(--paper-edge), 0 10px 40px -12px rgba(60, 45, 20, 0.35);
+  padding: 0 var(--sp-5) var(--sp-7) 96px;
+}
+.page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 72px;
+  border-left: 2px solid var(--margin-line);
+  pointer-events: none;
+}
+.page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 22px;
+  width: 22px;
+  background-image: radial-gradient(circle at 11px 11px, var(--hole) 8px, rgba(0, 0, 0, 0.12) 9px, transparent 10px);
+  background-size: 22px 120px;
+  background-position: 0 40px;
+  background-repeat: repeat-y;
+  pointer-events: none;
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 0 var(--sp-4) var(--sp-7) 34px;
+  }
+  .page::before {
+    left: 22px;
+  }
+  .page::after {
+    display: none;
+  }
+}

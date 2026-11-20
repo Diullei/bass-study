@@ -1,0 +1,26 @@
+.seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.opt {
+  flex: 1 1 auto;
+  padding: 4px 10px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+  background: none;
+  border: 1.5px dashed var(--pencil-light);
+  border-radius: var(--wobble-1);
+  cursor: pointer;
+}
+.opt:hover {
+  background: var(--highlighter);
+  color: var(--ink);
+}
+.on {
+  color: var(--ink);
+  font-weight: 700;
+  border: 2px solid var(--ink);
+  border-radius: var(--wobble-3);
+  background: var(--paper-sheet);
+}

@@ -1,0 +1,21 @@
+.tempo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.bpm {
+  font: 700 var(--fs-lg) var(--font-hand);
+  color: var(--ink);
+  min-width: 2.2em;
+}
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+.sheet {
+  margin-top: var(--sp-2);
+}

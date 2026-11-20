@@ -1,0 +1,49 @@
+/* A sheet of manuscript paper laid on the notebook page. */
+.paper {
+  position: relative;
+  background: var(--paper-sheet);
+  border: 1px solid var(--paper-edge);
+  box-shadow: var(--shadow-sheet);
+  padding: 22px 16px 20px;
+  border-radius: 2px;
+}
+.tilt-left {
+  transform: rotate(-0.35deg);
+}
+.tilt-right {
+  transform: rotate(0.3deg);
+}
+.tape::before,
+.tape::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  width: 92px;
+  height: 24px;
+  background: var(--tape);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.tape::before {
+  left: 18px;
+  transform: rotate(-4deg);
+}
+.tape::after {
+  right: 18px;
+  transform: rotate(3deg);
+}
+.label {
+  position: absolute;
+  top: 4px;
+  right: 14px;
+  font: 400 var(--fs-xs) var(--font-hand);
+  color: var(--pencil);
+}
+@media (max-width: 560px) {
+  .paper {
+    padding: 16px 6px 14px;
+  }
+  .tilt-left,
+  .tilt-right {
+    transform: none;
+  }
+}

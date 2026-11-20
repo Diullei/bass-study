@@ -1,0 +1,51 @@
+.lead {
+  font-size: var(--fs-md);
+  max-width: 780px;
+  margin: 0 0 var(--sp-2);
+}
+.facts {
+  max-width: 780px;
+  margin: 4px 0 var(--sp-3);
+  padding-left: 22px;
+  list-style: none;
+}
+.facts li {
+  position: relative;
+  margin: 4px 0;
+}
+.facts li::before {
+  content: '♪';
+  position: absolute;
+  left: -21px;
+  top: 0;
+  color: var(--pencil);
+  font-size: 0.95em;
+}
+.pencil {
+  font-size: var(--fs-sm);
+  color: var(--pencil);
+}
+.pencil b {
+  color: var(--ink);
+}
+.pen {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--red-pen);
+  min-height: 1.35em;
+}
+.marker {
+  background: linear-gradient(104deg, transparent 0.6%, var(--highlighter) 2.4%, var(--highlighter) 96%, transparent 98.8%);
+  padding: 0 0.2em;
+  margin: 0 -0.1em;
+  border-radius: 0.3em 0.6em 0.4em 0.7em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.kbd {
+  display: inline-block;
+  font: 700 0.8em var(--font-mono);
+  border: 1.5px solid var(--pencil-light);
+  border-radius: 4px;
+  padding: 0 5px;
+  color: var(--ink-soft);
+}
