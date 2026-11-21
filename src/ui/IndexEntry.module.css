@@ -15,14 +15,30 @@
   line-height: calc(var(--ruled) * 1.5);
 }
 .num {
+  flex: none;
   min-width: 2.2em;
   font: 700 var(--fs-xl) var(--font-hand);
   color: var(--red-pen);
 }
 .title {
+  /* a long title wraps onto the next ruled lines; the leader follows its last line */
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   font: 700 var(--fs-2xl) var(--font-hand);
   color: var(--ink);
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+}
+/* the leader: pencil dots after the last word. Zero width, so it never pushes a word onto a new line;
+   the dots spill to the right and are cut off where the title ends, just before the meta. */
+.text::after {
+  content: '\00a0  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .' / '';
+  display: inline-block;
+  width: 0;
+  white-space: pre;
+  font: 700 var(--fs-md) var(--font-hand);
+  letter-spacing: 1px;
+  color: var(--pencil-light);
 }
 .title a {
   color: inherit;
@@ -32,14 +48,8 @@
 .title a:focus-visible {
   background: linear-gradient(transparent 55%, var(--highlighter) 55%, var(--highlighter) 92%, transparent 92%);
 }
-.leader {
-  flex: 1;
-  min-width: 24px;
-  align-self: center;
-  margin-top: 14px;
-  border-bottom: 3px dotted var(--pencil-light);
-}
 .meta {
+  align-self: flex-end;
   font: 400 var(--fs-md) var(--font-hand);
   color: var(--pencil);
   white-space: nowrap;
@@ -60,7 +70,8 @@
 @media (max-width: 640px) {
   .title {
     font-size: var(--fs-xl);
-    white-space: normal;
+    line-height: 1.3;
+    padding: 6px 0;
   }
   .num {
     font-size: var(--fs-lg);

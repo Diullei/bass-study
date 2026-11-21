@@ -30,6 +30,9 @@ export const KEYS = {
   /** Pentatonics class: per-lesson progress, and the last lesson opened. */
   pentProgress: 'bs.pent.progress',
   pentCurrent: 'bs.pent.current',
+  /** Jazz harmony course: per-lesson progress, and the last lesson opened. */
+  harmonyProgress: 'bs.harmony.progress',
+  harmonyCurrent: 'bs.harmony.current',
   /** Backing track for practice: band feel and whether the written line is played. */
   backing: 'bs.backing',
 } as const

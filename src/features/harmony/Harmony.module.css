@@ -1,0 +1,534 @@
+.count {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.goLink {
+  font: 700 var(--fs-md) var(--font-hand);
+  color: var(--red-pen);
+  text-decoration: none;
+}
+.picker {
+  max-width: min(58vw, 420px);
+}
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.para {
+  max-width: 74ch;
+  margin: 0;
+  line-height: var(--ruled);
+}
+.h {
+  margin: var(--sp-3) 0 calc(-1 * var(--sp-2));
+  font: 700 var(--fs-lg) var(--font-hand);
+  color: var(--ink-soft);
+}
+.code {
+  font: 500 0.92em var(--font-mono);
+  background: var(--rule-faint);
+  padding: 0 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.caption {
+  margin: 0;
+  max-width: 74ch;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.caption b {
+  color: var(--ink);
+}
+
+/* pens on paper (HTML), matching the pens of the notation */
+.roles :global(.pen-green),
+.table :global(.pen-green),
+.roleKey :global(.pen-green) {
+  color: var(--green-pen);
+}
+.roles :global(.pen-purple),
+.table :global(.pen-purple),
+.roleKey :global(.pen-purple) {
+  color: var(--purple-pen);
+}
+.roles :global(.pen-blue),
+.table :global(.pen-blue),
+.roleKey :global(.pen-blue) {
+  color: var(--blue-pen);
+}
+
+/* ───── links to rules and lessons ───── */
+.ruleRef,
+.lessonRef {
+  position: relative;
+  display: inline-block;
+  margin: 0 1px;
+  padding: 0 6px;
+  font: 700 0.9em var(--font-hand);
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--wobble-3);
+}
+.ruleRef {
+  color: var(--ink);
+  background: var(--tab-orange);
+  border: 1px solid color-mix(in srgb, var(--tab-orange), var(--ink) 25%);
+}
+.lessonRef {
+  color: var(--blue-pen);
+  border-bottom: 1.5px dashed var(--blue-pen);
+  border-radius: 0;
+  padding: 0 2px;
+}
+.ruleRef:hover,
+.ruleRef:focus-visible {
+  background: var(--highlighter);
+}
+/* the rule itself, on a sticky note, while you hover its link */
+.ruleRef::after {
+  content: attr(data-tip);
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  width: max-content;
+  max-width: min(320px, 80vw);
+  padding: 8px 12px;
+  transform: translateX(-50%) rotate(-0.6deg);
+  font: 400 var(--fs-sm) / 1.35 var(--font-hand);
+  white-space: normal;
+  text-align: left;
+  color: var(--ink);
+  background: var(--sticky);
+  border-bottom: 2px solid var(--sticky-edge);
+  box-shadow: var(--shadow-note);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+.ruleRef:hover::after,
+.ruleRef:focus-visible::after {
+  opacity: 1;
+}
+.uses {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin: var(--sp-2) 0 0;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.usesHint {
+  font-size: var(--fs-xs);
+  color: var(--pencil-light);
+}
+.backlinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: var(--sp-3) 0 0;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+
+/* ───── rules page ───── */
+.ruleIndex {
+  margin: var(--sp-3) 0 0;
+  padding-left: 26px;
+  max-width: 78ch;
+}
+.ruleIndex li {
+  margin: 4px 0;
+}
+.ruleIndex a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.ruleIndex a:hover b {
+  background: var(--highlighter);
+}
+.rule {
+  /* clear the sticky notebook header when a rule link jumps here */
+  scroll-margin-top: 84px;
+  padding-top: var(--sp-4);
+  border-top: 2px dashed var(--paper-edge);
+}
+.rule:target .ruleShort {
+  background: var(--highlighter);
+}
+.ruleShort {
+  max-width: 70ch;
+  margin: 0 0 var(--sp-4);
+  padding: 6px 12px;
+  font: 700 var(--fs-lg) / 1.35 var(--font-hand);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--tab-orange), transparent 45%);
+  border-left: 4px solid var(--ink-soft);
+  transition: background 0.4s;
+}
+
+/* ───── tables ───── */
+.tableFig,
+.codeFig,
+.derive {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.table {
+  border-collapse: collapse;
+  font: 400 var(--fs-md) var(--font-body);
+  background: var(--paper-sheet);
+  box-shadow: var(--shadow-sheet);
+}
+.table th,
+.table td {
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.table th {
+  font: 700 var(--fs-sm) var(--font-hand);
+  color: var(--ink-soft);
+  background: var(--rule-faint);
+}
+.table tbody th {
+  white-space: nowrap;
+}
+.use {
+  font-size: var(--fs-sm);
+  color: var(--pencil);
+}
+.rowOn td {
+  background: var(--red-pen-soft);
+}
+.mini {
+  border: 1.5px solid var(--ink-soft);
+  background: var(--paper-sheet);
+  color: var(--ink);
+  border-radius: var(--wobble-2);
+  width: 30px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.mini:hover {
+  background: var(--highlighter);
+}
+.rnSmall {
+  font: 400 var(--fs-xs) var(--font-hand);
+  color: var(--pencil);
+}
+.nt {
+  display: inline-block;
+  min-width: 1.9em;
+  margin-right: 2px;
+  text-align: center;
+}
+.ntFour,
+.ntSeven {
+  font-weight: 700;
+  border-radius: 40%;
+}
+.ntFour {
+  box-shadow: inset 0 -0.45em 0 var(--highlighter);
+}
+.ntSeven {
+  box-shadow: inset 0 -0.45em 0 var(--marker-pink);
+}
+.f_tonic {
+  color: var(--green-pen);
+  font-weight: 700;
+}
+.f_subdominant {
+  color: var(--blue-pen);
+  font-weight: 700;
+}
+.f_dominant {
+  color: var(--purple-pen);
+  font-weight: 700;
+}
+.ct {
+  color: var(--blue-pen);
+  font-weight: 700;
+}
+.changed {
+  background: var(--highlighter);
+}
+.derive figcaption,
+.codeFig figcaption {
+  font: 700 var(--fs-md) var(--font-hand);
+}
+.pre {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  overflow-x: auto;
+  font: 500 15px/1.6 var(--font-mono);
+  color: var(--ink);
+  background: var(--paper-sheet);
+  box-shadow: var(--shadow-sheet);
+  border-left: 3px solid var(--margin-line);
+}
+
+/* ───── listening ───── */
+.listen,
+.chartFig,
+.scaleFig {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.listen figcaption,
+.chartFig figcaption,
+.scaleFig figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font: 700 var(--fs-md) var(--font-hand);
+}
+.listenItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.listenItem {
+  padding: 4px 12px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink);
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--ink-soft);
+  border-radius: var(--wobble-1);
+  cursor: pointer;
+}
+.listenItem:hover {
+  background: var(--highlighter);
+}
+.listenItem.on {
+  color: var(--red-pen);
+  border-color: var(--red-pen);
+}
+
+/* ───── chord chart ───── */
+.chart {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: var(--sp-2) 0;
+  background: var(--paper-sheet);
+  box-shadow: var(--shadow-sheet);
+}
+@media (max-width: 640px) {
+  .chart {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.bar {
+  display: flex;
+  min-height: 64px;
+  padding: 6px 4px 10px;
+  border-left: 2px solid var(--ink-soft);
+}
+.bar:nth-child(4n) {
+  border-right: 2px solid var(--ink-soft);
+}
+/* the final barline */
+.bar:last-child {
+  border-right: 4px double var(--ink-soft);
+}
+.cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 4px 4px;
+  min-width: 0;
+}
+.sym {
+  font: 700 var(--fs-lg) var(--font-hand);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.arrow {
+  margin-left: 3px;
+  color: var(--ink-soft);
+}
+.rn {
+  font: 400 var(--fs-xs) var(--font-hand);
+  color: var(--pencil);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* II–V bracket: a pencil line under the pair */
+.br {
+  border-bottom: 2px solid var(--pencil);
+}
+.br_start {
+  border-left: 2px solid var(--pencil);
+  border-bottom-left-radius: 6px;
+}
+.br_end {
+  border-right: 2px solid var(--pencil);
+  border-bottom-right-radius: 6px;
+}
+.cell.on .sym {
+  color: var(--red-pen);
+}
+
+/* ───── keyboard ───── */
+.piano {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+}
+.white {
+  fill: var(--paper-sheet);
+  stroke: var(--ink-soft);
+  stroke-width: 1.4;
+}
+.black {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+.keyDot {
+  fill: var(--paper-sheet);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+.keyLab {
+  font: 700 10px var(--font-hand);
+  fill: var(--ink);
+}
+.keyRoot .keyDot {
+  fill: var(--ink);
+}
+.keyRoot .keyLab {
+  fill: var(--paper-sheet);
+}
+.piano :global(.pen-green) .keyDot {
+  stroke: var(--green-pen);
+  fill: var(--green-pen-soft);
+}
+.piano :global(.pen-green) .keyLab {
+  fill: var(--green-pen);
+}
+.piano :global(.pen-purple) .keyDot {
+  stroke: var(--purple-pen);
+  stroke-dasharray: 3 2;
+}
+.piano :global(.pen-purple) .keyLab {
+  fill: var(--purple-pen);
+}
+.piano :global(.pen-blue) .keyDot {
+  stroke: var(--blue-pen);
+}
+.piano :global(.pen-blue) .keyLab {
+  fill: var(--blue-pen);
+}
+.piano .keyOn .keyDot {
+  stroke: var(--red-pen);
+  stroke-width: 3;
+}
+.piano .keyOn .keyLab {
+  fill: var(--red-pen);
+}
+.roleKey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink-soft);
+}
+.roleKey li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+}
+.roles {
+  margin: 0;
+  padding-left: 18px;
+  max-width: 78ch;
+  font-size: var(--fs-md);
+}
+.roles li {
+  margin: 3px 0;
+}
+.roleNote {
+  white-space: nowrap;
+}
+.roleNote small {
+  font-weight: 400;
+}
+.roleWord {
+  font-weight: 700;
+}
+.roles li > :not(.roleNote):not(.roleWord) {
+  color: var(--ink);
+}
+
+/* ───── checks & quiz ───── */
+.checks {
+  margin: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  max-width: 78ch;
+}
+.checks li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.q {
+  font-size: var(--fs-md);
+}
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 12px;
+  background: var(--sticky-green);
+  border-left: 3px solid var(--green-pen);
+}
+.whyLine {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink-soft);
+}
+.quiz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.prompt {
+  margin: 0;
+  font: 700 var(--fs-lg) var(--font-hand);
+}
+.why {
+  margin: 0;
+  max-width: 74ch;
+  padding: 6px 12px;
+  background: var(--paper-sheet);
+  border-left: 3px solid var(--ink-soft);
+}

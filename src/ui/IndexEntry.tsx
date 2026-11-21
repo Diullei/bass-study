@@ -21,8 +21,10 @@ export function IndexEntry({ number, title, meta, muted, children }: IndexEntryP
     <li className={cx(styles.entry, muted && styles.muted)}>
       <div className={styles.line}>
         <span className={styles.num}>{number}</span>
-        <span className={styles.title}>{title}</span>
-        <span className={styles.leader} aria-hidden />
+        {/* the title fills the line; its dotted leader runs from the end of its last line to the meta */}
+        <span className={styles.title}>
+          <span className={styles.text}>{title}</span>
+        </span>
         {meta && <span className={styles.meta}>{meta}</span>}
       </div>
       {children && <div className={styles.body}>{children}</div>}

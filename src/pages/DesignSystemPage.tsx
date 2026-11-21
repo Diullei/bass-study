@@ -321,12 +321,15 @@ export function DesignSystemPage() {
               <Paper tilt="right" style={{ width: 280, height: 120 }} />
             </Spec>
 
-            <Spec id="index" name="Index entry" path="ui/IndexEntry" text="A line of the contents page: red-pen number, title, dotted leader, and a description on the ruled lines below. Sections not written yet are muted pencil." column>
+            <Spec id="index" name="Index entry" path="ui/IndexEntry" text="A line of the contents page: red-pen number, title, dotted leader, and a description on the ruled lines below. A long title wraps onto the next lines and the leader follows its last line. Sections not written yet are muted pencil." column>
               <IndexList>
                 <IndexEntry number="I." title={<Link to="/">Bass Method</Link>} meta="18 units">
                   <p>From the open strings to walking bass, a lesson at a time.</p>
                 </IndexEntry>
-                <IndexEntry number="II." title="to be written…" muted>
+                <IndexEntry number="R5" title={<Link to="/harmony/rules#rule-5">A chord's scale is the key, plus only the changes the chord forces</Link>} meta="9 lessons">
+                  <p>A long title: it wraps instead of running off the page.</p>
+                </IndexEntry>
+                <IndexEntry number="III." title="to be written…" muted>
                   The next section goes here.
                 </IndexEntry>
               </IndexList>

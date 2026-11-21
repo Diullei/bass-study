@@ -6,6 +6,9 @@ import { METHOD_PATH } from './features/method/paths'
 import { IdeaRoutes } from './features/ideas/IdeaRoutes'
 import { IdeaSummary } from './features/ideas/IdeaSummary'
 import { IDEAS_PATH } from './features/ideas/params'
+import { HarmonyRoutes } from './features/harmony/HarmonyRoutes'
+import { HarmonySummary } from './features/harmony/HarmonySummary'
+import { HARMONY_PATH } from './features/harmony/paths'
 import { PENT_PATH } from './features/pentatonics/paths'
 import { PentRoutes } from './features/pentatonics/PentRoutes'
 import { PentSummary } from './features/pentatonics/PentSummary'
@@ -69,5 +72,17 @@ export const SECTIONS: NotebookSection[] = [
     meta: '20 lessons',
     tab: 'var(--tab-pink)',
     tabLabel: 'Pentatonics',
+  },
+  {
+    id: 'harmony',
+    title: 'Functional Jazz Harmony',
+    blurb:
+      'From intervals to Coltrane changes, in plain language: seven rules that generate everything, and twenty lessons that apply them — with examples to hear, walking bass lines, and questions that come with the reasoning.',
+    path: HARMONY_PATH,
+    routes: <HarmonyRoutes />,
+    Summary: HarmonySummary,
+    meta: '20 lessons',
+    tab: 'var(--tab-orange)',
+    tabLabel: 'Harmony',
   },
 ]
