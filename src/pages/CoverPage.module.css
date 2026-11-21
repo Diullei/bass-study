@@ -17,10 +17,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* pinned to the top: the cover grows with the contents page, the label stays where it is */
+  justify-content: flex-start;
   gap: var(--sp-6);
   min-height: 640px;
-  padding: var(--sp-7) var(--sp-6);
+  padding: 140px var(--sp-6) var(--sp-7);
   border-radius: 12px 4px 4px 12px;
   background-color: var(--cover);
   background-image:
