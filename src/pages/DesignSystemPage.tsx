@@ -4,6 +4,7 @@ import type { Highlight } from '../audio/player'
 import { LESSONS } from '../curriculum/lessons'
 import { generate, lessonIntro, type Score } from '../engine'
 import { ChordShape } from '../notation/ChordShape'
+import { FingerKey } from '../notation/FingerKey'
 import { Fretboard } from '../notation/Fretboard'
 import { ShapeMove } from '../notation/ShapeMove'
 import { VoiceLines } from '../notation/VoiceLines'
@@ -486,6 +487,10 @@ export function DesignSystemPage() {
               <div style={{ width: 240 }}>
                 <ChordShape shape="8-x-x-9-11" labels={['R', '3', '7']} pens={[undefined, 'pen-green', 'pen-green']} roots={[true]} fingers={[1, 2, 4]} hand={{ from: 8, to: 11, at: { 8: '1', 9: '2', 11: '4' }, stretch: true }} />
                 <Caption>Gmaj7 form C: a stretch (dashed)</Caption>
+              </div>
+              <div>
+                <FingerKey />
+                <Caption>FingerKey (notation/FingerKey): which finger is which number; mirrors with the left-handed view</Caption>
               </div>
             </Spec>
             <Spec

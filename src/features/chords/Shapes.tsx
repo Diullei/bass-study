@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
+import { FingerKey } from '../../notation/FingerKey'
 import { ShapeMove } from '../../notation/ShapeMove'
 import { VoiceLines } from '../../notation/VoiceLines'
 import { Button, Checkbox, cx } from '../../ui'
@@ -17,21 +18,25 @@ export const rootsOf = (I: ShapeInfo) => I.a.notes.map((n) => n.deg === 'R')
 
 /** The pens, explained once per block. */
 export function PenKey() {
+  const F = useFingers()
   return (
-    <ul className={s.penKey} aria-label="What the colours mean">
-      <li>
-        <span className={cx(s.sw, s.swRoot)} /> root
-      </li>
-      <li>
-        <span className={cx(s.sw, s.swGuide)} /> 3rd and 7th (guide tones)
-      </li>
-      <li>
-        <span className={cx(s.sw, s.swColour)} /> colour (9, 11, 13)
-      </li>
-      <li>
-        <span className={s.sw} /> 5th
-      </li>
-    </ul>
+    <div className={s.keys}>
+      <ul className={s.penKey} aria-label="What the colours mean">
+        <li>
+          <span className={cx(s.sw, s.swRoot)} /> root
+        </li>
+        <li>
+          <span className={cx(s.sw, s.swGuide)} /> 3rd and 7th (guide tones)
+        </li>
+        <li>
+          <span className={cx(s.sw, s.swColour)} /> colour (9, 11, 13)
+        </li>
+        <li>
+          <span className={s.sw} /> 5th
+        </li>
+      </ul>
+      {F.show && <FingerKey />}
+    </div>
   )
 }
 

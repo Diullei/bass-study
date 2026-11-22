@@ -686,3 +686,10 @@
   font: 400 var(--fs-sm) / 1.4 var(--font-hand);
   color: var(--ink);
 }
+
+.keys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 28px;
+}

@@ -1,5 +1,6 @@
 import { useState, type ComponentType } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
+import { FingerKey } from '../../notation/FingerKey'
 import { useHandSize, useLefty, useShowFingers } from '../../state/prefs'
 import { Button, Modal, Segmented } from '../../ui'
 import s from './Settings.module.css'
@@ -58,6 +59,7 @@ function FingersControl() {
           {...(show ? { fingers: [1, 3, 3], barres: [{ fret: 9, from: 3, to: 4, finger: 3 }], hand: { from: 8, to: 9, at: { 8: '1', 9: '3' } } } : {})}
         />
       </div>
+      <FingerKey />
     </div>
   )
 }
@@ -91,7 +93,7 @@ export const SETTINGS: SettingDef[] = [
     id: 'fingers',
     group: 'Fingering',
     label: 'Fingers on chord diagrams',
-    help: 'A yellow tag on each dot is the fretting finger (1 index … 4 little finger); a grey bar is one finger laid flat across strings (a barre); the bracket under the neck shows which fingers sit at which fret (dashed when it is a stretch).',
+    help: 'A yellow tag on each dot is the fretting finger: 1 index, 2 middle, 3 ring, 4 little finger; a grey bar is one finger laid flat across strings (a barre); the bracket under the neck shows which fingers sit at which fret (dashed when it is a stretch).',
     Control: FingersControl,
   },
   {

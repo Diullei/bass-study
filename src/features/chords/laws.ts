@@ -88,6 +88,29 @@ export const LAWS: Law[] = [
         ],
         caption: 'Find each root from the note named in the caption before you look at the diagram.',
       },
+      { t: 'h', text: 'When the answer does not fit the hand' },
+      {
+        t: 'p',
+        text: 'The arithmetic always gives an answer, but not always one you can play. There are only five strings, so a root has a limited number of strings above it: four from the B string, three from the E string, two from the A string. When the strings run out, the frets have to make up the rest, and more than three or four frets is out of reach.',
+      },
+      {
+        t: 'p',
+        text: 'Example: the root is C at E‑8 and you want the **13** (21 semitones). The E string has three strings above it, worth 15. That leaves 21 − 15 = **6 frets**: G‑14, far from a hand at fret 8. Do not tap it and do not give up on the note. Run Law 1 again, in one of three ways:',
+      },
+      {
+        t: 'steps',
+        items: [
+          '**Buy a string.** The same C is also on the B string, five frets higher (B‑13), because one string down and five frets up cancel out. From there four strings are above the root: 21 = 20 + 1, so the 13 is four strings up and **one** fret forward (G‑14). The note did not move; the root came to it. This is the reason for the fifth string ([[Ch9]], [[Ch11]]).',
+          '**Take an octave off.** An octave is 12 = 5 + 5 + 2: **two strings and two frets**. The 13 an octave lower is the 6, the same note: 21 − 12 = 9 = 10 − 1, two strings up and one fret back (D‑7). You keep the colour and lose only its height, so check the lower note against the clear zones ([[Law2]]).',
+          '**Split it in time.** Play the root, let it ring, move the hand, play the note ([[Law5]]).',
+        ],
+      },
+      { t: 'big', text: 'too many frets? one string lower for the root = 5 frets fewer · an octave off = 2 strings + 2 frets' },
+      {
+        t: 'p',
+        text: 'The same thinking covers the other dead ends. **No string above the root** (the root is on the G string): go along the string (a 3rd is 4 frets forward, a stretch), or move the root to a lower string. **Too many frets back** (the fret would be below the nut): the note is on the next string down, five frets higher. Try any case here: choose a root, its string and the degree you want.',
+      },
+      { t: 'reach', root: 'C', string: 1, degree: '13' },
     ],
     tries: [
       {
@@ -104,6 +127,16 @@ export const LAWS: Law[] = [
         q: 'A guitarist says "this shape changes when it crosses the B string". Why does a bassist never have that problem?',
         a: 'Every pair of neighbouring bass strings is a fourth apart, so the arithmetic never changes.',
         why: 'The formula 5 × strings + frets assumes 5 semitones per string. On a guitar one pair (G–B) is 4 semitones, so shapes crossing it move one fret. On a bass the 5 holds everywhere.',
+      },
+      {
+        q: 'The root is F at E‑1 and you want the 9 (14 semitones). Three strings up gives 15: what do you do?',
+        a: 'Three strings up, one fret back would be G‑0: the open G string. That works here. In another key, take an octave off: the 2 is on the same string, two frets forward.',
+        why: '14 = 15 − 1: three strings up, one fret back. From fret 1 that is fret 0, an open string, which rings without a finger. From a root at the nut with no open string to help, 14 − 12 = 2: the same note an octave lower, two frets along the root\'s own string.',
+      },
+      {
+        q: 'The root is C at E‑8 and you want the 13. The G string gives it only at fret 14. Name two fixes.',
+        a: 'Move the root to B‑13 (then the 13 is four strings up, one fret forward), or play the 6 instead: two strings up, one fret back, D‑7.',
+        why: '21 semitones need four strings (20 + 1), and the E string has only three above it. Putting the root one string lower adds a string above it; taking an octave off (two strings and two frets) turns 21 into 9 = 10 − 1.',
       },
       {
         q: 'You hold the ♭7 of a chord on the G string, fret 10. Where is the root?',

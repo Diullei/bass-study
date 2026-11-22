@@ -197,3 +197,56 @@
 .linesNow .linesSym {
   fill: var(--red-pen);
 }
+
+/* FingerKey: which finger is which number */
+.fingerKey {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 400 var(--fs-sm) / 1.3 var(--font-hand);
+  color: var(--pencil);
+}
+.palm {
+  fill: var(--paper-sheet);
+  stroke: var(--ink-soft);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.tip {
+  fill: var(--sticky);
+  stroke: var(--pencil);
+  stroke-width: 1;
+}
+.tipNum {
+  font: 700 10px var(--font-hand);
+  fill: var(--ink);
+}
+.thumbT {
+  font: 700 9px var(--font-hand);
+  fill: var(--pencil);
+}
+.fingerNames {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 2px 16px;
+}
+.fingerNames b {
+  grid-column: 1 / -1;
+  color: var(--ink-soft);
+}
+.fingerNames .fingerWide {
+  grid-column: 1 / -1;
+}
+.fingerNames i {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  margin-right: 3px;
+  font: 700 11px/16px var(--font-hand);
+  font-style: normal;
+  text-align: center;
+  color: var(--ink);
+  background: var(--sticky);
+  border: 1px solid var(--pencil-light);
+  border-radius: 50%;
+}

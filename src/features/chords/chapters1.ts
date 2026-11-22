@@ -49,6 +49,12 @@ export const CHAPTERS_1: Chapter[] = [
         t: "p",
         text: "It is the same map with the fret direction turned round. Three to keep: the root of a **3rd** is one string down, one fret forward; the root of a **♭7** is two strings down, same fret; the root of a **7** is two strings down, one fret back.",
       },
+      { t: "h", text: "When the answer is out of reach" },
+      {
+        t: "p",
+        text: "Sometimes the arithmetic is right and the hand says no. From C at E‑8, the 13 is 21 semitones, but the E string has only three strings above it (15), so the rest is 6 frets: G‑14. There are three ways out, all of them [[Law1]] again. **Buy a string**: the same C is at B‑13, and from there the 13 is four strings up, one fret forward. **Take an octave off** (an octave is two strings and two frets): play the 6, two strings up and one fret back. Or **split it in time** ([[Law5]]). The reach solver below works out any case.",
+      },
+      { t: "reach", root: "C", string: 1, degree: "13" },
       { t: "h", text: "The clear zones ([[Law2]])" },
       {
         t: "p",
@@ -99,6 +105,7 @@ export const CHAPTERS_1: Chapter[] = [
       "**Mud test.** Play a major 3rd (one string up, one fret back) starting on E‑3, E‑8, A‑8, A‑14, D‑9. Notice where it starts to sound like a chord and not a rumble. You have just found your own floor for 3rds.",
       "**Same note, three colours.** Play E3 at G‑9, D‑14 and A‑19. Then play the pair C3 + E3 as D‑10 with G‑9, and as A‑15 with D‑14. Same notes, different chord. Decide which you would use under a melody.",
       "**Trace a band.** Play F2 on every string that has it (D‑3, A‑8, E‑13, B‑18). That diagonal is the floor of the chord register.",
+      "**Out of reach.** From C at E‑8, find the 9, the 11 and the 13 on the G string and notice which ones the hand cannot hold. Fix each one twice: once by moving the root to the B string, once by taking an octave off.",
       "**Find the root.** Put a finger anywhere on the D or G string. Call the note the 3rd and find its root (one string down, one fret forward); then call it the ♭7, the 7, the 9. Play your note, then the root, and listen: the same note changes its job with every root.",
     ],
     ready: "You can find any degree from any root in under three seconds, by reasoning, without the table.",

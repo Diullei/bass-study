@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import { Fretboard, type FretBand } from '../../notation/Fretboard'
-import { BeatGrid, Button, FactList, Segmented, StickyNote, cx } from '../../ui'
+import { BeatGrid, Button, FactList, Field, FieldGrid, Segmented, Select, StickyNote, cx } from '../../ui'
+import { fingerings } from '../../theory/fingering'
+import { handOf } from './fingers'
 import { Along, patternRows } from './Along'
 import { CText } from './CText'
 import { useFingers } from './fingers'
@@ -119,6 +121,167 @@ function MapBlock({ down = false }: { down?: boolean }) {
                 <b>{ivOf(pick[0], pick[1])} semitones</b>: the {name(ivOf(pick[0], pick[1]))}. Click any cell to hear it.
               </>
             )}
+          </p>
+        </>
+      )}
+    </figure>
+  )
+}
+
+// ───────────── Law 1: the reach solver ─────────────
+
+const REACH_ROOTS = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'A♭', 'A', 'B♭', 'B']
+/** Degree → semitones above the root, at the height its name asks for (a 13 is above the octave, a 6 below it). */
+const REACH_DEGS: [string, number][] = [
+  ['♭3', 3], ['3', 4], ['5', 7], ['6', 9], ['♭7', 10], ['7', 11], ['♭9', 13], ['9', 14], ['♭10 (♭3 up an octave)', 15], ['10 (3 up an octave)', 16], ['11', 17], ['♯11', 18], ['♭13', 20], ['13', 21],
+]
+
+interface Place {
+  /** Root and target: string, fret. */
+  rs: number
+  rf: number
+  ts: number
+  tf: number
+  su: number
+  df: number
+  iv: number
+  /** 'ok' within three frets, 'stretch' four, 'far' more. */
+  reach: 'ok' | 'stretch' | 'far'
+}
+
+function place(rs: number, rf: number, ts: number, iv: number, hand: 'average' | 'large'): Place | null {
+  const tf = OPEN[rs] + rf + iv - OPEN[ts]
+  if (tf < 0 || tf > 20) return null
+  const df = tf - rf
+  const fits = tf === 0 || fingerings([{ str: rs, fret: rf }, { str: ts, fret: tf }], hand).length > 0
+  return { rs, rf, ts, tf, su: ts - rs, df, iv, reach: !fits ? 'far' : Math.abs(df) >= 4 ? 'stretch' : 'ok' }
+}
+
+/**
+ * Law 1 when the first answer does not fit: from a root on a string, where can a degree go?
+ * It tries the root where it is, the same root on the other strings, and the degree an octave lower,
+ * and says which the hand can hold (measured by the fingering model).
+ */
+function ReachBlock({ root = 'C', string = 1, degree = '13' }: { root?: string; string?: number; degree?: string }) {
+  const [r, setR] = useState(root)
+  const [rs, setRs] = useState(string)
+  const [deg, setDeg] = useState(degree)
+  const F = useFingers()
+  const P = useClip<string>()
+  const pc = REACH_ROOTS.indexOf(r)
+  const iv = REACH_DEGS.find((d) => d[0] === deg)?.[1] ?? 21
+  // the root on the chosen string, between frets 1 and 12
+  const fretOn = (s: number, midi: number) => midi - OPEN[s]
+  let rf = (pc - (OPEN[rs] % 12) + 12) % 12
+  if (rf === 0) rf = 12
+  const rootMidi = OPEN[rs] + rf
+  const say = (p: Place) => `${p.su} string${p.su > 1 ? 's' : ''} up, ${p.df === 0 ? 'same fret' : `${Math.abs(p.df)} fret${Math.abs(p.df) > 1 ? 's' : ''} ${p.df > 0 ? 'forward' : 'back'}`}`
+  const math = (p: Place) => `5 × ${p.su}${p.df === 0 ? '' : ` ${p.df > 0 ? '+' : '−'} ${Math.abs(p.df)}`} = ${p.iv}`
+  const allOn = (s: number, f: number, interval: number) =>
+    [1, 2, 3, 4].map((su) => (s + su <= 4 ? place(s, f, s + su, interval, F.hand) : null)).filter((x): x is Place => !!x)
+  // 1. from the root as it is
+  const here = allOn(rs, rf, iv)
+  const hereOk = here.filter((p) => p.reach !== 'far')
+  // 2. the same root pitch on the other strings ("buy a string")
+  const moved = [0, 1, 2]
+    .filter((s) => s !== rs && fretOn(s, rootMidi) >= 1 && fretOn(s, rootMidi) <= 17)
+    .flatMap((s) => allOn(s, fretOn(s, rootMidi), iv))
+    .filter((p) => p.reach !== 'far')
+  // 3. the degree an octave lower (the same note name)
+  const lower = iv > 12 ? [...allOn(rs, rf, iv - 12), ...[0, 1, 2].filter((s) => s !== rs && fretOn(s, rootMidi) >= 1 && fretOn(s, rootMidi) <= 17).flatMap((s) => allOn(s, fretOn(s, rootMidi), iv - 12))].filter((p) => p.reach !== 'far') : []
+  // easiest first
+  const easy = (a: Place, b: Place) => Math.abs(a.df) - Math.abs(b.df)
+  hereOk.sort(easy)
+  moved.sort(easy)
+  lower.sort(easy)
+  const best = here.slice().sort((a, b) => Math.abs(a.df) - Math.abs(b.df))[0]
+  const hear = (p: Place) =>
+    P.once([{ notes: [{ t: 0, midi: OPEN[p.rs] + p.rf, dur: 2.6 }, { t: 1, midi: OPEN[p.ts] + p.tf, dur: 1.6 }], cues: [{ t: 0, v: `${p.rs}${p.rf}${p.ts}${p.tf}` }], beats: 3 }], 90)
+  const Card = ({ p, label }: { p: Place; label: string }) => {
+    const toks = ['x', 'x', 'x', 'x', 'x']
+    toks[p.rs] = String(p.rf)
+    toks[p.ts] = String(p.tf)
+    const f = p.tf > 0 ? fingerings([{ str: p.rs, fret: p.rf }, { str: p.ts, fret: p.tf }], F.hand)[0] : null
+    const fp = F.show && f ? { fingers: f.fingers, barres: f.barres, hand: handOf([p.rf, p.tf], f) } : {}
+    return (
+      <figure className={s.card}>
+        <button type="button" className={s.cardHead} onClick={() => hear(p)}>
+          <b className={s.cardSym}>
+            {STRING_NAMES[p.rs]}‑{p.rf} → {STRING_NAMES[p.ts]}‑{p.tf}
+          </b>
+          <span className={s.cardPlay}>▶</span>
+        </button>
+        <ChordShape shape={toks.join('-')} labels={['R', label]} pens={[undefined, 'pen-green']} roots={[true]} {...fp} />
+        <figcaption>
+          <span className={s.notes}>
+            {say(p)}: {math(p)}
+          </span>
+          {p.reach === 'stretch' && <span className={s.stretch}>a stretch</span>}
+        </figcaption>
+      </figure>
+    )
+  }
+  const short = deg.split(' ')[0]
+  const lowName = iv > 12 ? ({ 13: '♭2 (♭9)', 14: '2 (9)', 15: '♭3', 16: '3', 17: '4 (11)', 18: '♯4 (♯11)', 20: '♭6 (♭13)', 21: '6 (13)' } as Record<number, string>)[iv] : ''
+  return (
+    <figure className={s.shapes}>
+      <FieldGrid>
+        <Field label="Root">
+          <Select value={r} options={REACH_ROOTS.map((x) => ({ value: x, label: x }))} onChange={setR} />
+        </Field>
+        <Field label="Root on the">
+          <Segmented label="Root string" value={rs} options={[0, 1, 2].map((x) => ({ value: x, label: `${STRING_NAMES[x]} string` }))} onChange={setRs} />
+        </Field>
+        <Field label="You want the">
+          <Select value={deg} options={REACH_DEGS.map(([d, n]) => ({ value: d, label: `${d} · ${n} semitones` }))} onChange={setDeg} />
+        </Field>
+      </FieldGrid>
+      <p className={s.para}>
+        The root {r} is at <b>{STRING_NAMES[rs]}‑{rf}</b>, with {4 - rs} string{4 - rs > 1 ? 's' : ''} above it. The {short} is <b>{iv} semitones</b> up.{' '}
+        {hereOk.length > 0 ? (
+          <>It fits as it is:</>
+        ) : best ? (
+          <>
+            The most the strings give is 5 × {best.su} = {5 * best.su}, which leaves <b>{best.df > 0 ? '+' : '−'}{Math.abs(best.df)} frets</b> ({STRING_NAMES[best.ts]}‑{best.tf}): out of reach for one hand. Law 1 has three ways out.
+          </>
+        ) : (
+          <>There is no string above the root that holds it. Law 1 has three ways out.</>
+        )}
+      </p>
+      {hereOk.length > 0 && (
+        <div className={s.cards}>
+          {hereOk.map((p, i) => (
+            <Card key={i} p={p} label={short} />
+          ))}
+        </div>
+      )}
+      {moved.length > 0 && (
+        <>
+          <h4 className={s.h}>{hereOk.length ? 'Also: ' : '1. '}buy a string: the same {r}, one string lower and five frets higher</h4>
+          <p className={s.caption}>The root keeps its pitch, but now there is one more string above it, worth 5 semitones: five frets fewer to reach.</p>
+          <div className={s.cards}>
+            {moved.map((p, i) => (
+              <Card key={i} p={p} label={short} />
+            ))}
+          </div>
+        </>
+      )}
+      {lower.length > 0 && (
+        <>
+          <h4 className={s.h}>{hereOk.length ? 'Also: ' : '2. '}take an octave off: the {lowName} is the same note, 12 semitones lower</h4>
+          <p className={s.caption}>An octave is 12 = 5 + 5 + 2: two strings and two frets. Taking it off turns {iv} into {iv - 12}. The colour is the same note; it only sits lower, so check it against the clear zones (Law 2).</p>
+          <div className={s.cards}>
+            {lower.map((p, i) => (
+              <Card key={i} p={p} label={lowName.split(' ')[0]} />
+            ))}
+          </div>
+        </>
+      )}
+      {hereOk.length === 0 && (
+        <>
+          <h4 className={s.h}>3. split it in time</h4>
+          <p className={s.caption}>
+            <CText text={`Play the root, let it ring, and move the hand to ${best ? `${STRING_NAMES[best.ts]}‑${best.tf}` : 'the note'}: the ear joins the two ([[Law5]]). Tapping the high note with the plucking hand works too, but it is a special effect, not a grip.`} />
           </p>
         </>
       )}
@@ -439,6 +602,8 @@ export function BlockView({ b }: { b: CBlock }) {
       return <ShapesBlock {...b} />
     case 'map':
       return <MapBlock down={b.down} />
+    case 'reach':
+      return <ReachBlock root={b.root} string={b.string} degree={b.degree} />
     case 'zones':
       return <ZonesBlock />
     case 'registers':

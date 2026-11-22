@@ -34,6 +34,8 @@ export type CBlock =
   | { t: 'shapes'; title?: string; rows: string[]; caption?: string; seq?: boolean; tempo?: number }
   /** Chapter 1: the interval map, computed from Law 1. Click a cell to hear it. `down`: the map backwards, from a note to the notes below it. */
   | { t: 'map'; down?: boolean }
+  /** Law 1: the reach solver. A root, its string and a degree → every placement the hand can hold, and how to get there when the first answer is out of reach. */
+  | { t: 'reach'; root?: string; string?: number; degree?: string }
   /** Chapter 1: the clear zones, computed from the low interval limits. */
   | { t: 'zones' }
   /** Chapter 1: the neck shaded by register (bass, chord, melody bands). */
