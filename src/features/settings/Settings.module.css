@@ -1,0 +1,67 @@
+/* the sticky note in the corner, the twin of the metronome's */
+.fab {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 6px;
+  font: 700 17px var(--font-hand);
+  color: var(--ink);
+  background: var(--sticky-green);
+  border: 0;
+  box-shadow: var(--shadow-note);
+  transform: rotate(1.5deg);
+  cursor: pointer;
+}
+.fab:hover,
+.fab:focus-visible {
+  transform: rotate(0.5deg) translateY(-1px);
+}
+@media (max-width: 640px) {
+  .fab {
+    left: 10px;
+    bottom: 10px;
+    padding: 6px 10px 4px;
+    font-size: 15px;
+  }
+}
+
+.group + .group {
+  margin-top: var(--sp-5);
+}
+.groupTitle {
+  margin: 0 0 var(--sp-2);
+  font: 700 var(--fs-lg) var(--font-hand);
+  color: var(--ink-soft);
+}
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.text b {
+  font: 700 var(--fs-md) var(--font-hand);
+}
+.text p {
+  margin: 2px 0 0;
+  font: 400 var(--fs-sm) / 1.4 var(--font-body);
+  color: var(--pencil);
+}
+.control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.preview {
+  width: 210px;
+}
+.saved {
+  margin-right: auto;
+  align-self: center;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}

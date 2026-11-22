@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { LegacyLessonRedirect } from './features/method/MethodRoutes'
 import { Metronome } from './features/metronome/Metronome'
+import { Settings } from './features/settings/Settings'
 import { MetronomeTempoProvider } from './features/metronome/MetronomeTempo'
 import { CoverPage } from './pages/CoverPage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
@@ -24,6 +25,8 @@ export function App() {
           </Routes>
           {/* one metronome for the whole app: it keeps running as you move between pages */}
           <Metronome />
+          {/* the notebook's settings, always one click away */}
+          <Settings />
         </BrowserRouter>
       </MetronomeTempoProvider>
     </AppStateProvider>

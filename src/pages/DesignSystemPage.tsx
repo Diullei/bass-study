@@ -3,9 +3,13 @@ import { Link } from 'react-router'
 import type { Highlight } from '../audio/player'
 import { LESSONS } from '../curriculum/lessons'
 import { generate, lessonIntro, type Score } from '../engine'
+import { ChordShape } from '../notation/ChordShape'
 import { Fretboard } from '../notation/Fretboard'
+import { ShapeMove } from '../notation/ShapeMove'
+import { VoiceLines } from '../notation/VoiceLines'
 import { Staff } from '../notation/Staff'
 import {
+  BeatGrid,
   Button,
   Checkbox,
   Choice,
@@ -19,6 +23,7 @@ import {
   Kbd,
   Lead,
   Marker,
+  Modal,
   Notebook,
   NumberInput,
   PageTitle,
@@ -39,6 +44,18 @@ import { NotebookHeader } from '../features/shell/NotebookHeader'
 import s from './DesignSystemPage.module.css'
 
 const GEN = { strings: '5', bars: 'auto' } as const
+
+function ModalDemo() {
+  const [open, setOpen] = useState(false)
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open a modal</Button>
+      <Modal open={open} onClose={() => setOpen(false)} title="A modal" footer={<Button variant="ink" onClick={() => setOpen(false)}>Done</Button>}>
+        <p style={{ margin: 0 }}>Anything that needs the whole attention for a moment: settings, a confirmation, a long form.</p>
+      </Modal>
+    </>
+  )
+}
 
 /** One component specimen: name, import path, guidance, live demo. */
 function Spec({ id, name, path, children, text, column }: {
@@ -149,6 +166,12 @@ export function DesignSystemPage() {
           <a href="#song">Repeats &amp; endings</a>
           <a href="#pens">Pens</a>
           <a href="#fretboard">Fretboard</a>
+          <a href="#fretboard-more">Marks &amp; bands</a>
+          <a href="#chord-shape">ChordShape</a>
+          <a href="#shape-move">ShapeMove</a>
+          <a href="#voice-lines">VoiceLines</a>
+          <a href="#beat-grid">BeatGrid</a>
+          <a href="#modal">Modal</a>
         </nav>
 
         <main>
@@ -404,6 +427,100 @@ export function DesignSystemPage() {
                   { str: 3, fret: 7, label: '4', pen: 'pen-purple' },
                 ]}
               />
+            </Spec>
+            <Spec
+              id="fretboard-more"
+              name="Fretboard: marks, bands, mirror"
+              path="notation/Fretboard"
+              text="muted puts an × left of the window; a dot with harmonic is a diamond over the fret wire; active is the red playback pen; bands shade stretches of a string (the register bands of the chord method); lefty mirrors the neck, nut on the right, as a left-handed player sees it."
+              column
+            >
+              <Fretboard
+                strings={5}
+                from={0}
+                to={12}
+                lefty
+                muted={[0]}
+                bands={[0, 1, 2, 3, 4].flatMap((str) => [
+                  { str, from: 1, to: Math.max(0, 18 - 5 * str), cls: 'band-bass' },
+                  { str, from: Math.max(1, 19 - 5 * str), to: 12, cls: 'band-chord' },
+                ]).filter((b) => b.to >= b.from)}
+                dots={[
+                  { str: 1, fret: 8, label: 'R', root: true },
+                  { str: 2, fret: 7, label: '9', harmonic: true, pen: 'pen-blue' },
+                  { str: 3, fret: 9, label: '7', pen: 'pen-green', active: true },
+                  { str: 4, fret: 9, label: '3', pen: 'pen-green' },
+                ]}
+              />
+            </Spec>
+            <Spec
+              id="chord-shape"
+              name="ChordShape"
+              path="notation/ChordShape"
+              text="One chord shape from its frets, low string to high (x-8-x-9-9): the window fits the shape, every fret is numbered, labels and pens per sounding note. Used by the chord method's cards, chips and play-along."
+            >
+              <div style={{ width: 230 }}>
+                <ChordShape shape="x-8-x-9-9" labels={['R', '7', '3']} pens={[undefined, 'pen-green', 'pen-green']} roots={[true, false, false]} />
+                <Caption>Cmaj7, form A</Caption>
+              </div>
+              <div style={{ width: 230 }}>
+                <ChordShape shape="x-13-14-13-15" labels={['♭7', '3', '♭13', '♯9']} pens={['pen-green', 'pen-green', 'pen-blue', 'pen-blue']} />
+                <Caption>G7♯9♭13, rootless grid</Caption>
+              </div>
+              <div style={{ width: 230 }}>
+                <ChordShape shape="x-8-h7-h7-h7" labels={['R', '3', '6', '9']} pens={[undefined, 'pen-green', 'pen-green', 'pen-blue']} roots={[true]} active={[1, 2, 3]} />
+                <Caption>C6/9 with harmonics, sounding</Caption>
+              </div>
+            </Spec>
+            <Spec
+              id="shape-move"
+              name="ShapeMove"
+              path="notation/ShapeMove · pairVoices()"
+              text="Voice leading on the neck: the chord before in dashed pencil, the next one in ink, an arrow for each finger that moves, a thick ring for a finger that stays down, ½ on a half-step pull. Voices pair from the top down."
+              column
+            >
+              <div style={{ maxWidth: 460 }}>
+                <ShapeMove from={{ shape: 'x-10-x-10-10' }} to={{ shape: 'x-x-10-9-10', labels: ['R', '3', '♭7'], pens: [undefined, 'pen-green', 'pen-green'], roots: [true] }} />
+                <Caption>Dm7 → G7: F stays, C falls a half step to B, the root crosses to the A string.</Caption>
+              </div>
+            </Spec>
+            <Spec
+              id="voice-lines"
+              name="VoiceLines"
+              path="notation/VoiceLines"
+              text="A progression as voices: each voice from chord to chord at its pitch. Green and flat = a held note (common tone); a short step marked ½ = a half-step pull; dashed pencil = a leap; the top line, the melody, is the thickest. at circles the chord that sounds."
+              column
+            >
+              <VoiceLines
+                at={1}
+                chords={[
+                  { label: 'Dm7', midis: [38, 48, 53], names: ['D', 'C', 'F'], degs: ['R', '♭7', '♭3'] },
+                  { label: 'G7', midis: [43, 47, 53], names: ['G', 'B', 'F'], degs: ['R', '3', '♭7'] },
+                  { label: 'Cmaj7', midis: [36, 47, 52], names: ['C', 'B', 'E'], degs: ['R', '7', '3'] },
+                ]}
+              />
+            </Spec>
+            <Spec
+              id="beat-grid"
+              name="BeatGrid"
+              path="ui/BeatGrid"
+              text="A rhythm on squared paper: a row per hand or finger, a column per step, counted 1 & 2 &. Accented hits in bold ink; the sounding step gets the red pen. Used for the plucking-hand patterns."
+            >
+              <BeatGrid
+                at={2}
+                rows={[
+                  { label: 'fingers', cells: [null, null, '●', null, null, null, '●', null], accents: [2, 6] },
+                  { label: 'thumb', cells: ['R', null, null, null, '5', null, null, null] },
+                ]}
+              />
+            </Spec>
+            <Spec
+              id="modal"
+              name="Modal"
+              path="ui/Modal"
+              text="A sheet of notebook paper taped over a dimmed desk, on the native <dialog>: Esc or a click on the desk closes it, and focus stays inside while it is open. Used by the notebook's settings (the green note in the bottom-left corner)."
+            >
+              <ModalDemo />
             </Spec>
           </div>
           <Row style={{ marginTop: 'var(--sp-7)' }}>

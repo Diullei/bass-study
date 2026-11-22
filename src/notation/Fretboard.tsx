@@ -1,3 +1,4 @@
+import { useLefty } from '../state/prefs'
 import styles from './Fretboard.module.css'
 
 export interface FretDot {
@@ -10,6 +11,20 @@ export interface FretDot {
   pen?: string
   /** Drawn filled: the root of the shape. */
   root?: boolean
+  /** A natural harmonic touched over this fret: drawn as a diamond. */
+  harmonic?: boolean
+  /** Sounding now: the red playback pen. */
+  active?: boolean
+}
+
+/** A shaded stretch of one string, e.g. a register band. */
+export interface FretBand {
+  str: number
+  /** First and last fret of the stretch (inclusive). */
+  from: number
+  to: number
+  /** A class for the fill, e.g. "band-bass". */
+  cls: string
 }
 
 export interface FretboardProps {
@@ -17,66 +32,107 @@ export interface FretboardProps {
   from?: number
   to?: number
   dots: FretDot[]
+  /** Strings that must not sound: an × left of the window. */
+  muted?: number[]
+  /** Shaded stretches behind the dots. */
+  bands?: FretBand[]
+  /** Mirror the neck (nut on the right), as a left-handed player sees it. Default: the notebook's left-handed setting. */
+  lefty?: boolean
+  /** Number every fret, not only the inlay frets. */
+  allNumbers?: boolean
   className?: string
 }
 
 const NAMES = { 4: ['E', 'A', 'D', 'G'], 5: ['B', 'E', 'A', 'D', 'G'] }
-const INLAY = [3, 5, 7, 9, 15, 17]
+const INLAY = [3, 5, 7, 9, 15, 17, 19, 21]
 
 /** A hand-drawn bass neck, G string on top (as in tab), with labelled dots. */
-export function Fretboard({ strings, from = 0, to = 12, dots, className }: FretboardProps) {
+export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands = [], lefty: leftyProp, allNumbers = false, className }: FretboardProps) {
+  const [leftySetting] = useLefty()
+  const lefty = leftyProp ?? leftySetting
   const n = to - (from === 0 ? 1 : from) + 1
   const fw = 46
   const sp = 24
-  const left = 30
+  const marks = muted.length > 0 || (from === 0 && dots.some((d) => d.fret === 0))
+  const left = marks ? 46 : 30
   const top = 14
   const W = left + n * fw + 8
   const H = top + (strings - 1) * sp + 34
+  const X = (x: number) => (lefty ? W - x : x)
   const yOf = (s: number) => top + (strings - 1 - s) * sp
   // the space for fret f lies between wire f-1 and wire f; the first space is fret `from` (or 1 after the nut)
   const first = from === 0 ? 1 : from
-  const cx = (f: number) => (f === 0 ? left - 13 : left + (f - first + 0.5) * fw)
+  const cx = (f: number) => (f === 0 ? left - 14 : left + (f - first + 0.5) * fw)
   const wireX = (f: number) => left + (f - first + 1) * fw
   const jit = (i: number) => (Math.sin(i * 12.9898) * 43758.5453) % 1 * 0.8
   const wires: number[] = []
   for (let f = first; f <= to; f++) wires.push(f)
+  const inWindow = (f: number) => f === 0 ? from === 0 : f >= first && f <= to
   return (
     <svg className={`${styles.board} score ${className ?? ''}`} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Fretboard">
+      {bands
+        .filter((b) => b.str < strings && b.to >= first && b.from <= to)
+        .map((b, i) => {
+          const a = Math.max(b.from, first)
+          const z = Math.min(b.to, to)
+          const x0 = left + (a - first) * fw + 2
+          const x1 = left + (z - first + 1) * fw - 2
+          return <rect key={i} className={b.cls} x={Math.min(X(x0), X(x1))} y={yOf(b.str) - 8} width={x1 - x0} height={16} rx={6} />
+        })}
       {/* nut or first wire */}
-      <path className={from === 0 ? styles.nut : styles.wire} d={`M${left} ${top - 4} L${left + jit(1)} ${yOf(0) + 4}`} />
+      <path className={from === 0 ? styles.nut : styles.wire} d={`M${X(left)} ${top - 4} L${X(left + jit(1))} ${yOf(0) + 4}`} />
       {wires.map((f) => (
-        <path key={f} className={styles.wire} d={`M${wireX(f)} ${top - 4} Q${wireX(f) + jit(f)} ${(top + yOf(0)) / 2} ${wireX(f) - jit(f + 3)} ${yOf(0) + 4}`} />
+        <path key={f} className={styles.wire} d={`M${X(wireX(f))} ${top - 4} Q${X(wireX(f) + jit(f))} ${(top + yOf(0)) / 2} ${X(wireX(f) - jit(f + 3))} ${yOf(0) + 4}`} />
       ))}
       {Array.from({ length: strings }, (_, s) => (
         <g key={s}>
-          <path className={styles.string} style={{ strokeWidth: 1 + (strings - 1 - s) * 0.35 }} d={`M${left - 4} ${yOf(s)} Q${W / 2} ${yOf(s) + jit(s + 7)} ${W - 6} ${yOf(s)}`} />
-          <text className={styles.sname} x={8} y={yOf(s) + 4}>
+          <path
+            className={styles.string}
+            style={{ strokeWidth: 1 + (strings - 1 - s) * 0.35 }}
+            d={`M${X(left - 4)} ${yOf(s)} Q${W / 2} ${yOf(s) + jit(s + 7)} ${X(W - 6)} ${yOf(s)}`}
+          />
+          <text className={styles.sname} x={X(8)} y={yOf(s) + 4} textAnchor={lefty ? 'end' : 'start'}>
             {NAMES[strings][s]}
           </text>
+          {muted.includes(s) && (
+            <text className={styles.mute} x={X(left - 14)} y={yOf(s) + 5} textAnchor="middle">
+              ×
+            </text>
+          )}
         </g>
       ))}
-      {Array.from({ length: n }, (_, k) => from + k)
-        .filter((f) => f > 0)
-        .map((f) => (
-          <g key={f}>
-            {(INLAY.includes(f) || f === 12) && (
-              <text className={styles.fnum} x={cx(f)} y={H - 6} textAnchor="middle">
-                {f}
-              </text>
-            )}
-            {f === 12 && <text className={styles.inlay} x={cx(f)} y={H - 18} textAnchor="middle">••</text>}
-          </g>
-        ))}
-      {dots
-        .filter((d) => d.fret >= from && d.fret <= to && d.str < strings)
-        .map((d, i) => (
-          <g key={i} className={`${d.pen ?? ''} ${d.root ? styles.root : ''}`}>
-            <circle className={styles.dot} cx={cx(d.fret)} cy={yOf(d.str)} r={10.5} />
-            <text className={styles.dlab} x={cx(d.fret)} y={yOf(d.str) + 4} textAnchor="middle">
-              {d.label}
+      {Array.from({ length: n }, (_, k) => first + k).map((f) => (
+        <g key={f}>
+          {(allNumbers || INLAY.includes(f) || f === 12) && (
+            <text className={styles.fnum} x={X(cx(f))} y={H - 6} textAnchor="middle">
+              {f}
             </text>
-          </g>
-        ))}
+          )}
+          {f === 12 && !allNumbers && (
+            <text className={styles.inlay} x={X(cx(f))} y={H - 18} textAnchor="middle">
+              ••
+            </text>
+          )}
+        </g>
+      ))}
+      {dots
+        .filter((d) => inWindow(d.fret) && d.str < strings)
+        .map((d, i) => {
+          const x = X(d.harmonic ? wireX(d.fret) : cx(d.fret))
+          const y = yOf(d.str)
+          return (
+            <g key={i} className={`${d.pen ?? ''} ${d.root ? styles.root : ''} ${d.active ? styles.active : ''}`}>
+              {d.harmonic ? (
+                <path className={styles.dot} d={`M${x} ${y - 12} L${x + 12} ${y} L${x} ${y + 12} L${x - 12} ${y} Z`} />
+              ) : (
+                <circle className={styles.dot} cx={x} cy={y} r={10.5} />
+              )}
+              <text className={styles.dlab} x={x} y={y + 4} textAnchor="middle">
+                {d.label}
+              </text>
+            </g>
+          )
+        })}
     </svg>
   )
 }

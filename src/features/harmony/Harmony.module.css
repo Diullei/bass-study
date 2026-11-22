@@ -104,13 +104,13 @@
   background: var(--sticky);
   border-bottom: 2px solid var(--sticky-edge);
   box-shadow: var(--shadow-note);
-  opacity: 0;
+  /* display, not opacity: a hidden tooltip must not widen the page on a phone */
+  display: none;
   pointer-events: none;
-  transition: opacity 0.12s;
 }
 .ruleRef:hover::after,
 .ruleRef:focus-visible::after {
-  opacity: 1;
+  display: block;
 }
 .uses {
   display: flex;
@@ -531,4 +531,8 @@
   padding: 6px 12px;
   background: var(--paper-sheet);
   border-left: 3px solid var(--ink-soft);
+}
+
+.backlinks .lessonRef {
+  white-space: normal;
 }

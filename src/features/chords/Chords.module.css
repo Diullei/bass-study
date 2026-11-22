@@ -1,0 +1,676 @@
+/* The chord method: same notebook language as the harmony course, purple index tab. */
+
+.count {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.goLink {
+  font: 700 var(--fs-md) var(--font-hand);
+  color: var(--red-pen);
+  text-decoration: none;
+}
+.picker {
+  max-width: min(52vw, 400px);
+}
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.blockSlot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+.para {
+  max-width: 74ch;
+  margin: 0;
+  line-height: var(--ruled);
+}
+.h {
+  margin: var(--sp-3) 0 calc(-1 * var(--sp-2));
+  font: 700 var(--fs-lg) var(--font-hand);
+  color: var(--ink-soft);
+}
+.code {
+  font: 500 0.92em var(--font-mono);
+  background: var(--rule-faint);
+  padding: 0 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.caption {
+  margin: 0;
+  max-width: 74ch;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.caption b {
+  color: var(--ink);
+}
+.pencil {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.big {
+  align-self: flex-start;
+  max-width: 70ch;
+  margin: var(--sp-2) 0;
+  padding: 8px 18px;
+  font: 700 var(--fs-xl) / 1.3 var(--font-hand);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--tab-purple), transparent 30%);
+  border-left: 4px solid var(--ink-soft);
+}
+.steps {
+  margin: 0;
+  padding-left: 26px;
+  max-width: 74ch;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.wide {
+  overflow-x: auto;
+}
+.wide > svg {
+  min-width: 760px;
+}
+
+/* ───── links ───── */
+.lawRef,
+.chRef {
+  position: relative;
+  display: inline-block;
+  margin: 0 1px;
+  font: 700 0.9em var(--font-hand);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lawRef {
+  padding: 0 6px;
+  color: var(--ink);
+  background: var(--tab-purple);
+  border: 1px solid color-mix(in srgb, var(--tab-purple), var(--ink) 25%);
+  border-radius: var(--wobble-3);
+}
+.chRef {
+  padding: 0 2px;
+  color: var(--blue-pen);
+  border-bottom: 1.5px dashed var(--blue-pen);
+}
+.lawRef:hover,
+.lawRef:focus-visible {
+  background: var(--highlighter);
+}
+.lawRef::after {
+  content: attr(data-tip);
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  width: max-content;
+  max-width: min(320px, 80vw);
+  padding: 8px 12px;
+  transform: translateX(-50%) rotate(-0.6deg);
+  font: 400 var(--fs-sm) / 1.35 var(--font-hand);
+  white-space: normal;
+  text-align: left;
+  color: var(--ink);
+  background: var(--sticky);
+  border-bottom: 2px solid var(--sticky-edge);
+  box-shadow: var(--shadow-note);
+  display: none;
+  pointer-events: none;
+}
+.lawRef:hover::after,
+.lawRef:focus-visible::after {
+  display: block;
+}
+.uses {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin: var(--sp-2) 0 0;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.backlinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: var(--sp-3) 0 0;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+
+/* ───── inline shape chip: hover for the diagram, click to hear ───── */
+.chip {
+  position: relative;
+  display: inline;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.chip code {
+  font: 500 0.92em var(--font-mono);
+  padding: 0 4px;
+  background: color-mix(in srgb, var(--tab-purple), transparent 40%);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.chip:hover code,
+.chip:focus-visible code {
+  background: var(--highlighter);
+}
+.chipPop {
+  position: absolute;
+  z-index: 30;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 230px;
+  padding: 8px 10px;
+  transform: translateX(-50%) rotate(-0.5deg);
+  text-align: left;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink);
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--ink-soft);
+  border-radius: var(--wobble-2);
+  box-shadow: var(--shadow-note);
+  display: none;
+  pointer-events: none;
+}
+.chipPop small {
+  color: var(--pencil);
+}
+.chip:hover .chipPop,
+.chip:focus-visible .chipPop {
+  display: flex;
+}
+@media (max-width: 640px) {
+  .chipPop {
+    width: 190px;
+  }
+}
+
+/* ───── laws page ───── */
+.lawIndex {
+  margin: var(--sp-3) 0 0;
+  padding-left: 26px;
+  max-width: 78ch;
+}
+.lawIndex li {
+  margin: 4px 0;
+}
+.lawIndex a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.lawIndex a:hover b {
+  background: var(--highlighter);
+}
+.law {
+  scroll-margin-top: 84px;
+  padding-top: var(--sp-4);
+  border-top: 2px dashed var(--paper-edge);
+}
+.law:target .lawShort {
+  background: var(--highlighter);
+}
+.lawShort {
+  max-width: 70ch;
+  margin: 0 0 var(--sp-4);
+  padding: 6px 12px;
+  font: 700 var(--fs-lg) / 1.35 var(--font-hand);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--tab-purple), transparent 45%);
+  border-left: 4px solid var(--ink-soft);
+  transition: background 0.4s;
+}
+.piano {
+  max-width: 74ch;
+  margin: var(--sp-3) 0 0;
+  padding: 8px 14px;
+  font: 400 var(--fs-md) / 1.5 var(--font-body);
+  background: var(--paper-sheet);
+  border: 1.5px dashed var(--pencil-light);
+  border-radius: var(--wobble-1);
+}
+.piano b:first-child {
+  font-family: var(--font-hand);
+}
+
+/* ───── tables ───── */
+.tableFig {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.tableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.table {
+  border-collapse: collapse;
+  font: 400 var(--fs-md) var(--font-body);
+  background: var(--paper-sheet);
+  box-shadow: var(--shadow-sheet);
+}
+.table th,
+.table td {
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.table th {
+  font: 700 var(--fs-sm) var(--font-hand);
+  color: var(--ink-soft);
+  background: var(--rule-faint);
+}
+.table tbody th {
+  white-space: nowrap;
+}
+.mapTable td {
+  padding: 3px;
+}
+.mapCell {
+  width: 100%;
+  min-width: 64px;
+  padding: 4px 6px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--wobble-1);
+  cursor: pointer;
+}
+.mapCell:hover {
+  background: var(--highlighter);
+}
+.mapOn {
+  color: var(--red-pen);
+  border-color: var(--red-pen);
+}
+
+/* ───── pen key ───── */
+.penKey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.penKey li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sw {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper-sheet);
+}
+.swRoot {
+  background: var(--ink);
+}
+.swGuide {
+  border-color: var(--green-pen);
+}
+.swColour {
+  border-color: var(--blue-pen);
+}
+.swBass,
+.swChord,
+.swBoth,
+.swMelody {
+  border: 0;
+  border-radius: 4px;
+  width: 22px;
+}
+.swBoth {
+  background: #d4e98a;
+}
+.swBass {
+  background: var(--tab-blue);
+}
+.swChord {
+  background: #a9dbb7;
+}
+.swMelody {
+  background: var(--highlighter-strong);
+}
+
+/* ───── shape cards ───── */
+.shapes,
+.along,
+.patterns {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+.shapesHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  font: 700 var(--fs-md) var(--font-hand);
+}
+.shapesTitle {
+  color: var(--ink);
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--sp-3);
+}
+.card {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px 8px;
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--paper-edge);
+  border-radius: var(--wobble-2);
+  box-shadow: var(--shadow-sheet);
+  min-width: 0;
+}
+.cardOn {
+  border-color: var(--red-pen);
+}
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px;
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.cardSym {
+  font: 700 var(--fs-lg) var(--font-hand);
+}
+.cardPlay {
+  font-size: var(--fs-sm);
+  color: var(--pencil);
+}
+.cardHead:hover .cardPlay {
+  color: var(--red-pen);
+}
+.card figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  font: 400 var(--fs-sm) / 1.35 var(--font-hand);
+}
+.frets {
+  font: 600 var(--fs-sm) var(--font-mono);
+}
+.stretch {
+  font-size: var(--fs-xs);
+  color: var(--purple-pen);
+}
+.notes {
+  color: var(--ink-soft);
+}
+.cardNote {
+  flex-basis: 100%;
+  color: var(--pencil);
+}
+.mud {
+  flex-basis: 100%;
+  font-size: var(--fs-xs);
+  color: var(--purple-pen);
+}
+
+/* ───── progression: voice lines + the move ───── */
+.prog {
+  min-width: 0;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: var(--sp-4);
+  align-items: start;
+  padding: var(--sp-3);
+  background: var(--paper-sheet);
+  box-shadow: var(--shadow-sheet);
+  border-radius: var(--wobble-1);
+}
+@media (max-width: 760px) {
+  .prog {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.progLines {
+  min-width: 0;
+  overflow-x: auto;
+}
+.progMove {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.progNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font: 400 var(--fs-md) var(--font-hand);
+}
+.moveText {
+  margin: 0;
+  font: 400 var(--fs-sm) / 1.4 var(--font-hand);
+  color: var(--ink-soft);
+}
+.moveKey {
+  margin: 0;
+  font: 400 var(--fs-xs) var(--font-hand);
+  color: var(--pencil-light);
+}
+
+/* ───── play-along ───── */
+.chart {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: var(--sp-2) 0;
+  background: var(--paper-sheet);
+  box-shadow: var(--shadow-sheet);
+}
+@media (max-width: 640px) {
+  .chart {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.chartBar {
+  border-bottom: 1px solid var(--rule-faint);
+  display: flex;
+  gap: 10px;
+  min-height: 40px;
+  align-items: center;
+  padding: 4px 10px;
+  border-left: 1.5px solid var(--ink-soft);
+}
+.chartBarOn {
+  background: var(--red-pen-soft);
+}
+.chartSym {
+  font: 700 var(--fs-md) var(--font-hand);
+  color: var(--ink);
+}
+.chartSymOn {
+  color: var(--red-pen);
+}
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.patHow {
+  margin: 0;
+  max-width: 74ch;
+  font: 400 var(--fs-sm) / 1.4 var(--font-hand);
+}
+.alongNow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 520px;
+}
+.alongSym {
+  font: 700 var(--fs-lg) var(--font-hand);
+}
+.patRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  align-items: flex-start;
+}
+.patShape {
+  flex: 0 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.patGrid {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* ───── checks & quiz ───── */
+.checks {
+  margin: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  max-width: 78ch;
+}
+.checks li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.q {
+  font-size: var(--fs-md);
+}
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 12px;
+  background: var(--sticky-green);
+  border-left: 3px solid var(--green-pen);
+}
+.whyLine {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink-soft);
+}
+.quiz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.prompt {
+  margin: 0;
+  font: 700 var(--fs-lg) var(--font-hand);
+}
+.why {
+  margin: 0;
+  max-width: 74ch;
+  padding: 6px 12px;
+  background: var(--paper-sheet);
+  border-left: 3px solid var(--ink-soft);
+}
+
+/* ───── tools ───── */
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.errors {
+  margin: 0;
+  padding: 6px 12px 6px 28px;
+  color: var(--red-pen);
+  background: var(--red-pen-soft);
+}
+.warnings {
+  margin: 0;
+  padding: 6px 12px 6px 28px;
+  color: var(--purple-pen);
+}
+.ok {
+  color: var(--green-pen);
+  font: 700 var(--fs-md) var(--font-hand);
+}
+.lefty {
+  font-size: var(--fs-sm);
+}
+.input {
+  width: 100%;
+  max-width: 420px;
+  padding: 6px 10px;
+  font: 500 var(--fs-md) var(--font-mono);
+  color: var(--ink);
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--ink-soft);
+  border-radius: var(--wobble-1);
+}
+.degPick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.deg,
+.degOn {
+  min-width: 40px;
+  padding: 3px 8px;
+  font: 700 var(--fs-sm) var(--font-hand);
+  color: var(--ink);
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--pencil-light);
+  border-radius: var(--wobble-3);
+  cursor: pointer;
+}
+.degOn {
+  border-color: var(--ink);
+  background: var(--tab-purple);
+}
+
+.mapBoard {
+  max-width: 560px;
+}
+
+.backlinks .chRef {
+  white-space: normal;
+}

@@ -9,6 +9,9 @@ import { IDEAS_PATH } from './features/ideas/params'
 import { HarmonyRoutes } from './features/harmony/HarmonyRoutes'
 import { HarmonySummary } from './features/harmony/HarmonySummary'
 import { HARMONY_PATH } from './features/harmony/paths'
+import { ChordsRoutes } from './features/chords/ChordsRoutes'
+import { ChordsSummary } from './features/chords/ChordsSummary'
+import { CHORDS_PATH } from './features/chords/paths'
 import { PENT_PATH } from './features/pentatonics/paths'
 import { PentRoutes } from './features/pentatonics/PentRoutes'
 import { PentSummary } from './features/pentatonics/PentSummary'
@@ -84,5 +87,17 @@ export const SECTIONS: NotebookSection[] = [
     meta: '20 lessons',
     tab: 'var(--tab-orange)',
     tabLabel: 'Harmony',
+  },
+  {
+    id: 'chords',
+    title: 'Two Hands on One Neck',
+    blurb:
+      'A chord method for 5-string bass, built by translating jazz piano voicing to the fretboard: five laws, shapes you can rebuild instead of memorize, the voice leading drawn on the neck, and play-along for every progression.',
+    path: CHORDS_PATH,
+    routes: <ChordsRoutes />,
+    Summary: ChordsSummary,
+    meta: '24 chapters',
+    tab: 'var(--tab-purple)',
+    tabLabel: 'Chords',
   },
 ]

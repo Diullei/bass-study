@@ -33,6 +33,11 @@ export const KEYS = {
   /** Jazz harmony course: per-lesson progress, and the last lesson opened. */
   harmonyProgress: 'bs.harmony.progress',
   harmonyCurrent: 'bs.harmony.current',
+  /** Chord method: per-chapter progress, the last chapter opened, the left-handed view. */
+  chordsProgress: 'bs.chords.progress',
+  chordsCurrent: 'bs.chords.current',
+  /** The left-handed view of every neck, for the whole notebook. */
+  lefty: 'bs.lefty',
   /** Backing track for practice: band feel and whether the written line is played. */
   backing: 'bs.backing',
 } as const

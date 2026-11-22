@@ -55,7 +55,9 @@ function LessonView({ L }: { L: PentLesson }) {
   const k = LESSONS.indexOf(L)
   const prev = LESSONS[k - 1]
   const next = LESSONS[k + 1]
-  useEffect(() => window.scrollTo(0, 0), [])
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const groups: OptionGroup[] = PARTS.map((p, pi) => ({
     label: `Part ${pi + 1} · ${p}`,

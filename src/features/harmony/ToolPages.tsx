@@ -31,7 +31,9 @@ export function WorkshopPage() {
   const { steps, clash } = derive(parseChord(key)!.root, mode, c)
   const derived = clash ? null : nameScale(c.root, steps.map((x) => x.out))
   const [scale, setScale] = useState<string>('')
-  useEffect(() => setScale(''), [chord, key, mode])
+  useEffect(() => {
+    setScale("")
+  }, [chord, key, mode])
   const shown = scale || derived || 'mixolydian'
 
   return (

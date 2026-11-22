@@ -1,0 +1,49 @@
+.wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.grid {
+  border-collapse: collapse;
+  font: 400 var(--fs-sm) var(--font-hand);
+}
+.grid th,
+.grid td {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 2px;
+  text-align: center;
+  border: 1px solid var(--rule-faint);
+}
+.grid thead th {
+  color: var(--pencil-light);
+  font-weight: 400;
+  border-top: 0;
+}
+.grid thead th.onBeat {
+  color: var(--pencil);
+  font-weight: 700;
+}
+.grid tbody th {
+  padding: 0 var(--sp-2) 0 0;
+  text-align: right;
+  color: var(--pencil);
+  font-weight: 700;
+  border-left: 0;
+  white-space: nowrap;
+}
+.grid td {
+  color: var(--ink-soft);
+}
+.grid td.acc {
+  color: var(--ink);
+  font-weight: 700;
+}
+.grid .bar {
+  border-left: 2px solid var(--staff);
+}
+.grid .now {
+  background: var(--red-pen-soft);
+}
+.grid td.now:not(:empty) {
+  color: var(--red-pen);
+}

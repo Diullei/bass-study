@@ -1,0 +1,81 @@
+.modal {
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+.modal::backdrop {
+  background: rgba(40, 32, 18, 0.38);
+}
+.sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 48px);
+  background: var(--paper) repeating-linear-gradient(transparent 0 calc(var(--ruled) - 1px), var(--rule-faint) calc(var(--ruled) - 1px) var(--ruled));
+  border-left: 2px solid var(--margin-line);
+  border-radius: 3px;
+  box-shadow: var(--shadow-sheet), 0 18px 40px -16px rgba(40, 32, 18, 0.5);
+  transform: rotate(-0.4deg);
+}
+/* a strip of tape holding the sheet */
+.sheet::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 110px;
+  height: 24px;
+  transform: translateX(-50%) rotate(2deg);
+  background: var(--tape);
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5) var(--sp-2);
+  border-bottom: 3px double var(--ink-soft);
+}
+.title {
+  margin: 0;
+  font: 700 var(--fs-xl) var(--font-hand);
+  color: var(--ink);
+}
+.close {
+  width: 34px;
+  height: 34px;
+  font: 700 26px/1 var(--font-hand);
+  color: var(--ink-soft);
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: var(--wobble-1);
+  cursor: pointer;
+}
+.close:hover,
+.close:focus-visible {
+  color: var(--red-pen);
+  border-color: var(--red-pen);
+}
+.body {
+  overflow-y: auto;
+  padding: var(--sp-4) var(--sp-5);
+}
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-5) var(--sp-4);
+  border-top: 1px dashed var(--pencil-light);
+}
+@media (max-width: 640px) {
+  .head,
+  .body,
+  .foot {
+    padding-left: var(--sp-4);
+    padding-right: var(--sp-4);
+  }
+}

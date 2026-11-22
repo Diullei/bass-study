@@ -32,7 +32,9 @@ function LessonView({ lesson: L }: { lesson: Lesson }) {
   const k = lessons.indexOf(L)
   const [tempo, setTempo] = useState(L.tempo || 70)
   const [message, setMessage] = useState('')
-  useEffect(() => window.scrollTo(0, 0), [])
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
   useOfferTempo(tempo)
 
   return (

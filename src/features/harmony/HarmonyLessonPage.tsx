@@ -28,7 +28,9 @@ function LessonView({ L }: { L: HLesson }) {
   const k = LESSONS.indexOf(L)
   const prev = LESSONS[k - 1]
   const next = LESSONS[k + 1]
-  useEffect(() => window.scrollTo(0, 0), [])
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
   const rules = rulesIn(L.blocks, [...L.practice, ...L.check.map((c) => c.why)])
 
   const groups: OptionGroup[] = PARTS.map((p, pi) => ({

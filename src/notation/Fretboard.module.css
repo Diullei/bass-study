@@ -43,3 +43,127 @@
 .board .root .dlab {
   fill: var(--paper-sheet);
 }
+.board .mute {
+  font: 700 15px var(--font-hand);
+  fill: var(--pencil);
+}
+/* sounding now: the red playback pen, as on the staff */
+.board .active {
+  color: var(--red-pen);
+}
+.board .active .dot {
+  stroke-width: 2.6;
+}
+/* register bands (Chapter 1 of the chord method) */
+.board :global(.band-bass) {
+  fill: var(--tab-blue);
+}
+.board :global(.band-chord) {
+  fill: #a9dbb7;
+}
+.board :global(.band-both) {
+  fill: #d4e98a;
+}
+.board :global(.band-melody) {
+  fill: var(--highlighter-strong);
+}
+
+/* ShapeMove: the chord before in pencil, arrows for the fingers that move */
+.moveWrap {
+  position: relative;
+}
+.moveLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.board .ghost {
+  color: var(--pencil-light);
+}
+.board .ghost .dot {
+  stroke-dasharray: 3 2.5;
+  fill: none;
+}
+.board .held .dot {
+  stroke-width: 3.4;
+}
+.move,
+.moveHalf {
+  color: var(--pencil);
+}
+.move path,
+.moveHalf path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-dasharray: 4 3;
+}
+.moveHalf {
+  color: var(--ink);
+}
+.moveHalf path {
+  stroke-dasharray: none;
+  stroke-width: 2;
+}
+.moveHalf text,
+.lineStep text,
+.lineHeld text,
+.lineLeap text {
+  font: 700 12px var(--font-hand);
+  fill: currentColor;
+}
+
+/* VoiceLines: each voice from chord to chord */
+.lines {
+  display: block;
+  max-width: none;
+  height: auto;
+  color: var(--ink);
+}
+.lines line {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.lineHeld {
+  color: var(--green-pen);
+}
+.lineHeld line {
+  stroke-width: 2.4;
+}
+.lineStep {
+  color: var(--ink-soft);
+}
+.lineLeap {
+  color: var(--pencil-light);
+}
+.lineLeap line {
+  stroke-dasharray: 4 4;
+}
+.lineTop line {
+  stroke-width: 3;
+}
+.linesSym {
+  font: 700 15px var(--font-hand);
+  fill: var(--ink);
+}
+.linesNote text {
+  font: 700 13px var(--font-hand);
+  fill: var(--ink);
+  paint-order: stroke;
+  stroke: var(--paper-sheet);
+  stroke-width: 4px;
+}
+.linesNote .linesDeg {
+  font: 400 10.5px var(--font-hand);
+  fill: var(--pencil);
+}
+.linesCol {
+  fill: var(--red-pen-soft);
+  opacity: 0.6;
+}
+.linesNow .linesSym {
+  fill: var(--red-pen);
+}

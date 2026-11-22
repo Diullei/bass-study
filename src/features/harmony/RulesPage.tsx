@@ -18,7 +18,10 @@ export const LESSONS_BY_RULE: Record<number, number[]> = Object.fromEntries(
 export function RulesPage() {
   const { hash } = useLocation()
   useEffect(() => {
-    if (!hash) return window.scrollTo(0, 0)
+    if (!hash) {
+      window.scrollTo(0, 0)
+      return
+    }
     const el = document.getElementById(hash.slice(1))
     if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }, [hash])
