@@ -467,11 +467,30 @@ export function DesignSystemPage() {
               id="chord-shape"
               name="ChordShape"
               path="notation/ChordShape"
-              text="One chord shape from its frets, low string to high (x-8-x-9-9): the window fits the shape, every fret is numbered, labels and pens per sounding note. Used by the chord method's cards, chips and play-along."
+              text="One chord shape from its frets, low string to high (x-8-x-9-9): the window fits the shape, every fret is numbered, labels and pens per sounding note. Used by the chord method's cards, chips and play-along. Marks on top of a shape: a dashed halo is the note the reader tapped; faint green and red stretches of string say where a second note is clear with it or mud (Law 2); a red ring with a ! tag is a note of the chord that sits in the mud. Red appears only for that: something is wrong."
             >
               <div style={{ width: 230 }}>
                 <ChordShape shape="x-8-x-9-9" labels={['R', '7', '3']} pens={[undefined, 'pen-green', 'pen-green']} roots={[true, false, false]} />
                 <Caption>Cmaj7, form A</Caption>
+              </div>
+              <div style={{ width: 230 }}>
+                <ChordShape
+                  shape="x-3-2-3-x"
+                  labels={['R', '3', '♭7']}
+                  pens={[undefined, 'pen-green', 'pen-green']}
+                  roots={[true]}
+                  picked={0}
+                  warn={[1]}
+                  bands={[
+                    { str: 1, from: 1, to: 2, cls: 'zone-mud' },
+                    { str: 1, from: 4, to: 5, cls: 'zone-mud' },
+                    { str: 2, from: 1, to: 2, cls: 'zone-mud' },
+                    { str: 2, from: 3, to: 5, cls: 'zone-clear' },
+                    { str: 3, from: 1, to: 5, cls: 'zone-clear' },
+                    { str: 4, from: 1, to: 5, cls: 'zone-clear' },
+                  ]}
+                />
+                <Caption>G7 low: the root tapped, its 3rd in the mud</Caption>
               </div>
               <div style={{ width: 230 }}>
                 <ChordShape shape="x-13-14-13-15" labels={['♭7', '3', '♭13', '♯9']} pens={['pen-green', 'pen-green', 'pen-blue', 'pen-blue']} />
@@ -584,29 +603,38 @@ export function DesignSystemPage() {
               id="scale"
               name="Chord scale on the neck"
               path="notation/ChordShape fill · ShapeMove fill · notation/ScaleStrip"
-              text="The scale that fits a chord, drawn on the fretboard itself: small dots around the shape, under the same hand, each with its degree over the chord in the pen of its job (root filled, 3rd and 7th green, 5th ink, colours blue, passing notes dashed pencil). No red: red is for errors. ScaleStrip, under a chord card, is the same scale as a row, root to root, with gaps to scale (½ marks a half step); the sounding note is highlighted. Off until the reader presses the small “scale” switch in the corner of that neck; each neck is switched on its own."
+              text="The scale that fits a chord, drawn on the fretboard itself. Two shapes keep the two things apart: the notes of the chord shape are round and bold (what you play); the other notes of the scale are small soft squares (what you could play), each with its degree over the chord, tinted in the pen of its job: 3rd and 7th green, colours blue, 5th grey, the root a darker grey square (never solid: solid is the played root). A passing note, a half step above a chord tone, is an empty square with a dashed outline. No red: red is for errors. With the scale on, the neck widens to at least five frets, because four frets leave one pitch out between each pair of strings. It is switched per neck, by the small “scale” pill in the neck's corner (blue when on); there is no global setting. ScaleStrip, under a chord card, is the same scale as a row, root to root, with gaps to scale (½ marks a half step); the sounding note is highlighted."
               column
             >
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
+                <div style={{ width: 240 }}>
+                  <Caption>scale off</Caption>
+                  <ChordShape shape="8-x-x-9-10" labels={['R', '3', '♭7']} pens={[undefined, 'pen-green', 'pen-green']} roots={[true]} />
+                </div>
+                <div style={{ width: 280 }}>
+                  <Caption>scale on: G Mixolydian (the 11 is a passing note)</Caption>
+                  <ChordShape
+                    shape="8-x-x-9-10"
+                    labels={['R', '3', '♭7']}
+                    pens={[undefined, 'pen-green', 'pen-green']}
+                    roots={[true]}
+                    fill={{ 7: { label: 'R', root: true }, 9: { label: '9', pen: 'pen-blue' }, 11: { label: '3', pen: 'pen-green' }, 0: { label: '11', pen: 'pen-pencil', dashed: true }, 2: { label: '5' }, 4: { label: '13', pen: 'pen-blue' }, 5: { label: '♭7', pen: 'pen-green' } }}
+                  />
+                </div>
+              </div>
+              <Caption>ScaleStrip, under the card:</Caption>
               <ScaleStrip
                 notes={[
-                  { name: 'D', deg: 'R', role: 'root', step: 2 },
-                  { name: 'E', deg: '9', role: 'colour', step: 1 },
-                  { name: 'F', deg: '♭3', role: 'guide', step: 2 },
-                  { name: 'G', deg: '11', role: 'colour', step: 2 },
-                  { name: 'A', deg: '5', role: 'fifth', step: 2 },
-                  { name: 'B', deg: '13', role: 'colour', step: 1 },
-                  { name: 'C', deg: '♭7', role: 'guide', step: 2 },
+                  { name: 'G', deg: 'R', role: 'root', step: 2 },
+                  { name: 'A', deg: '9', role: 'colour', step: 2 },
+                  { name: 'B', deg: '3', role: 'guide', step: 1 },
+                  { name: 'C', deg: '11', role: 'pass', step: 2 },
+                  { name: 'D', deg: '5', role: 'fifth', step: 2 },
+                  { name: 'E', deg: '13', role: 'colour', step: 1 },
+                  { name: 'F', deg: '♭7', role: 'guide', step: 2 },
                 ]}
+                active={2}
               />
-              <div style={{ maxWidth: 260 }}>
-                <ChordShape
-                  shape="x-10-x-10-10"
-                  labels={['R', '♭7', '♭3']}
-                  pens={[undefined, 'pen-green', 'pen-green']}
-                  roots={[true]}
-                  fill={{ 2: { label: 'R', root: true }, 4: { label: '9', pen: 'pen-blue' }, 5: { label: '♭3', pen: 'pen-green' }, 7: { label: '11', pen: 'pen-blue' }, 9: { label: '5' }, 11: { label: '13', pen: 'pen-blue' }, 0: { label: '♭7', pen: 'pen-green' } }}
-                />
-              </div>
             </Spec>
             <Spec
               id="interval-ruler"
