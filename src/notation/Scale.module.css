@@ -56,7 +56,7 @@
   width: 22px;
 }
 
-/* the pen of each job, shared by the strip and the map */
+/* the pen of each job */
 .root {
   color: var(--paper-sheet);
   background: var(--ink);
@@ -83,87 +83,3 @@
   transform: translateY(-2px);
 }
 
-/* ───── ScaleMap: a column per note, a row per chord ───── */
-.map {
-  display: grid;
-  align-items: stretch;
-  row-gap: 3px;
-  max-width: 520px;
-  font: 400 var(--fs-sm) var(--font-hand);
-}
-.mapRow {
-  display: contents;
-}
-.mapCorner {
-  min-height: 1px;
-}
-.mapHead {
-  padding-bottom: 2px;
-  font: 700 12px var(--font-hand);
-  color: var(--ink-soft);
-  text-align: center;
-  white-space: nowrap;
-}
-.mapHead2 {
-  font-size: 9.5px;
-  letter-spacing: -0.3px;
-  align-self: end;
-}
-.mapLabel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2px 8px 2px 4px;
-  font: inherit;
-  text-align: left;
-  color: var(--ink);
-  background: none;
-  border: 0;
-  border-radius: 6px 0 0 6px;
-  line-height: 1.1;
-}
-button.mapLabel {
-  cursor: pointer;
-}
-.mapLabel b {
-  font: 700 var(--fs-md) var(--font-hand);
-}
-.mapLabel small {
-  font-size: 10.5px;
-  color: var(--pencil);
-  white-space: nowrap;
-}
-.mapCell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 30px;
-  border-left: 1px dashed var(--pencil-light);
-}
-.mapRowOn > * {
-  background: color-mix(in srgb, var(--highlighter), transparent 55%);
-}
-/* a note that just came in: the only notes that move */
-.mapNew {
-  background: var(--highlighter-strong) !important;
-}
-.mapGone::after {
-  content: '×';
-  font: 400 11px var(--font-hand);
-  color: var(--pencil-light);
-}
-.pip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 21px;
-  height: 21px;
-  padding: 0 2px;
-  font: 700 9.5px var(--font-mono);
-  border: 1.5px solid currentColor;
-  border-radius: 50%;
-  background: var(--paper-sheet);
-}
-.pip.root {
-  background: var(--ink);
-}

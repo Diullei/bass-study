@@ -13,6 +13,8 @@ export interface MoveShape {
   fingers?: number[]
   barres?: FretBarre[]
   hand?: FretHand
+  /** Helper notes around the shape by pitch class (the chord scale), as in ChordShape. */
+  fill?: Record<number, { label: string; pen?: string; root?: boolean; dashed?: boolean }>
 }
 
 export interface ShapeMoveProps {
@@ -83,6 +85,15 @@ export function ShapeMove({ from, to, lefty: leftyProp, className }: ShapeMovePr
     root: to.roots?.[i],
     finger: to.fingers?.[i] || undefined,
   }))
+  const aux: FretDot[] = []
+  if (to.fill) {
+    const taken = new Set([...A, ...B].map((n) => `${n.str}:${n.fret}`))
+    for (let str = 0; str < 5; str++)
+      for (let f = start === 0 ? 0 : start; f <= end; f++) {
+        const g = to.fill[([23, 28, 33, 38, 43][str] + f) % 12]
+        if (g && !taken.has(`${str}:${f}`)) aux.push({ str, fret: f, label: g.label, pen: g.pen, root: g.root, dashed: g.dashed, ghost: true })
+      }
+  }
   const muted = to.shape.split('-').map((t, i) => (t === 'x' ? i : -1)).filter((i) => i >= 0)
   // geometry, mirrored from Fretboard: kept in sync on purpose
   const fw = 46
@@ -97,7 +108,7 @@ export function ShapeMove({ from, to, lefty: leftyProp, className }: ShapeMovePr
   const arrows = moves.filter((m) => !m.held)
   return (
     <div className={`${styles.moveWrap} ${className ?? ''}`}>
-      <Fretboard strings={5} from={start} to={end} dots={[...ghost, ...solid]} muted={muted} barres={to.barres} hand={to.hand} lefty={lefty} allNumbers />
+      <Fretboard strings={5} from={start} to={end} dots={[...aux, ...ghost, ...solid]} muted={muted} barres={to.barres} hand={to.hand} lefty={lefty} allNumbers />
       <svg className={styles.moveLayer} viewBox={`0 0 ${W} ${14 + 4 * sp + 34 + (to.hand ? 20 : 0)}`} aria-hidden>
         <defs>
           <marker id="mv-head" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="4" markerHeight="4" orient="auto-start-reverse">

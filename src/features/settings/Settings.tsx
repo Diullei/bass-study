@@ -2,7 +2,6 @@ import { useState, type ComponentType } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
 import { FingerKey } from '../../notation/FingerKey'
 import { ShapeRef } from '../../notation/ShapeRef'
-import { ScaleStrip } from '../../notation/ScaleStrip'
 import { useHandSize, useLefty, useShapeStyle, useShowFingers, useShowScales } from '../../state/prefs'
 import { Button, Modal, Segmented } from '../../ui'
 import s from './Settings.module.css'
@@ -117,19 +116,6 @@ function ScalesControl() {
         ]}
         onChange={(v) => setOn(v === 'on')}
       />
-      {on && (
-        <ScaleStrip
-          notes={[
-            { name: 'D', deg: 'R', role: 'root', step: 2 },
-            { name: 'E', deg: '9', role: 'colour', step: 1 },
-            { name: 'F', deg: '♭3', role: 'guide', step: 2 },
-            { name: 'G', deg: '11', role: 'colour', step: 2 },
-            { name: 'A', deg: '5', role: 'fifth', step: 2 },
-            { name: 'B', deg: '13', role: 'colour', step: 1 },
-            { name: 'C', deg: '♭7', role: 'guide', step: 2 },
-          ]}
-        />
-      )}
     </div>
   )
 }
@@ -153,7 +139,7 @@ export const SETTINGS: SettingDef[] = [
     id: 'scales',
     group: 'Chord shapes',
     label: 'Chord scales',
-    help: 'Draws the scale that fits each chord as small dots around its shape, under the same hand, with the scale written under the card: blue notes are colours you can hold, dashed notes are passing notes. Progressions also get a scale map: a column per note, a row per chord, with the notes that change highlighted. The same switch is the “chord scales” box on every page of the chord method.',
+    help: 'Draws the scale that fits each chord on the fretboard itself: small dots around the shape, under the same hand, each with its degree over the chord. Blue notes are colours you can hold, dashed notes are passing notes. Under each card the scale is written root to root, with a button to hear it over the chord. The same switch is the “chord scales” box on every page of the chord method.',
     Control: ScalesControl,
   },
   {

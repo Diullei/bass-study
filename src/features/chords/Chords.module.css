@@ -436,6 +436,45 @@
   border-color: var(--pencil);
   border-style: dashed;
 }
+/* the scale switch in the corner of a neck: under the string names, where nothing is drawn */
+.neckWrap {
+  position: relative;
+}
+.scaleTog {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: 0;
+  padding: 0 5px 1px;
+  font: 700 10.5px/1.3 var(--font-hand);
+  color: var(--pencil);
+  background: var(--paper-sheet);
+  border: 1.3px dashed var(--pencil-light);
+  border-radius: 8px 7px 9px 7px;
+  cursor: pointer;
+}
+.scaleTogLefty {
+  left: auto;
+  right: 0;
+}
+.scaleTog:hover,
+.scaleTog:focus-visible {
+  color: var(--blue-pen);
+  border-color: var(--blue-pen);
+}
+.scaleTogOn {
+  color: var(--paper-sheet);
+  background: var(--blue-pen);
+  border: 1.3px solid var(--blue-pen);
+}
+.scaleTogOn:hover,
+.scaleTogOn:focus-visible {
+  color: var(--paper-sheet);
+}
+.scaleTogDemo {
+  position: static;
+  cursor: default;
+}
 /* the chord scale under a card */
 .scaleBox {
   flex-basis: 100%;
@@ -462,27 +501,19 @@
   font-size: var(--fs-xs);
   color: var(--pencil);
 }
-/* the scale map under the voice lines of a progression */
-.scaleBoard {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: var(--sp-4);
-  padding-top: var(--sp-3);
-  border-top: 1px dashed var(--pencil-light);
+/* the scale's name beside the chord's name: in the head's own line, so nothing moves */
+.cardScale {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font: 400 var(--fs-xs) var(--font-hand);
+  color: var(--blue-pen);
 }
-.scaleBoardTitle {
-  font: 700 var(--fs-sm) var(--font-hand);
-  color: var(--ink-soft);
-}
-.scaleBoardNote {
-  margin: 0;
-  max-width: 60ch;
-  font: 400 var(--fs-sm) var(--font-hand);
-  color: var(--pencil);
-}
-.scaleBoardNote b {
-  color: var(--ink);
+small.cardScale {
+  font-size: var(--fs-sm);
 }
 .swGuide {
   border-color: var(--green-pen);

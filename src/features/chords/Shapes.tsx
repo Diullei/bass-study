@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
 import { ShapeRef } from '../../notation/ShapeRef'
 import { FingerKey } from '../../notation/FingerKey'
-import { ScaleMap } from '../../notation/ScaleMap'
 import { ScaleStrip } from '../../notation/ScaleStrip'
 import { ShapeMove } from '../../notation/ShapeMove'
 import { useShowScales } from '../../state/prefs'
@@ -27,13 +26,30 @@ const fillOf = (sc: ChordScale) =>
     sc.notes.map((n) => [n.pc, { label: n.deg, root: n.role === 'root', pen: n.role === 'guide' ? 'pen-green' : n.role === 'colour' ? 'pen-blue' : n.role === 'pass' ? 'pen-pencil' : undefined, dashed: n.role === 'pass' }]),
   )
 
+/**
+ * The scale switch of one fretboard: the notebook's setting until this neck is switched by hand.
+ * Returns whether the scale shows, and the small button that sits in the corner of the neck.
+ */
+function useNeckScale(lefty: boolean) {
+  const [global] = useShowScales()
+  const [own, setOwn] = useState<{ v: boolean; g: boolean } | null>(null)
+  // a change of the notebook's setting wins again over an older choice made on this neck
+  const on = own && own.g === global ? own.v : global
+  const button = (
+    <button type="button" className={cx(s.scaleTog, on && s.scaleTogOn, lefty && s.scaleTogLefty)} aria-pressed={on} title={on ? 'Hide the chord scale on this neck' : 'Show the chord scale on this neck'} onClick={() => setOwn({ v: !on, g: global })}>
+      scale
+    </button>
+  )
+  return { on, button }
+}
+
 /** The switch for chord scales (one setting for the whole notebook) and what the small dots mean. */
 export function ScaleKey() {
   const [on, setOn] = useShowScales()
   return (
     <div className={s.zoneKey}>
       <Checkbox label="chord scales" checked={on} onChange={setOn} />
-      {on ? (
+      {
         <ul>
           <li>
             <span className={cx(s.sw, s.swSmall)} /> small dots: the other notes of the scale that fits the chord, under the same hand
@@ -50,10 +66,12 @@ export function ScaleKey() {
               <b>dashed</b>: a passing note, a half step above a chord tone. Play through it, do not stop on it
             </span>
           </li>
+          <li>under each card: the scale root to root, ½ marks the half steps, and ▶ hear it</li>
+          <li>
+            <span className={cx(s.scaleTog, s.scaleTogDemo)}>scale</span> in the corner of a neck switches that neck alone
+          </li>
         </ul>
-      ) : (
-        <span>show the scale that fits each chord, around its shape</span>
-      )}
+      }
     </div>
   )
 }
@@ -145,9 +163,9 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
     : I.a.mud.flatMap((m) => [I.a.notes[m.at], plain[plain.indexOf(I.a.notes[m.at]) + 1]]).map((n) => I.a.notes.indexOf(n))
   const [lefty] = useLefty()
   const F = useFingers()
-  const [scalesOn] = useShowScales()
+  const NS = useNeckScale(lefty)
   // the progression's choice when it holds every note of the shape, else the scale that does
-  const sc = scalesOn ? (scale && I.midis.every((m) => scale.at[m % 12]) ? scale : chordScale(I.sym, { must: I.midis.map((m) => m % 12) })) : null
+  const sc = NS.on ? (scale && I.midis.every((m) => scale.at[m % 12]) ? scale : chordScale(I.sym, { must: I.midis.map((m) => m % 12) })) : null
   const SP = useClip<number>()
   // the chord held, the scale walked up over it, root to root
   const hearScale = () => {
@@ -176,6 +194,8 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
         <b className={s.cardSym}>{I.sym}</b>
         <span className={s.cardPlay}>{active ? '■' : '▶'}</span>
       </button>
+      <div className={s.neckWrap}>
+        {NS.button}
       <ChordShape
         shape={I.shape}
         labels={degsOf(I)}
@@ -190,6 +210,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
         onNote={(i) => setPick(pick === i ? null : i)}
         {...F.props(sf)}
       />
+      </div>
       <figcaption>
         <ShapeRef shape={I.shape} />
         {I.a.stretch && <span className={s.stretch}>stretch</span>}
@@ -259,7 +280,7 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { 
   const seqF = seq ? F.seq(items.map((x) => x.I)) : null
   const [scalesOn, setScalesOn] = useShowScales()
   // in a progression each chord's scale follows the key and the chord it goes to
-  const seqScales = seq && scalesOn ? progressionScales(items.map((x) => x.I.sym)).scales : null
+  const seqScales = seq ? progressionScales(items.map((x) => x.I.sym)).scales : null
   const playOne = (i: number) => (P.playing && P.cue === i ? P.stop() : P.once([shapeBar(items[i].I, 'roll', 3, i, addRoot)], tempo))
   const playAll = () =>
     P.playing ? P.stop() : P.once(items.map((x, i) => shapeBar(x.I, seq ? 'block' : 'roll', seq ? 4 : 3, i, addRoot)), tempo)
@@ -304,8 +325,9 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
   const sfCur = seqF[k]
   const sfPrev = k > 0 ? seqF[k - 1] : null
   const fmoves = F.show && prev && sfCur && sfPrev ? fingerMoveText({ I: prev, sf: sfPrev }, { I: cur, sf: sfCur }) : null
-  const [scalesOn] = useShowScales()
-  const PS = scalesOn ? progressionScales(items.map((x) => x.I.sym)) : null
+  const NS = useNeckScale(lefty)
+  const PS = NS.on ? progressionScales(items.map((x) => x.I.sym)) : null
+  const scCur = PS ? (cur.midis.every((m) => PS.scales[k].at[m % 12]) ? PS.scales[k] : chordScale(cur.sym, { must: cur.midis.map((m) => m % 12) })) : null
   return (
     <div className={s.prog}>
       <div className={s.progLines}>
@@ -313,7 +335,6 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
           chords={items.map(({ I }) => ({ label: I.sym, midis: I.midis, names: I.a.notes.map((n) => n.name), degs: degsOf(I) }))}
           at={at}
         />
-        {PS && <ScaleBoard PS={PS} syms={items.map((x) => x.I.sym)} at={k} onPick={at == null ? setPick : undefined} />}
       </div>
       <div className={s.progMove}>
         <div className={s.progNav}>
@@ -324,10 +345,12 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
             {prev ? (
               <>
                 <b>{prev.sym}</b> → <b>{cur.sym}</b>
+                {scCur && <small className={s.cardScale}> {scCur.title}</small>}
               </>
             ) : (
               <>
                 start: <b>{cur.sym}</b>
+                {scCur && <small className={s.cardScale}> {scCur.title}</small>}
               </>
             )}
           </span>
@@ -340,15 +363,18 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
             </Button>
           )}
         </div>
-        {prev ? (
+        <div className={s.neckWrap}>
+          {NS.button}
+          {prev ? (
           <ShapeMove
             from={{ shape: prev.shape }}
-            to={{ shape: cur.shape, labels: degsOf(cur), pens: pensOf(cur), roots: rootsOf(cur), ...F.props(sfCur) }}
+            to={{ shape: cur.shape, labels: degsOf(cur), pens: pensOf(cur), roots: rootsOf(cur), fill: scCur ? fillOf(scCur) : undefined, ...F.props(sfCur) }}
             lefty={lefty}
           />
         ) : (
-          <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} {...F.props(sfCur)} />
+          <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} fill={scCur ? fillOf(scCur) : undefined} {...F.props(sfCur)} />
         )}
+        </div>
         {!prev && <p className={s.moveText}>The first chord. Press ▶ to see how each finger moves to {items[1]?.I.sym ?? 'the next chord'}.</p>}
         {moves && <p className={s.moveText}>{moves}</p>}
         {fmoves && (
@@ -358,44 +384,6 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
         )}
         {prev && <p className={s.moveKey}>dashed pencil = the chord before · thick ring = the note stays · arrow = the note moves · ½ = a half-step pull · yellow tag = finger</p>}
       </div>
-    </div>
-  )
-}
-
-/** The scale map of a progression, with one line per change of chord: which notes move, or that none does. */
-function ScaleBoard({ PS, syms, at, onPick }: { PS: ReturnType<typeof progressionScales>; syms: string[]; at: number; onPick?: (i: number) => void }) {
-  const rows = PS.scales.map((sc, i) => ({ label: syms[i], sub: sc.title, cells: Object.fromEntries(sc.notes.map((n) => [n.pc, { deg: n.deg, role: n.role, name: n.name }])) }))
-  const changes = PS.scales.slice(1).map((sc, i) => {
-    const before = PS.scales[i]
-    const inn = sc.notes.filter((n) => !before.at[n.pc]).map((n) => n.name)
-    const out = before.notes.filter((n) => !sc.at[n.pc]).map((n) => n.name)
-    return { from: syms[i], to: syms[i + 1], inn, out }
-  })
-  const same = changes.every((c) => !c.inn.length && !c.out.length)
-  return (
-    <div className={s.scaleBoard}>
-      <b className={s.scaleBoardTitle}>the scales, note by note{PS.keyName ? ` · key of ${PS.keyName}` : ''}</b>
-      <ScaleMap rows={rows} origin={PS.key ?? PS.scales[0].notes[0].pc} at={at} onPick={onPick} />
-      <p className={s.scaleBoardNote}>
-        {same ? (
-          <>
-            <b>One scale for the whole progression.</b> The seven notes never change; only their jobs do. Read down a column: the same note is a 3rd over one chord and a passing note over the next.
-          </>
-        ) : (
-          <>
-            Read down a column to follow one note. Only the highlighted notes are new:{' '}
-            {changes
-              .filter((c) => c.inn.length || c.out.length)
-              .map((c, i) => (
-                <span key={i}>
-                  {i > 0 && ' · '}
-                  <b>{c.to}</b> brings {c.inn.join(', ')} in place of {c.out.join(', ')}
-                </span>
-              ))}
-            . Everything else carries over.
-          </>
-        )}
-      </p>
     </div>
   )
 }

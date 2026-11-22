@@ -7,7 +7,6 @@ import { ChordShape } from '../notation/ChordShape'
 import { FingerKey } from '../notation/FingerKey'
 import { FretRef } from '../notation/FretRef'
 import { ShapeRef } from '../notation/ShapeRef'
-import { ScaleMap } from '../notation/ScaleMap'
 import { ScaleStrip } from '../notation/ScaleStrip'
 import { Fretboard } from '../notation/Fretboard'
 import { ShapeMove } from '../notation/ShapeMove'
@@ -181,7 +180,7 @@ export function DesignSystemPage() {
           <a href="#modal">Modal</a>
           <a href="#fret-ref">FretRef</a>
           <a href="#shape-ref">ShapeRef</a>
-          <a href="#scale">ScaleStrip · ScaleMap</a>
+          <a href="#scale">Chord scale</a>
           <a href="#interval-ruler">Interval ruler</a>
         </nav>
 
@@ -583,29 +582,20 @@ export function DesignSystemPage() {
             </Spec>
             <Spec
               id="scale"
-              name="ScaleStrip · ScaleMap"
-              path="notation/ScaleStrip · notation/ScaleMap · ChordShape fill"
-              text="The chord scale, in three views that share one colour code: the pen of each note's job over the chord (root filled, 3rd and 7th green, 5th ink, colours blue, passing notes dashed pencil). No red: red is for errors. ScaleStrip is one scale as a row, root to root, with gaps to scale (½ marks a half step). ScaleMap is a progression: a column per note, a row per chord; a note that was not in the scale before is highlighted, a note that left is a pencil ×. ChordShape fill draws the scale as small dots around a shape. All are off until the reader ticks “chord scales”."
+              name="Chord scale on the neck"
+              path="notation/ChordShape fill · ShapeMove fill · notation/ScaleStrip"
+              text="The scale that fits a chord, drawn on the fretboard itself: small dots around the shape, under the same hand, each with its degree over the chord in the pen of its job (root filled, 3rd and 7th green, 5th ink, colours blue, passing notes dashed pencil). No red: red is for errors. ScaleStrip, under a chord card, is the same scale as a row, root to root, with gaps to scale (½ marks a half step); the sounding note is highlighted. Off until the reader ticks “chord scales”."
               column
             >
               <ScaleStrip
                 notes={[
-                  { name: 'G', deg: 'R', role: 'root', step: 2 },
-                  { name: 'A', deg: '9', role: 'colour', step: 2 },
-                  { name: 'B', deg: '3', role: 'guide', step: 1 },
-                  { name: 'C', deg: '11', role: 'pass', step: 2 },
-                  { name: 'D', deg: '5', role: 'fifth', step: 2 },
-                  { name: 'E', deg: '13', role: 'colour', step: 1 },
-                  { name: 'F', deg: '♭7', role: 'guide', step: 2 },
-                ]}
-              />
-              <ScaleMap
-                origin={0}
-                at={1}
-                rows={[
-                  { label: 'Cmaj7', sub: 'C Ionian', cells: { 0: { deg: 'R', role: 'root', name: 'C' }, 2: { deg: '9', role: 'colour', name: 'D' }, 4: { deg: '3', role: 'guide', name: 'E' }, 5: { deg: '11', role: 'pass', name: 'F' }, 7: { deg: '5', role: 'fifth', name: 'G' }, 9: { deg: '13', role: 'colour', name: 'A' }, 11: { deg: '7', role: 'guide', name: 'B' } } },
-                  { label: 'A7', sub: 'A Mixolydian ♭9 ♭13', cells: { 9: { deg: 'R', role: 'root', name: 'A' }, 10: { deg: '♭9', role: 'colour', name: 'B♭' }, 1: { deg: '3', role: 'guide', name: 'C♯' }, 2: { deg: '11', role: 'pass', name: 'D' }, 4: { deg: '5', role: 'fifth', name: 'E' }, 5: { deg: '♭13', role: 'colour', name: 'F' }, 7: { deg: '♭7', role: 'guide', name: 'G' } } },
-                  { label: 'Dm7', sub: 'D Dorian', cells: { 2: { deg: 'R', role: 'root', name: 'D' }, 4: { deg: '9', role: 'colour', name: 'E' }, 5: { deg: '♭3', role: 'guide', name: 'F' }, 7: { deg: '11', role: 'colour', name: 'G' }, 9: { deg: '5', role: 'fifth', name: 'A' }, 11: { deg: '13', role: 'colour', name: 'B' }, 0: { deg: '♭7', role: 'guide', name: 'C' } } },
+                  { name: 'D', deg: 'R', role: 'root', step: 2 },
+                  { name: 'E', deg: '9', role: 'colour', step: 1 },
+                  { name: 'F', deg: '♭3', role: 'guide', step: 2 },
+                  { name: 'G', deg: '11', role: 'colour', step: 2 },
+                  { name: 'A', deg: '5', role: 'fifth', step: 2 },
+                  { name: 'B', deg: '13', role: 'colour', step: 1 },
+                  { name: 'C', deg: '♭7', role: 'guide', step: 2 },
                 ]}
               />
               <div style={{ maxWidth: 260 }}>
