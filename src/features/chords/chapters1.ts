@@ -20,6 +20,20 @@ export const CHAPTERS_1: Chapter[] = [
         t: "p",
         text: "Rebuild any shape with this. A major 3rd is 4 semitones: 5 − 1, so *one string up, one fret back*. A minor 7th is 10: 5 + 5, so *two strings up, same fret*. A major 10th is 16: 15 + 1, so *three strings up, one fret forward*. You never need to remember where a note is; you can always work it out in a second.",
       },
+      {
+        t: "p",
+        text: "To use the formula you need one number: how many half steps (semitones) the degree is above the root. They come from the major scale, so this small table is all there is to know:",
+      },
+      {
+        t: "table",
+        head: ["Degree of the major scale", "1 (R)", "2", "3", "4", "5", "6", "7", "8"],
+        rows: [
+          ["**Half steps above the root**", "0", "2", "4", "5", "7", "9", "11", "12"],
+          ["The same degrees an octave up", "8", "9", "10", "11", "12", "13", "14", "15"],
+          ["**Half steps above the root**", "12", "14", "16", "17", "19", "21", "23", "24"],
+        ],
+        caption: "The major scale goes whole, whole, half, whole, whole, whole, half, which gives the first row of numbers. An octave adds 12. A ♭ takes one off and a ♯ adds one: ♭3 = 3, ♭5 = 6, ♭7 = 10, ♭9 = 13, ♯11 = 18, ♭13 = 20. This is the number you split into fives and ones.",
+      },
       { t: "h", text: "The whole map, worked out from a root" },
       {
         t: "p",

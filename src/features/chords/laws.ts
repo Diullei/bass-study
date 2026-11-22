@@ -23,7 +23,17 @@ export const LAWS: Law[] = [
       { t: 'h', text: 'The logic: count, do not memorize' },
       {
         t: 'p',
-        text: 'Know the size of the interval in semitones ([[HL1]]) and split it into fives and ones. When the number of frets gets awkward, use one more string and go back a few frets.',
+        text: 'Know the size of the interval in semitones ([[HL1]]; the first table below gives every number) and split it into fives and ones. When the number of frets gets awkward, use one more string and go back a few frets.',
+      },
+      {
+        t: 'table',
+        head: ['Degree of the major scale', '1 (R)', '2', '3', '4', '5', '6', '7', '8'],
+        rows: [
+          ['**Half steps above the root**', '0', '2', '4', '5', '7', '9', '11', '12'],
+          ['The same degrees an octave up', '8', '9', '10', '11', '12', '13', '14', '15'],
+          ['**Half steps above the root**', '12', '14', '16', '17', '19', '21', '23', '24'],
+        ],
+        caption: 'The major scale goes whole, whole, half, whole, whole, whole, half, which gives the first row of numbers. An octave adds 12. A ♭ takes one off and a ♯ adds one: ♭3 = 3, ♭5 = 6, ♭7 = 10, ♭9 = 13, ♯11 = 18, ♭13 = 20. This is the number you split into fives and ones.',
       },
       {
         t: 'table',
