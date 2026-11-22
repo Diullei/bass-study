@@ -202,6 +202,54 @@ export const LAWS: Law[] = [
         ],
         caption: 'Listen to the first and the last pairs. Nothing changed but the gaps at the bottom.',
       },
+      { t: 'h', text: 'Worked example: build Cmaj7 from the bottom' },
+      {
+        t: 'p',
+        text: 'Put the root at E‑8 (C2) and ask one question for each note you add: **is this gap above its floor at this height?** Three of the four candidates below fail or tell too little; the last one is form A.',
+      },
+      {
+        t: 'shapes',
+        rows: [
+          'C | x-8-7-x-x | the 3rd next: a major 3rd on C2, almost an octave under its floor (B2). Mud',
+          'C | x-8-10-x-x | the 5th next: a fifth on C2, one half step under its floor (C♯2). Dull, and it does not name the chord',
+          'Cmaj7 | x-8-x-9-x | the 7th next: a wide gap over a low root. Clear',
+          'Cmaj7 | x-8-x-9-9 | then the 3rd on top: a fourth on B2, above its floor (A2). Clear',
+        ],
+        caption: 'The rule you just used: after a low root, skip a string. The skipped string is the wide gap.',
+      },
+      { t: 'h', text: 'The same repair on other chords' },
+      {
+        t: 'shapes',
+        rows: [
+          'G7 | x-3-2-3-x | 3rd right above a low root: mud',
+          'G7 | x-3-x-3-4 | the 3rd moved up an octave: a 7th at the bottom, a tritone on top',
+          'Cm7 | x-x-3-1-3 | minor 3rd on C2: mud',
+          'Cm7 | x-8-x-8-8 | the same notes reordered: a 7th at the bottom, a fourth on top',
+        ],
+        caption: 'Each pair has the same three notes. Only the order changed: the 3rd went from the bottom gap to the top.',
+      },
+      { t: 'h', text: 'Spreads that work: read the gaps from the bottom' },
+      {
+        t: 'shapes',
+        rows: [
+          'G7 | 8-x-x-9-10 | root, a 10th, then a tritone',
+          'D | x-10-12-x-11 | root, a 5th (D2 is above the floor), then a 6th: the open triad',
+          'Dm9 | x-10-x-10-9 | root, a 7th, then a 3rd: C3 to E3 is above the floor for 3rds',
+          'G13 | 8-x-8-9-9 | root, a 7th, a tritone, a fourth: every gap is smaller than the one under it',
+        ],
+        caption: 'The pattern in all four: the widest gap is at the bottom, and the gaps shrink as you go up, like the overtones of one low note.',
+      },
+      {
+        t: 'shapes',
+        title: 'In a progression: ii–V–I in C under one hand',
+        seq: true,
+        rows: [
+          'Dm7 | x-10-x-10-10 | root, 7th, fourth',
+          'G7 | 8-x-x-9-10 | root, 10th, tritone',
+          'Cmaj7 | x-8-x-9-9 | root, 7th, fourth',
+        ],
+        caption: 'Three clear chords inside frets 8 to 10. The roots stay on the low strings and the 3rds and 7ths stay on D and G.',
+      },
       { t: 'zones' },
       {
         t: 'tip',
@@ -219,6 +267,11 @@ export const LAWS: Law[] = [
         q: 'A Cmaj7 at `x-x-3-2-4` sounds thick. Without changing the chord, give two fixes.',
         a: 'Widen the bottom (form A, `x-8-x-9-9`), or keep form B but move the root to a lower string so the hand sits higher (form C, `13-x-x-14-16`).',
         why: 'The mud comes from the 3rd sitting right above a low root. Both fixes put a big interval at the bottom and lift the 3rd into the chord band ([[Ch9]]).',
+      },
+      {
+        q: 'A G7 at `x-3-2-3-x` is muddy. Fix it without moving the root or changing a note name.',
+        a: 'Move the 3rd up an octave: `x-3-x-3-4`.',
+        why: 'The B at A‑2 is a major 3rd on G1, far under the floor (B2). An octave is two strings and two frets ([[Law1]]): A‑2 becomes G‑4. Now the bottom gap is a 7th and the top gap is a tritone, which is clear at any height.',
       },
       {
         q: 'Which interval can sit lowest of all without mud: a fifth, a fourth or a tritone?',
