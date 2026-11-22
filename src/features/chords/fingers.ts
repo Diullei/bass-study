@@ -12,11 +12,16 @@ export interface ShapeFingers {
   fingers: number[]
   barres: FretBarre[]
   hand: FretHand
-  /** The fretted notes and the harmonics do not fit one hand position: root first, then the harmonics (Law 5). */
+  /**
+   * The fretted notes and the harmonics do not fit one hand position. Harmonics ring on after the finger lifts and a
+   * fretted note does not, so the order is: harmonics first, then the hand moves and frets the rest under them (Law 5).
+   */
   split?: boolean
+  /** The fingering in words, when it is two hand positions (split). */
+  words?: string
 }
 
-const notesOf = (I: ShapeInfo): FNote[] => I.a.notes.map((n) => ({ str: n.str, fret: n.fret }))
+const notesOf = (I: ShapeInfo): FNote[] => I.a.notes.map((n) => ({ str: n.str, fret: n.fret, harm: n.harmonic }))
 
 /** The bracket under the neck: the frets the hand covers and the fingers at each. */
 export function handOf(frets: number[], f: Fingering): FretHand {
@@ -38,17 +43,21 @@ function pack(I: ShapeInfo, f: Fingering, split = false): ShapeFingers {
   }
 }
 
-/** A harmonic shape whose root is out of reach of the harmonics: finger the two parts on their own. */
+/** A harmonic shape whose fretted notes are out of reach of the harmonics: finger the two parts on their own. */
 function splitHarmonics(I: ShapeInfo, hand: HandSize): ShapeFingers | null {
   const N = I.a.notes
   if (!N.some((n) => n.harmonic)) return null
-  const a = fingerings(N.filter((n) => !n.harmonic).map((n) => ({ str: n.str, fret: n.fret })), hand)[0]
-  const b = fingerings(N.filter((n) => n.harmonic).map((n) => ({ str: n.str, fret: n.fret })), hand)[0]
+  const NA = N.filter((n) => !n.harmonic).map((n) => ({ str: n.str, fret: n.fret }))
+  const NB = N.filter((n) => n.harmonic).map((n) => ({ str: n.str, fret: n.fret, harm: true }))
+  const a = fingerings(NA, hand)[0]
+  const b = fingerings(NB, hand)[0]
   if (!a || !b) return null
   let ia = 0
   let ib = 0
   const fingers = N.map((n) => (n.harmonic ? b.fingers[ib++] : a.fingers[ia++]))
-  return pack(I, { ...b, fingers, barres: [...a.barres, ...b.barres], cost: a.cost + b.cost }, true)
+  // the same finger number can serve in both positions, so the two are told apart in words
+  const rest = fingeringWords(NA, a, STRING_NAMES)
+  return { ...pack(I, { ...b, fingers, barres: [...a.barres, ...b.barres], cost: a.cost + b.cost }, true), words: `harmonics first: ${fingeringWords(NB, b, STRING_NAMES)}. They ring on: move the hand, then ${rest}` }
 }
 
 const cache = new Map<string, ShapeFingers | null>()
@@ -71,7 +80,7 @@ export function fingersOfSeq(Is: ShapeInfo[], hand: HandSize, loop = false): (Sh
 }
 
 /** "1 on E‑8 · 3 flat across D and G at fret 9". */
-export const fingerText = (I: ShapeInfo, sf: ShapeFingers) => fingeringWords(notesOf(I), sf.f, STRING_NAMES)
+export const fingerText = (I: ShapeInfo, sf: ShapeFingers) => sf.words ?? fingeringWords(notesOf(I), sf.f, STRING_NAMES)
 
 /** What the fingers do from one chord to the next, in words: pivots, guide fingers, the hand's travel. */
 export function fingerMoveText(a: { I: ShapeInfo; sf: ShapeFingers }, b: { I: ShapeInfo; sf: ShapeFingers }): string {

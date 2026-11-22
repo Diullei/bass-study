@@ -49,6 +49,11 @@ export interface FNote {
   str: number
   /** Fret (the harmonic's fret for a harmonic); 0 = open string, needs no finger. */
   fret: number
+  /**
+   * A natural harmonic: the finger does not press, it touches the string lightly, exactly over the fret wire.
+   * So it sits half a fret further along than a pressing finger, and one finger cannot press and touch at once.
+   */
+  harm?: boolean
 }
 
 export interface Barre {
@@ -101,27 +106,37 @@ export function fingerings(notes: FNote[], hand: HandSize = 'average'): Fingerin
     for (let f = 1; f <= 4 && ok; f++) {
       const g = by[f]
       if (g.length < 2) continue
-      // one finger, several notes: all at one fret (a barre)
-      if (g.some((n) => n.fret !== g[0].fret)) ok = false
+      // one finger, several notes: all at one fret (a barre), and all pressed or all touched: never both
+      if (g.some((n) => n.fret !== g[0].fret || !!n.harm !== !!g[0].harm)) ok = false
+      const touch = !!g[0].harm
       const from = Math.min(...g.map((n) => n.str))
       const to = Math.max(...g.map((n) => n.str))
       // nothing under the barre may need a lower fret, or ring open
       if (idx.some((n) => n.str > from && n.str < to && n.fret < g[0].fret)) ok = false
+      // a finger that only touches would damp any other note under it
+      if (touch && idx.some((n) => n.str > from && n.str < to && !g.includes(n))) ok = false
       if (openStrings.some((s) => s > from && s < to)) ok = false
       // a flat finger 2, 3 or 4 holds up to four strings; only the index makes a full barre
-      if (f > 1 && to - from > 3) ok = false
+      if (!touch && f > 1 && to - from > 3) ok = false
       // a flat finger lies over every string from its tip to the G string. A higher string that must sound
       // a lower fret (or ring open) is only possible if the finger bends back to clear it: hard, and rare.
-      const over = notes.some((n) => n.str > to && n.fret < g[0].fret)
+      // The same holds for a harmonic on a higher string: it needs its string free of any finger. And a finger that
+      // only touches would damp every other note it lies over.
+      const over = notes.some((n) => n.str > to && (n.fret < g[0].fret || n.harm || (touch && n.fret > 0)))
       if (over) cost += 1.3
       barres.push({ finger: f, fret: g[0].fret, from, to, ...(over ? { bent: true } : {}) })
       // the index is the natural barre; the ring finger the natural flat finger; middle and little are weaker flat
-      cost += [0, 0.35, 0.8, 0.5, 0.95][f] + 0.2 * (to - from - 1)
+      // a finger that lies flat to touch: the natural ones are the index (the usual barre posture, the other fingers
+      // arch over it) and the little finger (the outside of the hand lies flat while the others press). A flat middle
+      // or ring finger beside an arched, pressing neighbour is the hard case: the two postures fight each other.
+      cost += touch ? [0, 0.3, 1.1, 0.9, 0.35][f] + 0.1 * (to - from - 1) : [0, 0.35, 0.8, 0.5, 0.95][f] + 0.2 * (to - from - 1)
     }
     if (!ok) continue
     // one fingertip per finger: for a barre, both ends count for reach
-    const tips: { f: number; x: number; y: number; fret: number; str: number }[] = []
-    for (let f = 1; f <= 4; f++) for (const n of by[f]) tips.push({ f, x: tipX(n.fret), y: n.str * STRING_GAP, fret: n.fret, str: n.str })
+    // `fret` here is the place along the neck in frets: a touched harmonic is over the wire, half a fret past the fingertip of that fret
+    const tips: { f: number; x: number; y: number; fret: number; str: number; harm: boolean; flat: boolean }[] = []
+    for (let f = 1; f <= 4; f++)
+      for (const n of by[f]) tips.push({ f, x: n.harm ? fretX(n.fret) : tipX(n.fret), y: n.str * STRING_GAP, fret: n.fret + (n.harm ? 0.5 : 0), str: n.str, harm: !!n.harm, flat: by[f].length > 1 })
     for (let a = 0; a < tips.length && ok; a++)
       for (let b = a + 1; b < tips.length && ok; b++) {
         const A = tips[a]
@@ -144,6 +159,8 @@ export function fingerings(notes: FNote[], hand: HandSize = 'average'): Fingerin
           // and they stack one way: the lower-numbered finger on the lower string. The other way round twists the hand.
           if (hi.str < lo.str) cost += 1.5
         }
+        // ring and little finger share a tendon: one pressing hard while the other lies flat and light is unreliable
+        if (hi.harm !== lo.harm && lo.f === 3 && hi.f === 4 && (lo.flat || hi.flat)) cost += 0.3
         // skipping a finger between neighbouring frets wastes the hand (1 then 3 on frets n, n+1)
         const gap = hi.fret - lo.fret
         if (gap > 0 && hi.f - lo.f > gap + 1) cost += 0.3
@@ -259,9 +276,11 @@ export function fingeringWords(notes: FNote[], f: Fingering, names: string[]): s
   for (let k = 1; k <= 4; k++) {
     const mine = notes.filter((_, i) => f.fingers[i] === k)
     if (!mine.length) continue
-    if (mine.length > 1)
+    const strs = mine.map((n) => names[n.str]).join(', ').replace(/, ([^,]*)$/, ' and $1')
+    if (mine[0].harm) parts.push(mine.length > 1 ? `${k} touches ${strs} flat over fret ${mine[0].fret}` : `${k} touches ${strs} over fret ${mine[0].fret}`)
+    else if (mine.length > 1)
       parts.push(
-        `${k} flat across ${mine.map((n) => names[n.str]).join(', ').replace(/, ([^,]*)$/, ' and $1')} at fret ${mine[0].fret}${k === 1 ? ' (barre)' : ''}${f.barres.find((b) => b.finger === k)?.bent ? ', bent back to clear the higher string' : ''}`,
+        `${k} flat across ${strs} at fret ${mine[0].fret}${k === 1 ? ' (barre)' : ''}${f.barres.find((b) => b.finger === k)?.bent ? ', bent back to clear the higher string' : ''}`,
       )
     else parts.push(`${k} on ${names[mine[0].str]}‑${mine[0].fret}`)
   }

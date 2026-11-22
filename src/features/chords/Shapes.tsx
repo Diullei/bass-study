@@ -217,7 +217,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
         {F.show && sf && (
           <span className={s.fingers}>
             ✋ <CText text={fingerText(I, sf)} />
-            {sf.split ? ' · root first, then the harmonics' : sf.f.stretch > 0.93 ? ' · a stretch' : ''}
+            {sf.split ? '' : sf.f.stretch > 0.93 ? ' · a stretch' : ''}
           </span>
         )}
         {F.show && !sf && <span className={s.mud}>✋ too wide for this hand size: play the root first, then the rest (Law 5), or set a larger hand in Settings</span>}

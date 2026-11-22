@@ -1018,7 +1018,7 @@ export const CHAPTERS_2: Chapter[] = [
           'Gmaj7♯11 | x-3-h4-h4-h4 | ♯11 7 3',
           'B♭maj13 | x-6-h5-h5-h5 | 7 3 13',
         ],
-        caption: 'Fret the root with finger 1 or 2, pluck it with T, then lay finger 3 or 4 lightly across the three strings at the harmonic fret and pluck with i, m, r. The fret‑4 harmonics are a little flat and quieter.',
+        caption: 'Two hand postures. When the harmonics are on the **nut side** of the root, the index lies flat and light over them and finger 2 frets the root behind it: the posture of a barre chord. When they are on the **bridge side**, fret the root with finger 1 or 2 and lay the little finger flat over the harmonics. One finger cannot press a note and touch a harmonic at the same time. Pluck the root with T and the harmonics with i, m, r. The fret‑4 harmonics are a little flat and quieter.',
       },
       {
         t: 'along',
@@ -1056,9 +1056,9 @@ export const CHAPTERS_2: Chapter[] = [
           'Cmaj13 | x-8-h7-h7-h4 | 3 13 7',
           'Fmaj9 | 6-x-h7-h7-h5 | 7 3 9',
           'Gmaj9 | 8-x-h5-h4-h4 | 9 7 3',
-          'Cmaj9 | 1-x-h7-h5-h4 | 3 9 7: root at B‑1, far from the harmonics, so root first',
+          'Cmaj9 | 1-x-h7-h5-h4 | 3 9 7: the root at B‑1 is far from the harmonics',
         ],
-        caption: 'In the A7 the harmonic on the A string (C♯) sounds higher than the one on the D string: with harmonics the order of the strings is not the order of the pitches.',
+        caption: 'When the hand cannot hold the root and reach the harmonics together, play the **harmonics first**: they ring on after the fingers lift, a fretted note does not. Then move the hand and put the root under them ([[Law5]]). In the A7 the harmonic on the A string (C♯) sounds higher than the one on the D string: with harmonics the order of the strings is not the order of the pitches.',
       },
       {
         t: 'shapes',
@@ -1074,7 +1074,7 @@ export const CHAPTERS_2: Chapter[] = [
       { t: 'h', text: 'A harmonic on top of a fretted chord' },
       {
         t: 'p',
-        text: 'A shell leaves strings free ([[Ch6]]). Put one harmonic on a free string and it becomes the **colour on top**, an octave or two above anything you could fret there. Ring the harmonic first and put the shell under it, or the shell first when the harmonic is under the same hand ([[Law5]]).',
+        text: 'A shell leaves strings free ([[Ch6]]). Put one harmonic on a free string and it becomes the **colour on top**, an octave or two above anything you could fret there. When the harmonic is under the same hand, hold the shell and touch it with a free finger. When it is far away, ring the harmonic first and put the shell under it: the harmonic rings on, the shell would not ([[Law5]]).',
       },
       {
         t: 'shapes',
