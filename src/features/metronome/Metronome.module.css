@@ -20,9 +20,17 @@
 .fab:hover {
   transform: rotate(-1deg) translateY(-1px);
 }
+/* the note, with the light as a small badge on it */
+.fabIcon {
+  position: relative;
+  justify-self: start;
+}
 .led {
-  width: 9px;
-  height: 9px;
+  position: absolute;
+  top: -1px;
+  right: -9px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--pencil-light);
 }
@@ -35,15 +43,15 @@
 .win {
   position: fixed;
   right: 18px;
-  bottom: 158px;
+  bottom: 76px;
   z-index: 31;
   width: 380px;
   max-width: calc(100vw - 16px);
-  /* it sits above the corner stack (158px), so it must leave that much room plus a margin at the top:
+  /* it sits above the corner launcher (76px), so it must leave that much room plus a margin at the top:
      otherwise its title bar, with the close button, is pushed off the screen */
-  height: min(700px, calc(100vh - 174px));
+  height: min(700px, calc(100vh - 92px));
   /* dvh is the visible height on phones and tablets, where the address bar makes vh too tall */
-  height: min(700px, calc(100dvh - 174px));
+  height: min(700px, calc(100dvh - 92px));
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -663,7 +671,7 @@
   }
   .compact {
     top: auto;
-    bottom: 158px;
+    bottom: 76px;
   }
 }
 @media (max-width: 560px) {
@@ -678,7 +686,7 @@
     left: 8px;
     right: 8px;
     top: auto;
-    bottom: 158px;
+    bottom: 76px;
     width: auto;
     height: auto;
   }

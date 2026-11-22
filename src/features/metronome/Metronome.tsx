@@ -125,8 +125,11 @@ export function Metronome() {
 
   return (
     <>
-      <button type="button" className={cx(styles.fab, live.playing && styles.on)} onClick={() => setOpen((o) => !o)} title="Metronome">
-        <span className={styles.led} aria-hidden />♩ {live.playing ? S.bpm : 'Metronome'}
+      <button type="button" className={cx(styles.fab, live.playing && styles.on)} onClick={() => setOpen((o) => !o)} title="Metronome" data-hint={`${S.bpm} bpm · ${S.beats}/${S.note}${live.playing ? ' · playing' : ''}`}>
+        <span className={styles.fabIcon} aria-hidden>
+          ♩<i className={styles.led} />
+        </span>
+        <span>Metronome</span>
       </button>
 
       <div

@@ -33,8 +33,9 @@ export function IntervalWidget() {
   }, [st.open])
   return (
     <>
-      <button type="button" className={s.fab} onClick={() => set({ open: !st.open })} title="Interval ruler: degrees and half steps" aria-expanded={st.open}>
-        <span aria-hidden>↔</span> Intervals
+      <button type="button" className={s.fab} onClick={() => set({ open: !st.open })} title="Interval ruler: degrees and half steps" data-hint="degrees and half steps" aria-expanded={st.open}>
+        <span aria-hidden>↔</span>
+        <span>Intervals</span>
       </button>
       {st.open && (
         <aside ref={F.ref} className={s.panel} style={F.style} aria-label="Interval ruler">

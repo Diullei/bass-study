@@ -168,11 +168,11 @@
 .panel {
   position: fixed;
   right: 18px;
-  bottom: 152px;
+  bottom: 76px;
   z-index: 31;
   width: min(560px, calc(100vw - 36px));
-  max-height: calc(100vh - 172px);
-  max-height: calc(100dvh - 172px);
+  max-height: calc(100vh - 92px);
+  max-height: calc(100dvh - 92px);
   overflow-y: auto;
   padding: var(--sp-3) var(--sp-4) var(--sp-4);
   background: var(--paper-sheet);

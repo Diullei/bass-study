@@ -145,8 +145,9 @@ export function Settings() {
   const [open, setOpen] = useState(false)
   return (
     <>
-      <button type="button" className={s.fab} onClick={() => setOpen(true)} title="Settings" aria-haspopup="dialog">
-        <span aria-hidden>⚙</span> Settings
+      <button type="button" className={s.fab} onClick={() => setOpen(true)} title="Settings" data-hint="left-handed view · fingering" aria-haspopup="dialog">
+        <span aria-hidden>⚙</span>
+        <span>Settings</span>
       </button>
       <SettingsModal open={open} onClose={() => setOpen(false)} />
     </>

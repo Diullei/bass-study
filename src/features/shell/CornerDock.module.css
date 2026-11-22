@@ -1,4 +1,4 @@
-/* The tools in the bottom-right corner: a pile of icon tabs that fans out into sticky notes. */
+/* The tools in the bottom-right corner: one launcher, and a menu card that opens above it. */
 .dock {
   position: fixed;
   right: 18px;
@@ -6,58 +6,157 @@
   z-index: 30;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: stretch;
   /* no transform or filter here: the tools' own windows are fixed-position children */
 }
-/* the notes: each tool's first element. The dock lays them out; their own corner offsets no longer apply. */
-.dock > button:not(.cover) {
-  position: static;
-  /* minimized: just wide enough for the icon; the wide gap pushes the name out of sight */
-  max-width: 46px;
-  gap: 13px;
-  /* the right edge fades out, so a name cut off there never shows as a sliver */
-  mask-image: linear-gradient(to right, #000 62%, transparent 92%);
-  margin-top: -9px;
-  padding-left: 12px;
-  padding-right: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  justify-content: flex-start;
-  opacity: 0.88;
-  transition:
-    max-width 0.22s ease,
-    gap 0.22s ease,
-    margin-top 0.22s ease,
-    padding 0.22s ease,
-    opacity 0.15s ease;
+.open {
+  width: 248px;
+  padding: 8px 8px 0;
 }
-.dock > button:not(.cover):first-of-type {
-  margin-top: 0;
-}
-.open > button:not(.cover) {
-  max-width: 260px;
-  gap: 7px;
-  mask-image: none;
-  margin-top: 6px;
-  padding-right: 14px;
-  opacity: 1;
-}
-/* fanned out one after the other, from the bottom up */
-.open > button:not(.cover):nth-of-type(2) {
-  transition-delay: 0.03s;
-}
-.open > button:not(.cover):nth-of-type(1) {
-  transition-delay: 0.06s;
-}
-/* over the pile while it is minimized: one tap opens the stack */
-.cover {
+/* the card is drawn as a layer of its own, above the tools' windows (they are children of the dock and may
+   sit in this corner): an open menu is never covered */
+.open::before {
+  content: '';
   position: absolute;
-  inset: -6px;
-  z-index: 1;
-  padding: 0;
+  inset: 0;
+  z-index: 39;
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--ink-soft);
+  border-radius: 14px 14px 4px 14px;
+  box-shadow: var(--shadow-sheet), 0 14px 30px -14px rgba(40, 32, 18, 0.5);
+}
+.open > button {
+  z-index: 40;
+}
+.open > .launcher {
+  position: relative;
+}
+
+/* ── the rows: each tool's first element, restyled from a sticky note into a menu row ── */
+.dock > button:not(.launcher) {
+  display: none;
+}
+.open > button:not(.launcher) {
+  position: relative;
+  /* the notes' own corner offsets must not shift the rows */
+  inset: auto;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  align-items: center;
+  column-gap: 8px;
+  min-height: 52px;
+  margin: 0 0 4px;
+  padding: 6px 10px 6px 14px;
+  font: 700 var(--fs-md) / 1.15 var(--font-hand);
+  text-align: left;
+  color: var(--ink);
   background: none;
   border: 0;
+  border-radius: 8px;
+  box-shadow: none;
+  transform: none;
   cursor: pointer;
+  animation: rowIn 0.16s ease both;
+}
+.open > button:not(.launcher):nth-of-type(2) {
+  animation-delay: 0.03s;
+}
+.open > button:not(.launcher):nth-of-type(3) {
+  animation-delay: 0.06s;
+}
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* the tool's colour, as a bar down the left edge */
+.open > button:not(.launcher)::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 8px;
+  bottom: 8px;
+  width: 5px;
+  border-radius: 3px;
+  background: var(--row, var(--sticky));
+}
+.open > button[title^='Interval'] {
+  --row: var(--tab-blue);
+}
+.open > button[title='Metronome'] {
+  --row: var(--sticky-edge);
+}
+.open > button[title='Settings'] {
+  --row: var(--sticky-green-edge);
+}
+/* a line under the name: what the tool is, or what it is doing */
+.open > button:not(.launcher)::after {
+  content: attr(data-hint);
+  grid-column: 2;
+  font: 400 var(--fs-xs) / 1.2 var(--font-hand);
+  color: var(--pencil);
+}
+.open > button:not(.launcher):hover,
+.open > button:not(.launcher):focus-visible {
+  background: var(--highlighter);
+  transform: none;
+}
+
+/* ── the launcher: a small pile of sticky notes ── */
+.launcher {
+  align-self: flex-end;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 46px;
+  padding: 0;
+  color: var(--ink);
+  background: var(--sticky);
+  border: 0;
+  /* two more notes under the top one */
+  box-shadow:
+    -4px 3px 0 -1px var(--tab-blue),
+    -8px 6px 0 -2px var(--sticky-green),
+    var(--shadow-note);
+  transform: rotate(-2deg);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+.launcher:hover,
+.launcher:focus-visible {
+  transform: rotate(0deg) translateY(-1px);
+}
+.open .launcher {
+  width: 34px;
+  height: 30px;
+  margin: 0 -2px 6px 0;
+  background: none;
+  box-shadow: none;
+  transform: none;
+  color: var(--pencil);
+}
+.open .launcher:hover,
+.open .launcher:focus-visible {
+  color: var(--red-pen);
+}
+.x {
+  font: 700 22px/1 var(--font-hand);
+}
+/* a running metronome shows on the closed launcher: its light and its tempo */
+.bpm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font: 700 14px/1 var(--font-hand);
+}
+.bpm i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red-pen);
+  box-shadow: 0 0 0 3px var(--red-pen-soft);
 }
 @media (max-width: 640px) {
   .dock {
@@ -66,11 +165,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .dock > button:not(.cover) {
-    transition: none;
+  .open > button:not(.launcher) {
+    animation: none;
   }
-}
-/* the metronome's tab keeps its light next to the note, so a running metronome shows while minimized */
-.dock:not(.open) > button[title='Metronome'] {
-  gap: 5px;
 }
