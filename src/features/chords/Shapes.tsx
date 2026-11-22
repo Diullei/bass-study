@@ -2,13 +2,17 @@ import { useState } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
 import { ShapeRef } from '../../notation/ShapeRef'
 import { FingerKey } from '../../notation/FingerKey'
+import { ScaleMap } from '../../notation/ScaleMap'
+import { ScaleStrip } from '../../notation/ScaleStrip'
 import { ShapeMove } from '../../notation/ShapeMove'
+import { useShowScales } from '../../state/prefs'
 import { VoiceLines } from '../../notation/VoiceLines'
 import { Button, Checkbox, cx } from '../../ui'
 import { CText } from './CText'
 import { fingerMoveText, fingerText, useFingers, type ShapeFingers } from './fingers'
 import { useLefty } from './progress'
 import { info, parseRow, penOf, shapeBar, type ShapeInfo } from './render'
+import { chordScale, progressionScales, type ChordScale } from './scales'
 import { useClip } from './sound'
 import { bandsOf, clearPair, IV_NAME, pitchName, zonesAround, zoneWords } from './voicing'
 import s from './Chords.module.css'
@@ -16,6 +20,43 @@ import s from './Chords.module.css'
 export const degsOf = (I: ShapeInfo) => I.a.notes.map((n) => n.deg)
 export const pensOf = (I: ShapeInfo) => I.a.notes.map((n) => penOf(n.deg))
 export const rootsOf = (I: ShapeInfo) => I.a.notes.map((n) => n.deg === 'R')
+
+/** What a scale note is drawn with around a shape: the pen of its job. */
+const fillOf = (sc: ChordScale) =>
+  Object.fromEntries(
+    sc.notes.map((n) => [n.pc, { label: n.deg, root: n.role === 'root', pen: n.role === 'guide' ? 'pen-green' : n.role === 'colour' ? 'pen-blue' : n.role === 'pass' ? 'pen-pencil' : undefined, dashed: n.role === 'pass' }]),
+  )
+
+/** The switch for chord scales (one setting for the whole notebook) and what the small dots mean. */
+export function ScaleKey() {
+  const [on, setOn] = useShowScales()
+  return (
+    <div className={s.zoneKey}>
+      <Checkbox label="chord scales" checked={on} onChange={setOn} />
+      {on ? (
+        <ul>
+          <li>
+            <span className={cx(s.sw, s.swSmall)} /> small dots: the other notes of the scale that fits the chord, under the same hand
+          </li>
+          <li>
+            <span className={cx(s.sw, s.swSmall, s.swColour)} />
+            <span>
+              <b>blue</b>: a colour you can hold over the chord
+            </span>
+          </li>
+          <li>
+            <span className={cx(s.sw, s.swSmall, s.swPass)} />
+            <span>
+              <b>dashed</b>: a passing note, a half step above a chord tone. Play through it, do not stop on it
+            </span>
+          </li>
+        </ul>
+      ) : (
+        <span>show the scale that fits each chord, around its shape</span>
+      )}
+    </div>
+  )
+}
 
 /** The pens, explained once per block. */
 export function PenKey() {
@@ -75,6 +116,7 @@ export function PenKey() {
           <li>no shade: the same note · tap again to hide</li>
         </ul>
       </div>
+      <ScaleKey />
       {F.show && <FingerKey />}
     </div>
   )
@@ -90,7 +132,7 @@ export function mudNote(I: ShapeInfo): string | null {
 }
 
 /** A shape as a card: name, diagram, frets, notes and degrees (computed), the author's note. Click to hear it. */
-export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zones }: { I: ShapeInfo; note?: string; on?: boolean; active?: boolean; onPlay?: () => void; compact?: boolean; sf?: ShapeFingers | null; /** Start with the clear zones of the lowest note shown. */ zones?: boolean }) {
+export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zones, scale }: { I: ShapeInfo; /** The scale chosen for this chord inside its progression; without it the chord's usual scale. */ scale?: ChordScale; note?: string; on?: boolean; active?: boolean; onPlay?: () => void; compact?: boolean; sf?: ShapeFingers | null; /** Start with the clear zones of the lowest note shown. */ zones?: boolean }) {
   // the note whose clear zones are shaded (Law 2); tap a note to choose it, tap it again to clear
   const [pick, setPick] = useState<number | null>(zones ? 0 : null)
   const held = pick != null ? I.a.notes[pick] : undefined
@@ -103,6 +145,28 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
     : I.a.mud.flatMap((m) => [I.a.notes[m.at], plain[plain.indexOf(I.a.notes[m.at]) + 1]]).map((n) => I.a.notes.indexOf(n))
   const [lefty] = useLefty()
   const F = useFingers()
+  const [scalesOn] = useShowScales()
+  // the progression's choice when it holds every note of the shape, else the scale that does
+  const sc = scalesOn ? (scale && I.midis.every((m) => scale.at[m % 12]) ? scale : chordScale(I.sym, { must: I.midis.map((m) => m % 12) })) : null
+  const SP = useClip<number>()
+  // the chord held, the scale walked up over it, root to root
+  const hearScale = () => {
+    if (!sc) return
+    if (SP.playing) return SP.stop()
+    let base = 45
+    while (base % 12 !== sc.notes[0].pc) base++
+    const up = [...sc.notes.map((n) => base + n.iv), base + 12]
+    SP.once(
+      [
+        {
+          notes: [...I.midis.map((m) => ({ t: 0, midi: m, dur: up.length * 0.5 + 1, vel: 0.5 })), ...up.map((m, i) => ({ t: 0.5 + i * 0.5, midi: m, dur: 0.48, vel: 0.9 }))],
+          cues: up.map((_, i) => ({ t: 0.5 + i * 0.5, v: i })),
+          beats: up.length * 0.5 + 1.5,
+        },
+      ],
+      84,
+    )
+  }
   // the fingering chosen for the progression when there is one, else the best for this shape alone
   const sf = given === undefined ? F.of(I) : given
   const mud = mudNote(I)
@@ -122,6 +186,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
         bands={bands}
         picked={pick}
         warn={warn}
+        fill={sc ? fillOf(sc) : undefined}
         onNote={(i) => setPick(pick === i ? null : i)}
         {...F.props(sf)}
       />
@@ -154,6 +219,18 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
             )}
           </span>
         )}
+        {sc && !compact && (
+          <span className={s.scaleBox}>
+            <span className={s.scaleHead}>
+              <b>{sc.title}</b>
+              <button type="button" className={s.zoneBtn} onClick={hearScale}>
+                {SP.playing ? '■ stop' : '▶ hear it'}
+              </button>
+            </span>
+            <ScaleStrip notes={sc.notes} active={SP.playing ? SP.cue : null} />
+            <span className={s.scaleWhy}>{sc.why}</span>
+          </span>
+        )}
         {held && words && (
           <span className={s.zoneNote}>
             <span>
@@ -180,6 +257,9 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { 
   const anyRootless = items.some((x) => x.I.rootless)
   const F = useFingers()
   const seqF = seq ? F.seq(items.map((x) => x.I)) : null
+  const [scalesOn, setScalesOn] = useShowScales()
+  // in a progression each chord's scale follows the key and the chord it goes to
+  const seqScales = seq && scalesOn ? progressionScales(items.map((x) => x.I.sym)).scales : null
   const playOne = (i: number) => (P.playing && P.cue === i ? P.stop() : P.once([shapeBar(items[i].I, 'roll', 3, i, addRoot)], tempo))
   const playAll = () =>
     P.playing ? P.stop() : P.once(items.map((x, i) => shapeBar(x.I, seq ? 'block' : 'roll', seq ? 4 : 3, i, addRoot)), tempo)
@@ -193,11 +273,12 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { 
           </Button>
         )}
         {anyRootless && <Checkbox label="thumb adds the root" checked={addRoot} onChange={setAddRoot} />}
+        <Checkbox label="chord scales" checked={scalesOn} onChange={setScalesOn} />
       </figcaption>
       {seq && items.length > 1 && <Progression items={items} at={P.cue} onPick={playOne} />}
       <div className={cx(s.cards, seq && s.cardsSeq)}>
         {items.map((x, i) => (
-          <ShapeCard key={i} I={x.I} note={x.note} on={P.cue === i} active={P.cue === i} onPlay={() => playOne(i)} sf={seqF ? seqF[i] : undefined} zones={zones} />
+          <ShapeCard key={i} I={x.I} note={x.note} on={P.cue === i} active={P.cue === i} onPlay={() => playOne(i)} sf={seqF ? seqF[i] : undefined} zones={zones} scale={seqScales?.[i]} />
         ))}
       </div>
       {caption && (
@@ -223,6 +304,8 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
   const sfCur = seqF[k]
   const sfPrev = k > 0 ? seqF[k - 1] : null
   const fmoves = F.show && prev && sfCur && sfPrev ? fingerMoveText({ I: prev, sf: sfPrev }, { I: cur, sf: sfCur }) : null
+  const [scalesOn] = useShowScales()
+  const PS = scalesOn ? progressionScales(items.map((x) => x.I.sym)) : null
   return (
     <div className={s.prog}>
       <div className={s.progLines}>
@@ -230,6 +313,7 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
           chords={items.map(({ I }) => ({ label: I.sym, midis: I.midis, names: I.a.notes.map((n) => n.name), degs: degsOf(I) }))}
           at={at}
         />
+        {PS && <ScaleBoard PS={PS} syms={items.map((x) => x.I.sym)} at={k} onPick={at == null ? setPick : undefined} />}
       </div>
       <div className={s.progMove}>
         <div className={s.progNav}>
@@ -274,6 +358,44 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
         )}
         {prev && <p className={s.moveKey}>dashed pencil = the chord before · thick ring = the note stays · arrow = the note moves · ½ = a half-step pull · yellow tag = finger</p>}
       </div>
+    </div>
+  )
+}
+
+/** The scale map of a progression, with one line per change of chord: which notes move, or that none does. */
+function ScaleBoard({ PS, syms, at, onPick }: { PS: ReturnType<typeof progressionScales>; syms: string[]; at: number; onPick?: (i: number) => void }) {
+  const rows = PS.scales.map((sc, i) => ({ label: syms[i], sub: sc.title, cells: Object.fromEntries(sc.notes.map((n) => [n.pc, { deg: n.deg, role: n.role, name: n.name }])) }))
+  const changes = PS.scales.slice(1).map((sc, i) => {
+    const before = PS.scales[i]
+    const inn = sc.notes.filter((n) => !before.at[n.pc]).map((n) => n.name)
+    const out = before.notes.filter((n) => !sc.at[n.pc]).map((n) => n.name)
+    return { from: syms[i], to: syms[i + 1], inn, out }
+  })
+  const same = changes.every((c) => !c.inn.length && !c.out.length)
+  return (
+    <div className={s.scaleBoard}>
+      <b className={s.scaleBoardTitle}>the scales, note by note{PS.keyName ? ` · key of ${PS.keyName}` : ''}</b>
+      <ScaleMap rows={rows} origin={PS.key ?? PS.scales[0].notes[0].pc} at={at} onPick={onPick} />
+      <p className={s.scaleBoardNote}>
+        {same ? (
+          <>
+            <b>One scale for the whole progression.</b> The seven notes never change; only their jobs do. Read down a column: the same note is a 3rd over one chord and a passing note over the next.
+          </>
+        ) : (
+          <>
+            Read down a column to follow one note. Only the highlighted notes are new:{' '}
+            {changes
+              .filter((c) => c.inn.length || c.out.length)
+              .map((c, i) => (
+                <span key={i}>
+                  {i > 0 && ' · '}
+                  <b>{c.to}</b> brings {c.inn.join(', ')} in place of {c.out.join(', ')}
+                </span>
+              ))}
+            . Everything else carries over.
+          </>
+        )}
+      </p>
     </div>
   )
 }

@@ -25,12 +25,19 @@ export interface ChordShapeProps {
   warn?: number[]
   /** The selected sounding note (a dashed halo). */
   picked?: number | null
+  /**
+   * Helper notes around the shape, by pitch class (0 = C): every free place of the window whose note is in the map
+   * gets a small dot. Used for the chord scale.
+   */
+  fill?: Record<number, { label: string; pen?: string; root?: boolean; dashed?: boolean }>
   /** Mirror for a left-handed player. */
   lefty?: boolean
   /** At least this many frets in the window (default 4). */
   minFrets?: number
   className?: string
 }
+
+const OPEN = [23, 28, 33, 38, 43]
 
 /** Fret tokens → sounding notes: { str, fret, harmonic }. */
 export function shapeDots(shape: string) {
@@ -47,7 +54,7 @@ export function shapeDots(shape: string) {
  * A chord shape on a short piece of the neck: the window fits the shape, muted strings get an ×,
  * harmonics are diamonds over the fret wire. Every fret of the window is numbered, so a shape can be found at once.
  */
-export function ChordShape({ shape, labels, pens, roots, active = [], fingers, barres, hand, bands, onNote, picked, warn, lefty, minFrets = 4, className }: ChordShapeProps) {
+export function ChordShape({ shape, labels, pens, roots, active = [], fingers, barres, hand, bands, onNote, picked, warn, fill, lefty, minFrets = 4, className }: ChordShapeProps) {
   const toks = shape.split('-')
   const strings = toks.length === 4 ? 4 : 5
   const notes = shapeDots(shape)
@@ -70,5 +77,13 @@ export function ChordShape({ shape, labels, pens, roots, active = [], fingers, b
     picked: picked === i,
     warn: warn?.includes(i),
   }))
+  if (fill && strings === 5) {
+    const taken = new Set(notes.map((n) => `${n.str}:${n.fret}`))
+    for (let str = 0; str < 5; str++)
+      for (let f = from === 0 ? 0 : from; f <= to; f++) {
+        const g = fill[(OPEN[str] + f) % 12]
+        if (g && !taken.has(`${str}:${f}`)) dots.push({ str, fret: f, label: g.label, pen: g.pen, root: g.root, dashed: g.dashed, ghost: true })
+      }
+  }
   return <Fretboard strings={strings} from={from} to={to} dots={dots} muted={muted} bands={bands} onDot={onNote} barres={barres} hand={hand} lefty={lefty} allNumbers className={className} />
 }

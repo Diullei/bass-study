@@ -7,6 +7,8 @@ import { ChordShape } from '../notation/ChordShape'
 import { FingerKey } from '../notation/FingerKey'
 import { FretRef } from '../notation/FretRef'
 import { ShapeRef } from '../notation/ShapeRef'
+import { ScaleMap } from '../notation/ScaleMap'
+import { ScaleStrip } from '../notation/ScaleStrip'
 import { Fretboard } from '../notation/Fretboard'
 import { ShapeMove } from '../notation/ShapeMove'
 import { VoiceLines } from '../notation/VoiceLines'
@@ -179,6 +181,7 @@ export function DesignSystemPage() {
           <a href="#modal">Modal</a>
           <a href="#fret-ref">FretRef</a>
           <a href="#shape-ref">ShapeRef</a>
+          <a href="#scale">ScaleStrip · ScaleMap</a>
           <a href="#interval-ruler">Interval ruler</a>
         </nav>
 
@@ -577,6 +580,43 @@ export function DesignSystemPage() {
                   </div>
                 </div>
               ))}
+            </Spec>
+            <Spec
+              id="scale"
+              name="ScaleStrip · ScaleMap"
+              path="notation/ScaleStrip · notation/ScaleMap · ChordShape fill"
+              text="The chord scale, in three views that share one colour code: the pen of each note's job over the chord (root filled, 3rd and 7th green, 5th ink, colours blue, passing notes dashed pencil). No red: red is for errors. ScaleStrip is one scale as a row, root to root, with gaps to scale (½ marks a half step). ScaleMap is a progression: a column per note, a row per chord; a note that was not in the scale before is highlighted, a note that left is a pencil ×. ChordShape fill draws the scale as small dots around a shape. All are off until the reader ticks “chord scales”."
+              column
+            >
+              <ScaleStrip
+                notes={[
+                  { name: 'G', deg: 'R', role: 'root', step: 2 },
+                  { name: 'A', deg: '9', role: 'colour', step: 2 },
+                  { name: 'B', deg: '3', role: 'guide', step: 1 },
+                  { name: 'C', deg: '11', role: 'pass', step: 2 },
+                  { name: 'D', deg: '5', role: 'fifth', step: 2 },
+                  { name: 'E', deg: '13', role: 'colour', step: 1 },
+                  { name: 'F', deg: '♭7', role: 'guide', step: 2 },
+                ]}
+              />
+              <ScaleMap
+                origin={0}
+                at={1}
+                rows={[
+                  { label: 'Cmaj7', sub: 'C Ionian', cells: { 0: { deg: 'R', role: 'root', name: 'C' }, 2: { deg: '9', role: 'colour', name: 'D' }, 4: { deg: '3', role: 'guide', name: 'E' }, 5: { deg: '11', role: 'pass', name: 'F' }, 7: { deg: '5', role: 'fifth', name: 'G' }, 9: { deg: '13', role: 'colour', name: 'A' }, 11: { deg: '7', role: 'guide', name: 'B' } } },
+                  { label: 'A7', sub: 'A Mixolydian ♭9 ♭13', cells: { 9: { deg: 'R', role: 'root', name: 'A' }, 10: { deg: '♭9', role: 'colour', name: 'B♭' }, 1: { deg: '3', role: 'guide', name: 'C♯' }, 2: { deg: '11', role: 'pass', name: 'D' }, 4: { deg: '5', role: 'fifth', name: 'E' }, 5: { deg: '♭13', role: 'colour', name: 'F' }, 7: { deg: '♭7', role: 'guide', name: 'G' } } },
+                  { label: 'Dm7', sub: 'D Dorian', cells: { 2: { deg: 'R', role: 'root', name: 'D' }, 4: { deg: '9', role: 'colour', name: 'E' }, 5: { deg: '♭3', role: 'guide', name: 'F' }, 7: { deg: '11', role: 'colour', name: 'G' }, 9: { deg: '5', role: 'fifth', name: 'A' }, 11: { deg: '13', role: 'colour', name: 'B' }, 0: { deg: '♭7', role: 'guide', name: 'C' } } },
+                ]}
+              />
+              <div style={{ maxWidth: 260 }}>
+                <ChordShape
+                  shape="x-10-x-10-10"
+                  labels={['R', '♭7', '♭3']}
+                  pens={[undefined, 'pen-green', 'pen-green']}
+                  roots={[true]}
+                  fill={{ 2: { label: 'R', root: true }, 4: { label: '9', pen: 'pen-blue' }, 5: { label: '♭3', pen: 'pen-green' }, 7: { label: '11', pen: 'pen-blue' }, 9: { label: '5' }, 11: { label: '13', pen: 'pen-blue' }, 0: { label: '♭7', pen: 'pen-green' } }}
+                />
+              </div>
             </Spec>
             <Spec
               id="interval-ruler"

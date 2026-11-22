@@ -17,6 +17,9 @@ export interface FretDot {
   active?: boolean
   /** Fretting-hand finger, 1–4: a small pencil tag on the dot. */
   finger?: number
+  /** A helper note around the shape (e.g. a scale note): smaller and lighter. `dashed` = a passing note. */
+  ghost?: boolean
+  dashed?: boolean
   /** Selected: a dashed halo around the dot. */
   picked?: boolean
   /** In a wrong place (e.g. mud with another note): a red ring and a "!" tag. */
@@ -178,14 +181,15 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
       {dots
         .map((d, i) => [d, i] as const)
         .filter(([d]) => inWindow(d.fret) && d.str < strings)
+        .sort((a, b) => +!!b[0].ghost - +!!a[0].ghost)
         .map(([d, i]) => {
           const x = X(d.harmonic ? wireX(d.fret) : cx(d.fret))
           const y = yOf(d.str)
           return (
             <g
               key={i}
-              className={`${d.pen ?? ''} ${d.root ? styles.root : ''} ${d.active ? styles.active : ''} ${onDot ? styles.tap : ''}`}
-              {...(onDot
+              className={`${d.pen ?? ''} ${d.root ? styles.root : ''} ${d.active ? styles.active : ''} ${d.ghost ? styles.aux : onDot ? styles.tap : ''} ${d.dashed ? styles.dashed : ''}`}
+              {...(onDot && !d.ghost
                 ? {
                     role: 'button',
                     tabIndex: 0,
@@ -206,9 +210,9 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
               {d.harmonic ? (
                 <path className={styles.dot} d={`M${x} ${y - 12} L${x + 12} ${y} L${x} ${y + 12} L${x - 12} ${y} Z`} />
               ) : (
-                <circle className={styles.dot} cx={x} cy={y} r={10.5} />
+                <circle className={styles.dot} cx={x} cy={y} r={d.ghost ? 8.4 : 10.5} />
               )}
-              <text className={styles.dlab} x={x} y={y + 4} textAnchor="middle">
+              <text className={styles.dlab} x={x} y={y + (d.ghost ? 3 : 4)} textAnchor="middle">
                 {d.label}
               </text>
               {d.warn && (
