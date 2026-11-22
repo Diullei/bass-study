@@ -4,6 +4,7 @@ import { ShapeMove } from '../../notation/ShapeMove'
 import { VoiceLines } from '../../notation/VoiceLines'
 import { Button, Checkbox, cx } from '../../ui'
 import { CText } from './CText'
+import { fingerMoveText, fingerText, useFingers, type ShapeFingers } from './fingers'
 import { useLefty } from './progress'
 import { info, parseRow, penOf, shapeBar, type ShapeInfo } from './render'
 import { useClip } from './sound'
@@ -44,8 +45,11 @@ export function mudNote(I: ShapeInfo): string | null {
 }
 
 /** A shape as a card: name, diagram, frets, notes and degrees (computed), the author's note. Click to hear it. */
-export function ShapeCard({ I, note, on, active, onPlay, compact }: { I: ShapeInfo; note?: string; on?: boolean; active?: boolean; onPlay?: () => void; compact?: boolean }) {
+export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given }: { I: ShapeInfo; note?: string; on?: boolean; active?: boolean; onPlay?: () => void; compact?: boolean; sf?: ShapeFingers | null }) {
   const [lefty] = useLefty()
+  const F = useFingers()
+  // the fingering chosen for the progression when there is one, else the best for this shape alone
+  const sf = given === undefined ? F.of(I) : given
   const mud = mudNote(I)
   return (
     <figure className={cx(s.card, on && s.cardOn, compact && s.cardCompact)}>
@@ -53,7 +57,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact }: { I: ShapeIn
         <b className={s.cardSym}>{I.sym}</b>
         <span className={s.cardPlay}>{active ? '■' : '▶'}</span>
       </button>
-      <ChordShape shape={I.shape} labels={degsOf(I)} pens={pensOf(I)} roots={rootsOf(I)} lefty={lefty} active={active ? I.a.notes.map((_, i) => i) : []} />
+      <ChordShape shape={I.shape} labels={degsOf(I)} pens={pensOf(I)} roots={rootsOf(I)} lefty={lefty} active={active ? I.a.notes.map((_, i) => i) : []} {...F.props(sf)} />
       <figcaption>
         <code className={s.frets}>{I.shape}</code>
         {I.a.stretch && <span className={s.stretch}>stretch</span>}
@@ -63,6 +67,13 @@ export function ShapeCard({ I, note, on, active, onPlay, compact }: { I: ShapeIn
             <CText text={note} />
           </span>
         )}
+        {F.show && sf && (
+          <span className={s.fingers}>
+            ✋ {fingerText(I, sf)}
+            {sf.split ? ' · root first, then the harmonics' : sf.f.stretch > 0.9 ? ' · a stretch' : ''}
+          </span>
+        )}
+        {F.show && !sf && <span className={s.mud}>✋ too wide for this hand size: play the root first, then the rest (Law 5), or set a larger hand in Settings</span>}
         {!compact && mud && (
           <span className={s.mud}>
             <CText text={mud} />
@@ -79,6 +90,8 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72 }: { title?:
   const [addRoot, setAddRoot] = useState(true)
   const items = rows.map(parseRow).map((r) => ({ ...r, I: info(r.sym, r.shape) }))
   const anyRootless = items.some((x) => x.I.rootless)
+  const F = useFingers()
+  const seqF = seq ? F.seq(items.map((x) => x.I)) : null
   const playOne = (i: number) => (P.playing && P.cue === i ? P.stop() : P.once([shapeBar(items[i].I, 'roll', 3, i, addRoot)], tempo))
   const playAll = () =>
     P.playing ? P.stop() : P.once(items.map((x, i) => shapeBar(x.I, seq ? 'block' : 'roll', seq ? 4 : 3, i, addRoot)), tempo)
@@ -96,7 +109,7 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72 }: { title?:
       {seq && items.length > 1 && <Progression items={items} at={P.cue} onPick={playOne} />}
       <div className={cx(s.cards, seq && s.cardsSeq)}>
         {items.map((x, i) => (
-          <ShapeCard key={i} I={x.I} note={x.note} on={P.cue === i} active={P.cue === i} onPlay={() => playOne(i)} />
+          <ShapeCard key={i} I={x.I} note={x.note} on={P.cue === i} active={P.cue === i} onPlay={() => playOne(i)} sf={seqF ? seqF[i] : undefined} />
         ))}
       </div>
       {caption && (
@@ -111,11 +124,16 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72 }: { title?:
 /** The voice-leading view of a progression: every voice as a line, and the move into the chosen chord on the neck. */
 export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; at: number | null; onPick?: (i: number) => void }) {
   const [lefty] = useLefty()
+  const F = useFingers()
   const [pick, setPick] = useState(1)
-  const k = at ?? pick
-  const cur = items[Math.min(k, items.length - 1)].I
+  const k = Math.min(at ?? pick, items.length - 1)
+  const cur = items[k].I
   const prev = k > 0 ? items[k - 1].I : null
   const moves = prev ? describeMove(prev, cur) : null
+  const seqF = F.seq(items.map((x) => x.I))
+  const sfCur = seqF[k]
+  const sfPrev = k > 0 ? seqF[k - 1] : null
+  const fmoves = F.show && prev && sfCur && sfPrev ? fingerMoveText({ I: prev, sf: sfPrev }, { I: cur, sf: sfCur }) : null
   return (
     <div className={s.prog}>
       <div className={s.progLines}>
@@ -150,14 +168,15 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
         {prev ? (
           <ShapeMove
             from={{ shape: prev.shape }}
-            to={{ shape: cur.shape, labels: degsOf(cur), pens: pensOf(cur), roots: rootsOf(cur) }}
+            to={{ shape: cur.shape, labels: degsOf(cur), pens: pensOf(cur), roots: rootsOf(cur), ...F.props(sfCur) }}
             lefty={lefty}
           />
         ) : (
-          <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} />
+          <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} {...F.props(sfCur)} />
         )}
         {moves && <p className={s.moveText}>{moves}</p>}
-        <p className={s.moveKey}>dashed pencil = the chord before · thick ring = the finger stays · arrow = the finger moves · ½ = a half-step pull</p>
+        {fmoves && <p className={s.fingerMove}>✋ {fmoves}</p>}
+        <p className={s.moveKey}>dashed pencil = the chord before · thick ring = the note stays · arrow = the note moves · ½ = a half-step pull · yellow tag = finger</p>
       </div>
     </div>
   )

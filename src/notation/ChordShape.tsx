@@ -1,4 +1,4 @@
-import { Fretboard, type FretDot } from './Fretboard'
+import { Fretboard, type FretBarre, type FretDot, type FretHand } from './Fretboard'
 
 export interface ChordShapeProps {
   /** Frets low string to high, e.g. "x-8-x-9-9"; "0" open, "h7" a harmonic over fret 7. */
@@ -11,6 +11,12 @@ export interface ChordShapeProps {
   roots?: boolean[]
   /** Indexes of the sounding notes playing now (red pen). */
   active?: number[]
+  /** Fretting-hand finger per sounding note (0 or missing = none), a tag on each dot. */
+  fingers?: number[]
+  /** Flat fingers (barres) to draw across the strings. */
+  barres?: FretBarre[]
+  /** The hand position marker under the neck. */
+  hand?: FretHand
   /** Mirror for a left-handed player. */
   lefty?: boolean
   /** At least this many frets in the window (default 4). */
@@ -33,7 +39,7 @@ export function shapeDots(shape: string) {
  * A chord shape on a short piece of the neck: the window fits the shape, muted strings get an ×,
  * harmonics are diamonds over the fret wire. Every fret of the window is numbered, so a shape can be found at once.
  */
-export function ChordShape({ shape, labels, pens, roots, active = [], lefty, minFrets = 4, className }: ChordShapeProps) {
+export function ChordShape({ shape, labels, pens, roots, active = [], fingers, barres, hand, lefty, minFrets = 4, className }: ChordShapeProps) {
   const toks = shape.split('-')
   const strings = toks.length === 4 ? 4 : 5
   const notes = shapeDots(shape)
@@ -52,6 +58,7 @@ export function ChordShape({ shape, labels, pens, roots, active = [], lefty, min
     pen: pens?.[i],
     root: roots?.[i],
     active: active.includes(i),
+    finger: fingers?.[i] || undefined,
   }))
-  return <Fretboard strings={strings} from={from} to={to} dots={dots} muted={muted} lefty={lefty} allNumbers className={className} />
+  return <Fretboard strings={strings} from={from} to={to} dots={dots} muted={muted} barres={barres} hand={hand} lefty={lefty} allNumbers className={className} />
 }

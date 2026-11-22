@@ -3,6 +3,7 @@ import { Fretboard, type FretBand } from '../../notation/Fretboard'
 import { BeatGrid, Button, FactList, Segmented, StickyNote, cx } from '../../ui'
 import { Along, patternRows } from './Along'
 import { CText } from './CText'
+import { useFingers } from './fingers'
 import { PATTERNS, type PatternId } from './patterns'
 import { useLefty } from './progress'
 import { info, patternNotes, type ShapeInfo } from './render'
@@ -278,6 +279,7 @@ function PatternsBlock({ chord, shape, ids, caption }: { chord: string; shape: s
   const P = useClip<number>()
   const [lefty] = useLefty()
   const I = info(chord, shape)
+  const F = useFingers()
   const idRef = useRef(id)
   idRef.current = id
   const play = () =>
@@ -303,7 +305,7 @@ function PatternsBlock({ chord, shape, ids, caption }: { chord: string; shape: s
       <Segmented label="Pattern" value={id} options={ids.map((x) => ({ value: x, label: PATTERNS[x].name }))} onChange={setId} />
       <div className={s.patRow}>
         <div className={s.patShape}>
-          <ChordShape shape={shape} labels={degsOf(I)} pens={pensOf(I)} roots={rootsOf(I)} lefty={lefty} />
+          <ChordShape shape={shape} labels={degsOf(I)} pens={pensOf(I)} roots={rootsOf(I)} lefty={lefty} {...F.props(F.of(I))} />
           {I.thumb == null && <span className={s.pencil}>no root in the grip: the thumb plays it on a lower string</span>}
         </div>
         <div className={s.patGrid}>

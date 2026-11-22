@@ -674,3 +674,15 @@
 .backlinks .chRef {
   white-space: normal;
 }
+
+/* fingering in words, under a diagram and under a move */
+.fingers {
+  flex-basis: 100%;
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+}
+.fingerMove {
+  margin: 0;
+  font: 400 var(--fs-sm) / 1.4 var(--font-hand);
+  color: var(--ink);
+}

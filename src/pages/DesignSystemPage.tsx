@@ -168,6 +168,7 @@ export function DesignSystemPage() {
           <a href="#fretboard">Fretboard</a>
           <a href="#fretboard-more">Marks &amp; bands</a>
           <a href="#chord-shape">ChordShape</a>
+          <a href="#fingering">Fingering</a>
           <a href="#shape-move">ShapeMove</a>
           <a href="#voice-lines">VoiceLines</a>
           <a href="#beat-grid">BeatGrid</a>
@@ -470,6 +471,21 @@ export function DesignSystemPage() {
               <div style={{ width: 230 }}>
                 <ChordShape shape="x-8-h7-h7-h7" labels={['R', '3', '6', '9']} pens={[undefined, 'pen-green', 'pen-green', 'pen-blue']} roots={[true]} active={[1, 2, 3]} />
                 <Caption>C6/9 with harmonics, sounding</Caption>
+              </div>
+            </Spec>
+            <Spec
+              id="fingering"
+              name="Fingering"
+              path="notation/Fretboard · theory/fingering"
+              text="A dot's finger is a yellow tag; barres draws one finger flat across strings; hand brackets the frets the hand covers, with the fingers at each fret (dashed when it is a stretch). theory/fingering works them out from the real neck in millimetres: fingerings() for one grip, fingerSequence() for a progression, where pivots and guide fingers are rewarded."
+            >
+              <div style={{ width: 240 }}>
+                <ChordShape shape="x-10-x-10-10" labels={['R', '♭7', '♭3']} pens={[undefined, 'pen-green', 'pen-green']} roots={[true]} fingers={[1, 1, 4]} barres={[{ fret: 10, from: 1, to: 3, finger: 1 }]} hand={{ from: 10, to: 10, at: { 10: '1·4' } }} />
+                <Caption>Dm7: index barre, little finger on top</Caption>
+              </div>
+              <div style={{ width: 240 }}>
+                <ChordShape shape="8-x-x-9-11" labels={['R', '3', '7']} pens={[undefined, 'pen-green', 'pen-green']} roots={[true]} fingers={[1, 2, 4]} hand={{ from: 8, to: 11, at: { 8: '1', 9: '2', 11: '4' }, stretch: true }} />
+                <Caption>Gmaj7 form C: a stretch (dashed)</Caption>
               </div>
             </Spec>
             <Spec

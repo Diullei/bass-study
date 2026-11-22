@@ -830,6 +830,11 @@ export const CHAPTERS_1: Chapter[] = [
         tempo: 72,
         caption: "Bar 5 is the jump. Use technique 4: the thumb lands the B♭ on beat 1, the pair follows on beat 2. The A♭ shapes sit low on the neck, so expect some thickness ([[Law2]]).",
       },
+      {
+        t: "tip",
+        title: "The fingers on the diagrams follow these six rules",
+        text: "The finger tags are not typed in: a hand model measures every reach in millimetres on the real neck and, for a progression, chooses all the fingerings together. That is why a finger often stays down as a **pivot** (technique 3) or slides along its string as a **guide finger** (technique 2) where another fingering would be easier for one chord alone. Under each move you can read what every finger does. If your hands are large, say so in ⚙ Settings: wider reaches become available.",
+      },
     ],
     drills: [
       "**Octave ladder on Cmaj7:** {Cmaj7:x-x-3-2-4} → {Cmaj7:x-8-x-9-9} → {Cmaj7:13-x-x-14-16} → {Cmaj7:x-x-15-14-16}. Slow, in time, using technique 4.",

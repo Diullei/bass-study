@@ -37,6 +37,9 @@
   font: 700 var(--fs-lg) var(--font-hand);
   color: var(--ink-soft);
 }
+.row + .row {
+  margin-top: var(--sp-4);
+}
 .row {
   display: flex;
   flex-direction: column;

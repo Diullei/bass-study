@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { ChordShape } from '../../notation/ChordShape'
 import { LessonRef, RuleRef } from '../harmony/HText'
 import { CHAPTERS } from './chapters'
+import { useFingers } from './fingers'
 import { LAWS } from './laws'
 import { chapterPath, CHECK_PATH, FIND_PATH, GEN_PATH, lawPath, TESTS_PATH } from './paths'
 import { useLefty } from './progress'
@@ -37,6 +38,7 @@ export function ShapeChip({ sym, shape }: { sym: string; shape: string }) {
   const P = useClip<number>()
   const [lefty] = useLefty()
   const I = info(sym, shape)
+  const F = useFingers()
   const play = () => (P.playing ? P.stop() : P.once([shapeBar(I, 'roll', 3, 0, true)], 80))
   return (
     <button type="button" className={s.chip} onClick={play} aria-label={`${sym} ${shape}, play`}>
@@ -49,6 +51,7 @@ export function ShapeChip({ sym, shape }: { sym: string; shape: string }) {
           pens={I.a.notes.map((n) => penOf(n.deg))}
           roots={I.a.notes.map((n) => n.deg === 'R')}
           lefty={lefty}
+          {...F.props(F.of(I))}
         />
         <small>{I.a.notes.map((n) => n.name).join(' ')} · click to hear</small>
       </span>

@@ -3,6 +3,8 @@ import { Field, FieldGrid, Lead, Notebook, PageTitle, Section, SectionTitle, Seg
 import { NotebookHeader } from '../shell/NotebookHeader'
 import { Along } from './Along'
 import { CText } from './CText'
+import { fingerText, handOf, useFingers } from './fingers'
+import { fingerings } from '../../theory/fingering'
 import { find, LAYERS, voiceLead, type DomColour, type Layer } from './finder'
 import { KEYS, progById, progIn, PROGS, TESTS } from './progressions'
 import { info } from './render'
@@ -40,6 +42,8 @@ function voiced(bars: string[][], layer: Layer, dom: DomColour, around: number) 
 function Voiced({ V, barsText, title, pattern }: { V: { sym: string; shape: string; why?: string }[]; barsText: string; title: string; pattern?: 'split' | 'four' | 'bossa' | 'charleston' }) {
   const seq = V.filter((v, i) => i === 0 || v.shape !== V[i - 1].shape || v.sym !== V[i - 1].sym)
   const items = seq.slice(0, 16).map((v) => ({ I: info(v.sym, v.shape) }))
+  const F = useFingers()
+  const seqF = F.seq(seq.map((v) => info(v.sym, v.shape)), true)
   const whys = [...new Map(V.filter((v) => v.why).map((v) => [v.sym, `**${v.sym}**: ${v.why}`])).values()]
   return (
     <>
@@ -53,7 +57,7 @@ function Voiced({ V, barsText, title, pattern }: { V: { sym: string; shape: stri
       <Along key={barsText} title={title} bars={barsText} pattern={pattern ?? 'split'} tempo={100} noProg />
       <div className={s.cards}>
         {seq.map((v, i) => (
-          <ShapeCard key={i} I={info(v.sym, v.shape)} compact />
+          <ShapeCard key={i} I={info(v.sym, v.shape)} compact sf={seqF[i]} />
         ))}
       </div>
     </>
@@ -238,6 +242,7 @@ export function FinderPage() {
 export function CheckerPage() {
   const [sym, setSym] = useState('Cmaj7')
   const [shape, setShape] = useState('x-8-x-9-9')
+  const F = useFingers()
   const r = useMemo(() => {
     try {
       return analyse(sym, shape)
@@ -287,6 +292,7 @@ export function CheckerPage() {
                 ))}
               </ul>
             )}
+            {r.errors.length === 0 && <FingeringList sym={sym} shape={shape} hand={F.hand} />}
             <div className={s.tableWrap}>
             <table className={s.table}>
               <thead>
@@ -317,5 +323,32 @@ export function CheckerPage() {
         )}
       </Section>
     </Page>
+  )
+}
+
+/** The fingerings the hand model finds for a shape, best first, with how hard each one is. */
+function FingeringList({ sym, shape, hand }: { sym: string; shape: string; hand: 'average' | 'large' }) {
+  const I = info(sym, shape)
+  const notes = I.a.notes.map((n) => ({ str: n.str, fret: n.fret }))
+  const all = fingerings(notes, hand).slice(0, 4)
+  const effort = (c: number) => (c < 0.7 ? 'easy' : c < 1.6 ? 'comfortable' : c < 3 ? 'takes practice' : 'a real stretch')
+  return (
+    <div>
+      <p className={s.caption}>
+        <CText text={`**Fingering** for ${hand === 'large' ? 'a large' : 'an average'} hand (change it in ⚙ Settings). The hand is measured in millimetres on a 34″ neck, so the same span is easier high up than near the nut ([[Ch10]]).`} />
+      </p>
+      {all.length === 0 ? (
+        <p className={s.errors}>No fingering fits this hand: the reach is too wide. Play the root first and the rest after (Law 5: time is your second hand), or move the shape up the neck.</p>
+      ) : (
+        <ol className={s.steps}>
+          {all.map((f, i) => (
+            <li key={i}>
+              {fingerText(I, { f, fingers: f.fingers, barres: f.barres, hand: handOf(notes.map((n) => n.fret), f) })} · index at fret {f.pos} · <b>{effort(f.cost)}</b>
+              {i === 0 ? ' (shown above)' : ''}
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
   )
 }

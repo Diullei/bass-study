@@ -68,6 +68,36 @@
   fill: var(--highlighter-strong);
 }
 
+/* fingering: a flat finger across strings, finger tags, the hand under the neck */
+.board .barre {
+  stroke: var(--ink-soft);
+  stroke-width: 17;
+  stroke-linecap: round;
+  opacity: 0.2;
+}
+.board .finger circle {
+  fill: var(--sticky);
+  stroke: var(--pencil);
+  stroke-width: 1;
+}
+.board .finger text {
+  font: 700 9.5px var(--font-hand);
+  fill: var(--ink);
+}
+.board .hand path {
+  fill: none;
+  stroke: var(--pencil-light);
+  stroke-width: 1.3;
+}
+.board .handStretch path {
+  stroke-dasharray: 3 3;
+  stroke: var(--purple-pen);
+}
+.board .hand text {
+  font: 400 9.5px var(--font-hand);
+  fill: var(--pencil);
+}
+
 /* ShapeMove: the chord before in pencil, arrows for the fingers that move */
 .moveWrap {
   position: relative;

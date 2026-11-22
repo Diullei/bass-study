@@ -3,6 +3,7 @@ import { ShapeMove } from '../../notation/ShapeMove'
 import { ChordShape } from '../../notation/ChordShape'
 import { BeatGrid, Button, Checkbox, Field, FieldGrid, Select, Slider, cx, type BeatGridRow } from '../../ui'
 import { CText } from './CText'
+import { useFingers } from './fingers'
 import { PATTERN_LIST, PATTERNS, type Pattern, type PatternId } from './patterns'
 import { useLefty } from './progress'
 import { alongBar, info, midiOfName, parseBars, type PatCue, type ShapeInfo } from './render'
@@ -49,6 +50,9 @@ export function Along({ title, bars: barsText, pattern = 'split', tempo = 90, wa
   opts.current = { pat, bpm, drums, roots, part }
   const P = useClip<PatCue>()
   const [lefty] = useLefty()
+  const F = useFingers()
+  // the loop's fingering, chosen as a round trip (the last chord leads back to the first)
+  const loopF = useMemo(() => F.seq(flat, true), [F, flat])
   const start = () =>
     P.live(
       (i) => {
@@ -59,6 +63,7 @@ export function Along({ title, bars: barsText, pattern = 'split', tempo = 90, wa
     )
   const cue = P.cue
   const cur = cue ? flat[cue.chord] : null
+  const sfCur = cue ? loopF[cue.chord] : null
   const prev = cue ? flat[(cue.chord - 1 + flat.length) % flat.length] : null
   const p = PATTERNS[pat]
   let k = 0
@@ -106,9 +111,9 @@ export function Along({ title, bars: barsText, pattern = 'split', tempo = 90, wa
       {cur && (
         <div className={s.alongNow}>
           {prev && prev !== cur && flat.length > 1 ? (
-            <ShapeMove from={{ shape: prev.shape }} to={{ shape: cur.shape, labels: degsOf(cur), pens: pensOf(cur), roots: rootsOf(cur) }} lefty={lefty} />
+            <ShapeMove from={{ shape: prev.shape }} to={{ shape: cur.shape, labels: degsOf(cur), pens: pensOf(cur), roots: rootsOf(cur), ...F.props(sfCur) }} lefty={lefty} />
           ) : (
-            <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} />
+            <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} {...F.props(sfCur)} />
           )}
           <span className={s.alongSym}>
             {cur.sym} <code>{cur.shape}</code>

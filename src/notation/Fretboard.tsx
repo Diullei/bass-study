@@ -15,6 +15,30 @@ export interface FretDot {
   harmonic?: boolean
   /** Sounding now: the red playback pen. */
   active?: boolean
+  /** Fretting-hand finger, 1–4: a small pencil tag on the dot. */
+  finger?: number
+}
+
+/** One finger laid flat across several strings at one fret (a barre). */
+export interface FretBarre {
+  fret: number
+  /** Lowest and highest string it lies across. */
+  from: number
+  to: number
+  finger?: number
+  /** Lying over the fret wire (a row of harmonics touched by one finger). */
+  harmonic?: boolean
+}
+
+/** The fretting hand under the neck: a bracket over the frets it covers, with the fingers that sit at each fret. */
+export interface FretHand {
+  /** Lowest and highest fret under a finger. */
+  from: number
+  to: number
+  /** Fret → the fingers there, e.g. { 8: '1', 9: '2·3' }. */
+  at: Record<number, string>
+  /** Near the limit of the hand: the bracket is dashed. */
+  stretch?: boolean
 }
 
 /** A shaded stretch of one string, e.g. a register band. */
@@ -36,6 +60,10 @@ export interface FretboardProps {
   muted?: number[]
   /** Shaded stretches behind the dots. */
   bands?: FretBand[]
+  /** Flat fingers: a bar across the strings, behind the dots. */
+  barres?: FretBarre[]
+  /** Mark the hand under the neck: the frets it covers and the fingers at each one. */
+  hand?: FretHand
   /** Mirror the neck (nut on the right), as a left-handed player sees it. Default: the notebook's left-handed setting. */
   lefty?: boolean
   /** Number every fret, not only the inlay frets. */
@@ -47,7 +75,7 @@ const NAMES = { 4: ['E', 'A', 'D', 'G'], 5: ['B', 'E', 'A', 'D', 'G'] }
 const INLAY = [3, 5, 7, 9, 15, 17, 19, 21]
 
 /** A hand-drawn bass neck, G string on top (as in tab), with labelled dots. */
-export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands = [], lefty: leftyProp, allNumbers = false, className }: FretboardProps) {
+export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands = [], barres = [], hand, lefty: leftyProp, allNumbers = false, className }: FretboardProps) {
   const [leftySetting] = useLefty()
   const lefty = leftyProp ?? leftySetting
   const n = to - (from === 0 ? 1 : from) + 1
@@ -57,7 +85,9 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
   const left = marks ? 46 : 30
   const top = 14
   const W = left + n * fw + 8
-  const H = top + (strings - 1) * sp + 34
+  // room for the hand marker between the strings and the fret numbers
+  const handH = hand ? 20 : 0
+  const H = top + (strings - 1) * sp + 34 + handH
   const X = (x: number) => (lefty ? W - x : x)
   const yOf = (s: number) => top + (strings - 1 - s) * sp
   // the space for fret f lies between wire f-1 and wire f; the first space is fret `from` (or 1 after the nut)
@@ -115,6 +145,28 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
           )}
         </g>
       ))}
+      {barres
+        .filter((b) => b.fret >= first && b.fret <= to)
+        .map((b, i) => (
+          <line key={i} className={styles.barre} x1={X(b.harmonic ? wireX(b.fret) : cx(b.fret))} y1={yOf(b.from)} x2={X(b.harmonic ? wireX(b.fret) : cx(b.fret))} y2={yOf(b.to)} />
+        ))}
+      {hand && hand.to >= first && hand.from <= to && (
+        <g className={`${styles.hand} ${hand.stretch ? styles.handStretch : ''}`}>
+          {(() => {
+            const y = yOf(0) + 21
+            const a = X(cx(Math.max(hand.from, first)) - fw / 2 + 6)
+            const b = X(cx(Math.min(hand.to, to)) + fw / 2 - 6)
+            return <path d={`M${a} ${y - 5} L${a} ${y} L${b} ${y} L${b} ${y - 5}`} />
+          })()}
+          {Object.entries(hand.at)
+            .filter(([f]) => +f >= first && +f <= to)
+            .map(([f, who]) => (
+              <text key={f} x={X(cx(+f))} y={yOf(0) + 32} textAnchor="middle">
+                {who}
+              </text>
+            ))}
+        </g>
+      )}
       {dots
         .filter((d) => inWindow(d.fret) && d.str < strings)
         .map((d, i) => {
@@ -130,6 +182,14 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
               <text className={styles.dlab} x={x} y={y + 4} textAnchor="middle">
                 {d.label}
               </text>
+              {d.finger ? (
+                <g className={styles.finger}>
+                  <circle cx={x + (lefty ? -11 : 11)} cy={y + 9} r={6.2} />
+                  <text x={x + (lefty ? -11 : 11)} y={y + 12.4} textAnchor="middle">
+                    {d.finger}
+                  </text>
+                </g>
+              ) : null}
             </g>
           )
         })}

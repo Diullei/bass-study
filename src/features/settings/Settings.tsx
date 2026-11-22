@@ -1,6 +1,6 @@
 import { useState, type ComponentType } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
-import { useLefty } from '../../state/prefs'
+import { useHandSize, useLefty, useShowFingers } from '../../state/prefs'
 import { Button, Modal, Segmented } from '../../ui'
 import s from './Settings.module.css'
 
@@ -36,6 +36,49 @@ function LeftyControl() {
   )
 }
 
+function FingersControl() {
+  const [show, setShow] = useShowFingers()
+  return (
+    <div className={s.control}>
+      <Segmented
+        label="Fingering on chord diagrams"
+        value={show ? 'on' : 'off'}
+        options={[
+          { value: 'on', label: 'show fingers' },
+          { value: 'off', label: 'hide' },
+        ]}
+        onChange={(v) => setShow(v === 'on')}
+      />
+      <div className={s.preview} aria-hidden>
+        <ChordShape
+          shape="x-8-x-9-9"
+          labels={['R', '7', '3']}
+          pens={[undefined, 'pen-green', 'pen-green']}
+          roots={[true]}
+          {...(show ? { fingers: [1, 3, 3], barres: [{ fret: 9, from: 3, to: 4, finger: 3 }], hand: { from: 8, to: 9, at: { 8: '1', 9: '3' } } } : {})}
+        />
+      </div>
+    </div>
+  )
+}
+
+function HandControl() {
+  const [hand, setHand] = useHandSize()
+  return (
+    <div className={s.control}>
+      <Segmented
+        label="Hand size"
+        value={hand}
+        options={[
+          { value: 'average', label: 'average' },
+          { value: 'large', label: 'large' },
+        ]}
+        onChange={setHand}
+      />
+    </div>
+  )
+}
+
 export const SETTINGS: SettingDef[] = [
   {
     id: 'lefty',
@@ -43,6 +86,20 @@ export const SETTINGS: SettingDef[] = [
     label: 'Neck orientation',
     help: 'Left-handed mirrors every neck in the notebook, nut on the right, as a left-handed player sees it. Tab and shape names (x-8-x-9-9) read the same both ways.',
     Control: LeftyControl,
+  },
+  {
+    id: 'fingers',
+    group: 'Fingering',
+    label: 'Fingers on chord diagrams',
+    help: 'A yellow tag on each dot is the fretting finger (1 index … 4 little finger); a grey bar is one finger laid flat across strings (a barre); the bracket under the neck shows which fingers sit at which fret (dashed when it is a stretch).',
+    Control: FingersControl,
+  },
+  {
+    id: 'hand',
+    group: 'Fingering',
+    label: 'Hand size',
+    help: 'Fingerings are worked out from the real size of the neck, in millimetres, and from how far fingers can spread. A large hand is allowed wider reaches, so some shapes get an easier fingering and a few more become possible.',
+    Control: HandControl,
   },
 ]
 

@@ -38,6 +38,9 @@ export const KEYS = {
   chordsCurrent: 'bs.chords.current',
   /** The left-handed view of every neck, for the whole notebook. */
   lefty: 'bs.lefty',
+  /** Fingering on chord diagrams: shown or not, and the hand size the fingering engine assumes. */
+  fingers: 'bs.fingers',
+  hand: 'bs.hand',
   /** Backing track for practice: band feel and whether the written line is played. */
   backing: 'bs.backing',
 } as const

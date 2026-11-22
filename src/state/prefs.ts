@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import type { HandSize } from '../theory/fingering'
 import { KEYS, load, store } from './storage'
 
 /**
@@ -6,27 +7,39 @@ import { KEYS, load, store } from './storage'
  * on this page (listeners) and in other tabs (the storage event).
  */
 
-const listeners = new Set<(v: boolean) => void>()
+const listeners = new Map<string, Set<(v: never) => void>>()
 
-const readLefty = () => load<boolean>(KEYS.lefty, load<boolean>('bs.chords.lefty', false))
-
-/** The left-handed view: every neck mirrored, nut on the right, as a left-handed player sees it. */
-export function useLefty(): [boolean, (v: boolean) => void] {
-  const [v, setV] = useState(readLefty)
+function usePref<T>(key: string, read: () => T): [T, (v: T) => void] {
+  const [v, setV] = useState<T>(read)
   useEffect(() => {
-    listeners.add(setV)
+    let set = listeners.get(key)
+    if (!set) listeners.set(key, (set = new Set()))
+    set.add(setV as (v: never) => void)
     const on = (e: StorageEvent) => {
-      if (e.key === KEYS.lefty) setV(readLefty())
+      if (e.key === key) setV(read())
     }
     window.addEventListener('storage', on)
     return () => {
-      listeners.delete(setV)
+      set.delete(setV as (v: never) => void)
       window.removeEventListener('storage', on)
     }
-  }, [])
-  const set = useCallback((x: boolean) => {
-    store(KEYS.lefty, x)
-    listeners.forEach((f) => f(x))
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key])
+  const set = useCallback(
+    (x: T) => {
+      store(key, x)
+      listeners.get(key)?.forEach((f) => (f as (v: T) => void)(x))
+    },
+    [key],
+  )
   return [v, set]
 }
+
+/** The left-handed view: every neck mirrored, nut on the right, as a left-handed player sees it. */
+export const useLefty = () => usePref<boolean>(KEYS.lefty, () => load<boolean>(KEYS.lefty, load<boolean>('bs.chords.lefty', false)))
+
+/** Show fretting-hand fingers (and barres) on chord diagrams. */
+export const useShowFingers = () => usePref<boolean>(KEYS.fingers, () => load<boolean>(KEYS.fingers, true))
+
+/** The size of the fretting hand: it sets how far the fingering engine lets the fingers reach. */
+export const useHandSize = () => usePref<HandSize>(KEYS.hand, () => (load<string>(KEYS.hand, 'average') === 'large' ? 'large' : 'average'))
