@@ -54,8 +54,10 @@ const apart = (su: number, df: number) =>
  * Pick a degree to read its half steps, the split into strings and frets (interval = 5 × strings + frets),
  * and every place that puts it on the neck around a root. One picture reads both ways: up from the root, or down to it.
  */
-export function IntervalRuler() {
-  const [pick, setPick] = useState(10)
+export function IntervalRuler({ value, onChange }: { value?: number; onChange?: (n: number) => void }) {
+  const [own, setOwn] = useState(10)
+  const pick = value != null && DEGREES[value] ? value : own
+  const setPick = (n: number) => (onChange ? onChange(n) : setOwn(n))
   const d = DEGREES[pick]
   const S = splits(d.n)
   const play = (n: number) => {

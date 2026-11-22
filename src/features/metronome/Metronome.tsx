@@ -31,9 +31,19 @@ type Tab = (typeof TABS)[number]['id']
 export function Metronome() {
   const pageTempo = useSuggestedTempo()
   const { S, live, m } = useMetronome()
-  const [open, setOpen] = useState(false)
+  const [open, setOpenState] = useState<boolean>(() => load(KEYS.metroOpen, false))
+  const setOpen = (v: boolean | ((o: boolean) => boolean)) =>
+    setOpenState((o) => {
+      const next = typeof v === 'function' ? v(o) : v
+      store(KEYS.metroOpen, next)
+      return next
+    })
   const [compact, setCompact] = useState<boolean>(() => load(KEYS.metroCompact, true))
-  const [tab, setTab] = useState<Tab>('play')
+  const [tab, setTabState] = useState<Tab>(() => {
+    const saved = load<string>(KEYS.metroTab, 'play')
+    return TABS.some((t) => t.id === saved) ? (saved as Tab) : 'play'
+  })
+  const setTab = (t: Tab) => (setTabState(t), store(KEYS.metroTab, t))
   const [stage, setStage] = useState(false)
   const [pos, setPos] = useState<Pos | null>(() => load<Pos | null>(KEYS.metroPos, null))
   const win = useRef<HTMLDivElement>(null)

@@ -181,11 +181,16 @@
   box-shadow: var(--shadow-sheet), 0 14px 30px -14px rgba(40, 32, 18, 0.5);
 }
 .panelHead {
+  user-select: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--sp-2);
   font: 700 var(--fs-lg) var(--font-hand);
+}
+.grip {
+  color: var(--pencil-light);
+  font-size: 0.8em;
 }
 .close {
   width: 30px;
