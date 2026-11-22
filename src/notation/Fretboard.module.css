@@ -64,6 +64,9 @@
 .board :global(.band-both) {
   fill: #d4e98a;
 }
+.board :global(.band-clear) {
+  fill: #a9dbb7;
+}
 .board :global(.band-melody) {
   fill: var(--highlighter-strong);
 }

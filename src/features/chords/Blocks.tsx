@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Fretboard, type FretBand } from '../../notation/Fretboard'
+import { Fretboard, type FretBand, type FretDot } from '../../notation/Fretboard'
 import { FretRef } from '../../notation/FretRef'
 import { BeatGrid, Button, FactList, Field, FieldGrid, Segmented, Select, StickyNote, cx } from '../../ui'
 import { fingerings } from '../../theory/fingering'
@@ -347,6 +347,43 @@ function ZonesBlock() {
   )
 }
 
+// ───────────── Law 2: the floors on the neck ─────────────
+
+/** One line per interval family, each with a small whole neck: shaded = the lower note of the pair sounds clear there. */
+function FloorsBlock({ rows }: { rows: { text: string; ivs?: number[] }[] }) {
+  const [lefty] = useLefty()
+  const LAST = 16
+  return (
+    <figure className={s.tableFig}>
+      <ul className={s.floors}>
+        {rows.map((r, i) => {
+          const limit = r.ivs?.length ? Math.min(...r.ivs.map((v) => LIMITS[v])) : 0
+          const bands: FretBand[] = []
+          const dots: FretDot[] = []
+          OPEN.forEach((o, str) => {
+            const f = limit - o
+            if (f > LAST) return
+            bands.push({ str, from: Math.max(1, f), to: LAST, cls: 'band-clear' })
+            // the floor itself: the first clear fret on this string
+            if (f >= 1) dots.push({ str, fret: f, label: String(f), pen: 'pen-green' })
+          })
+          return (
+            <li key={i} className={s.floorRow}>
+              <p className={s.floorText}>
+                <CText text={r.text} />
+              </p>
+              <Fretboard strings={5} from={0} to={LAST} dots={dots} bands={bands} lefty={lefty} className={s.floorNeck} />
+            </li>
+          )
+        })}
+      </ul>
+      <p className={s.caption}>
+        <span className={cx(s.sw, s.swChord)} /> <CText text="clear: the **lower** note of the pair can sit here. The ring is the floor on each string, with its fret. The same pitch is five frets higher on each lower string ([[Law1]]), so the clear part is a diagonal. Blank = mud." />
+      </p>
+    </figure>
+  )
+}
+
 // ───────────── Chapter 1: registers ─────────────
 
 /** The neck shaded by register: each band is a range of pitch, so it runs diagonally across the strings. */
@@ -610,6 +647,8 @@ export function BlockView({ b }: { b: CBlock }) {
       return <LawOneDrill />
     case 'zones':
       return <ZonesBlock />
+    case 'floors':
+      return <FloorsBlock rows={b.rows} />
     case 'registers':
       return <RegistersBlock />
     case 'harmonics':

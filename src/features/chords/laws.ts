@@ -178,12 +178,12 @@ export const LAWS: Law[] = [
       },
       { t: 'h', text: 'The logic: the floor depends on the interval' },
       {
-        t: 'list',
-        items: [
-          '**Wide intervals** (a tenth, anything over an octave) and the **tritone** sound clear almost anywhere.',
-          '**Fifths** are clear from about A‑4 or E‑9.',
-          '**Thirds** need the chord register: from about G‑4, D‑9 or A‑14.',
-          '**Seconds** only work up high: from about G‑8.',
+        t: 'floors',
+        rows: [
+          { text: '**Wide intervals** (a tenth, anything over an octave) and the **tritone** sound clear almost anywhere.' },
+          { text: '**Fifths** are clear from about A‑4 or E‑9.', ivs: [7] },
+          { text: '**Thirds** need the chord register: from about G‑4, D‑9 or A‑14.', ivs: [4] },
+          { text: '**Seconds** only work up high: from about G‑8.', ivs: [2] },
         ],
       },
       {
