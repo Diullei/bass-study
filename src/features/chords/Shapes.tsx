@@ -35,9 +35,33 @@ export function PenKey() {
           <span className={s.sw} /> 5th
         </li>
       </ul>
-      <p className={s.zoneKey}>
-        Tap a note of a shape: <span className={cx(s.sw, s.swClear)} /> a second note here is clear with it · <span className={cx(s.sw, s.swMud)} /> mud (<CText text="[[Law2]]" />)
-      </p>
+      <div className={s.zoneKey} aria-label="What the shading means">
+        <b className={s.zoneKeyTitle}>
+          tap a note: what fits with it? <CText text="[[Law2]]" />
+        </b>
+        <ul>
+          <li>
+            <svg className={s.zoneKeyDot} viewBox="0 0 34 34" aria-hidden>
+              <circle cx="17" cy="17" r="15" fill="none" stroke="currentColor" strokeWidth="1.4" strokeDasharray="3 3" />
+              <circle cx="17" cy="17" r="10" fill="currentColor" />
+            </svg>
+            the note you tapped
+          </li>
+          <li>
+            <span className={cx(s.sw, s.swClear)} />
+            <span>
+              <b>clear</b>: a second note here sounds clean with it
+            </span>
+          </li>
+          <li>
+            <span className={cx(s.sw, s.swMud)} />
+            <span>
+              <b>mud</b>: too close to it for this height
+            </span>
+          </li>
+          <li>no shade: the same note · tap again to hide</li>
+        </ul>
+      </div>
       {F.show && <FingerKey />}
     </div>
   )
@@ -113,8 +137,15 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
         )}
         {held && words && (
           <span className={s.zoneNote}>
-            Above {held.deg} ({pitchName(held.midi)}): {words.mud.length ? <>mud = {words.mud.join(', ')}</> : 'nothing is mud'}
-            {words.clear.length ? <> · clear = {words.clear.join(', ')}, and an octave or more</> : ' · clear = an octave or more'}
+            <span>
+              Above {held.deg} ({pitchName(held.midi)}):
+            </span>
+            <span>
+              <span className={cx(s.sw, s.swMud)} /> mud: {words.mud.length ? words.mud.join(', ') : 'nothing'}
+            </span>
+            <span>
+              <span className={cx(s.sw, s.swClear)} /> clear: {words.clear.length ? `${words.clear.join(', ')}, an octave or more` : 'an octave or more'}
+            </span>
           </span>
         )}
       </figcaption>

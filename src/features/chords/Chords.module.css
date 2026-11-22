@@ -371,18 +371,55 @@
   background: color-mix(in srgb, var(--red-pen) 28%, transparent);
 }
 .zoneKey {
-  margin: 0;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 6px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 12px 8px;
   font: 400 var(--fs-sm) var(--font-hand);
   color: var(--pencil);
+  border: 1.5px dashed var(--pencil-light);
+  border-radius: var(--wobble-1);
+}
+.zoneKeyTitle {
+  color: var(--ink);
+}
+.zoneKey ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.zoneKey li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.zoneKey li b {
+  color: var(--ink);
+}
+.zoneKey li > .sw,
+.zoneKeyDot {
+  flex: none;
+  width: 22px;
+}
+.zoneKeyDot {
+  height: 22px;
+  color: var(--ink);
 }
 .zoneNote {
   flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
   font-size: var(--fs-xs);
   color: var(--pencil);
+}
+.zoneNote .sw {
+  width: 14px;
+  height: 10px;
+  margin-right: 2px;
 }
 .zoneBtn {
   padding: 0;
