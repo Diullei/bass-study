@@ -64,7 +64,8 @@ export interface Chapter {
   piano: string
   /** Bass logic: how the laws turn it into something playable. */
   blocks: CBlock[]
-  drills: string[]
+  /** A drill is a line of rich text, or a line with diagrams under it (the shapes to play, a play-along …). */
+  drills: (string | { text: string; blocks: CBlock[] })[]
   /** The test for moving on. */
   ready: string
   checks: Check[]

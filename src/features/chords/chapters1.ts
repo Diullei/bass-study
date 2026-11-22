@@ -358,7 +358,25 @@ export const CHAPTERS_1: Chapter[] = [
       },
     ],
     drills: [
-      "**Cycle of fourths, alternating.** Roots on the E string take a 10th, roots on the A string take a 7th: {C7:x-8-x-x-9}, {F7:x-x-8-x-8}, {B♭7:x-6-x-x-7}, {E♭7:x-x-6-x-6}, and continue down the neck. The hand moves two frets every two chords.",
+      {
+        text: "**Cycle of fourths, alternating.** Roots on the E string take a 10th, roots on the A string take a 7th. The hand moves down two frets every two chords; continue down the neck until you run out of frets, then start again from another root.",
+        blocks: [
+          {
+            t: "shapes",
+            title: "The cycle: C7 → F7 → B♭7 → E♭7 → A♭7 → D♭7",
+            seq: true,
+            rows: [
+              "C7 | x-8-x-x-9 | root on E: root and 10th",
+              "F7 | x-x-8-x-8 | root on A: root and ♭7",
+              "B♭7 | x-6-x-x-7 | two frets down: root and 10th",
+              "E♭7 | x-x-6-x-6 | root and ♭7",
+              "A♭7 | x-4-x-x-5 | two frets down: root and 10th",
+              "D♭7 | x-x-4-x-4 | root and ♭7",
+            ],
+            caption: "Step through it with ▶: the top note falls a half step at every change (E, E♭, D, D♭, C, C♭), and the root crosses between the E and A strings.",
+          },
+        ],
+      },
       "**10ths scale** in C, up and down, split texture (T on the beat, finger off the beat). Then in F and G.",
       "**II–V–I in two notes**, in C, then B♭, E♭, F, G. Say the degrees of the top voice aloud.",
       "**Ear:** play a root, sing the 10th, then play it.",

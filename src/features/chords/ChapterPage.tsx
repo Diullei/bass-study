@@ -4,7 +4,7 @@ import { RuleRef } from '../harmony/HText'
 import { KEYS, store } from '../../state/storage'
 import { Button, Lead, Notebook, PageTitle, Section, SectionTitle, Select, StickyNote, UnitLabel, type OptionGroup } from '../../ui'
 import { NotebookHeader } from '../shell/NotebookHeader'
-import { Blocks, CheckList } from './Blocks'
+import { Blocks, BlockView, CheckList } from './Blocks'
 import { chapterById, CHAPTERS, PARTS } from './chapters'
 import { ChordsQuiz } from './ChordsQuiz'
 import { CText, LawRef, linksIn } from './CText'
@@ -91,7 +91,14 @@ function ChapterView({ C }: { C: Chapter }) {
             <ol className={s.steps}>
               {C.drills.map((d, i) => (
                 <li key={i}>
-                  <CText text={d} />
+                  <CText text={typeof d === 'string' ? d : d.text} />
+                  {typeof d !== 'string' && (
+                    <div className={s.drillBlocks}>
+                      {d.blocks.map((b, k) => (
+                        <BlockView key={k} b={b} />
+                      ))}
+                    </div>
+                  )}
                 </li>
               ))}
             </ol>

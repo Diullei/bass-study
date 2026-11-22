@@ -107,6 +107,23 @@
   }
 }
 
+/* diagrams under a drill: the list keeps its reading width for text, the diagrams take the page */
+.steps:has(.drillBlocks) {
+  max-width: none;
+}
+.steps:has(.drillBlocks) > li {
+  max-width: none;
+}
+.steps:has(.drillBlocks) > li::marker {
+  font-weight: 700;
+}
+.drillBlocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin: var(--sp-2) 0 var(--sp-3);
+}
+
 /* ───── links ───── */
 .lawRef,
 .chRef {
