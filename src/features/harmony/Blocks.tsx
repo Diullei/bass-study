@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { midiOf, nm, pc } from '../../theory/notes'
 import { Button, cx, FactList, StickyNote } from '../../ui'
+import { OnBass } from '../chords/OnBass'
 import { HText } from './HText'
 import { Piano, type KeyMark } from './Piano'
 import { useSteps, type Step } from './sound'
@@ -64,6 +65,10 @@ function Listen({ b }: { b: Extract<HBlock, { t: 'listen' }> }) {
   const all = steps.flat()
   const starts = steps.map((_, i) => steps.slice(0, i).reduce((a, x) => a + x.length, 0))
   const cur = P.at == null ? null : which != null ? which : starts.reduce((acc, st, i) => (st <= (P.at as number) ? i : acc), 0)
+  // the chords of the items, on the bass. Items that add a single note over a chord are about that note, not a shape.
+  const [shown, setShown] = useState(0)
+  const plain = b.items.every((it) => it.chord && !it.notes)
+  const neck = !plain ? null : b.items.every((it) => segs(it.chord).length === 1) ? { row: true, chords: b.items.map((it) => it.chord!) } : { row: false, chords: segs(b.items[shown].chord) }
   return (
     <figure className={s.listen}>
       <figcaption>
@@ -78,13 +83,19 @@ function Listen({ b }: { b: Extract<HBlock, { t: 'listen' }> }) {
             key={i}
             type="button"
             className={cx(s.listenItem, cur === i && s.on)}
-            onClick={() => (P.playing && which === i ? P.stop() : (setWhich(i), P.play(steps[i], b.tempo ?? 84)))}
+            onClick={() => (setShown(i), P.playing && which === i ? P.stop() : (setWhich(i), P.play(steps[i], b.tempo ?? 84)))}
           >
             {cur === i ? '■' : '▶'} {it.label}
           </button>
         ))}
       </div>
       {b.caption && <p className={s.caption}><HText text={b.caption} /></p>}
+      {neck &&
+        (neck.row ? (
+          <OnBass chords={neck.chords} title="The same chords on the bass" row />
+        ) : (
+          <OnBass key={shown} chords={neck.chords} title={`On the bass: ${b.items[shown].label}`} />
+        ))}
     </figure>
   )
 }
@@ -171,6 +182,7 @@ function Chart({ b }: { b: Extract<HBlock, { t: 'chart' }> }) {
         ))}
       </div>
       {b.caption && <p className={s.caption}><HText text={b.caption} /></p>}
+      <OnBass chords={cells.map((c) => c.sym)} title="The same chords on the bass" />
     </figure>
   )
 }
@@ -251,6 +263,7 @@ export function ScaleView({ chord, scale, caption }: { chord: string; scale: str
       <RoleKey />
       <RoleList A={A} />
       {caption && <p className={s.caption}><HText text={caption} /></p>}
+      <OnBass chords={[chord]} title="On the bass" row scale={scale} caption="Press “scale” in the corner of the neck to see this scale around the chord, under the same hand." />
     </figure>
   )
 }

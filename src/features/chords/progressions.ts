@@ -65,6 +65,14 @@ export const PROGS: Prog[] = [
   { id: 'bossa', name: 'I – II7 – II – ♭II7 (bossa)', bars: 'Cmaj7 | D7 | Dm7 | D♭7', key: 'C' },
   { id: 'rhythm-a', name: 'Rhythm changes, first four bars', bars: 'Cmaj7 A7 | Dm7 G7 | Em7 A7 | Dm7 G7', key: 'C' },
   { id: 'ladybird', name: 'Major 7ths in a turnaround', bars: 'Cmaj7 E♭maj7 | A♭maj7 D♭maj7 | Cmaj7 E♭maj7 | A♭maj7 D♭maj7', key: 'C' },
+  // from the harmony lessons
+  { id: 'five-qualities', name: 'One root, five kinds of seventh chord', bars: 'Cmaj7 | C7 | Cm7 | Cm7♭5 | C°7 | C°7', key: 'C' },
+  { id: 'diatonic-fifths', name: 'The seven chords of the key, in falling fifths', bars: 'Cmaj7 | Fmaj7 | Bm7♭5 | Em7 | Am7 | Dm7 | G7 | Cmaj7', key: 'C' },
+  { id: 'five-one', name: 'V – I, and V – VI (deceptive)', bars: 'G7 | Cmaj7 | G7 | Am7', key: 'C' },
+  { id: 'secondary', name: 'A secondary dominant before every chord', bars: 'Cmaj7 A7 | Dm7 B7 | Em7 A7 | Dm7 G7', key: 'C' },
+  { id: 'borrowed-iv', name: 'I – IVm6 – I (borrowed from minor)', bars: 'Cmaj7 | Fm6 | Cmaj7 | Fm6', key: 'C' },
+  { id: 'dim-walk', name: 'Passing diminished chords, up the key', bars: 'Cmaj7 C♯°7 | Dm7 D♯°7 | Em7 A7 | Dm7 G7', key: 'C' },
+  { id: 'bird-blues', name: 'Blues with II–Vs (Bird blues)', bars: 'Fmaj7 | Em7♭5 A7 | Dm7 G7 | Cm7 F7 | B♭7 | B♭m7 E♭7 | Am7 D7 | A♭m7 D♭7 | Gm7 | C7 | Fmaj7 D7 | Gm7 C7', key: 'F' },
   { id: 'thirds', name: 'Key centres a major 3rd apart', bars: 'Cmaj7 | E♭7 | A♭maj7 | B7 | Emaj7 | G7 | Cmaj7 | Cmaj7', key: 'C', ch: 23 },
 ]
 

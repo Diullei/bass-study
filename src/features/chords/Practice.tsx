@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useHandSize } from '../../state/prefs'
 import { KEYS as STORE, load, store } from '../../state/storage'
-import { fingerings } from '../../theory/fingering'
 import { Button, Field, FieldGrid, Section, SectionTitle, Segmented, Select, cx } from '../../ui'
 import { CText } from './CText'
-import { LAYERS, voiceLead, type Found, type Layer, type Style } from './finder'
-import { PRACTICE } from './practice'
+import { LAYERS, voiceLead, type Layer, type Style } from './finder'
+import { playableBy } from './OnBass'
+import { PRACTICE, type PracticePlan } from './practice'
 import { progById, progIn } from './progressions'
 import { Voiced } from './ToolPages'
 import s from './Chords.module.css'
@@ -24,8 +24,8 @@ const STYLES: { value: PStyle; label: string; what: string }[] = [
  * The end of a chapter: its progressions, to take round the twelve keys in fourths, in the voicing the chapter teaches.
  * The shapes are worked out for the key and the style chosen, so every key shows its own voicing.
  */
-export function Practice({ chapter }: { chapter: string }) {
-  const plan = PRACTICE[chapter]
+export function Practice({ chapter, plan: given }: { /** An id for remembering the keys played: a chapter of the chord method, or "harmony:…". */ chapter: string; /** A plan from outside the chord method (the harmony lessons). */ plan?: PracticePlan }) {
+  const plan = given ?? PRACTICE[chapter]
   const [hand] = useHandSize()
   const [pid, setPid] = useState(plan?.progs[0] ?? '')
   const [layer, setLayer] = useState<Layer>(plan?.layers[0] ?? 'shell')
@@ -37,10 +37,7 @@ export function Practice({ chapter }: { chapter: string }) {
   const played = done[slot] ?? []
   const out = useMemo(() => {
     if (!p) return null
-    const playable = (f: Found) => {
-      const fr = f.shape.split('-').map((t, str) => ({ str, fret: +t })).filter((n) => n.fret > 0)
-      return !fr.length || fingerings(fr, hand).length > 0
-    }
+    const playable = playableBy(hand)
     const bars = progIn(p, key)
     const run = (st: Style) => voiceLead(bars.flat(), layer, 'auto', 9, st, playable)
     const V = run(style)

@@ -8,7 +8,7 @@ import { FAM, parseSym, spell, type ChordSym, type Family } from './voicing'
 
 export type ScaleId =
   | 'ionian' | 'dorian' | 'phrygian' | 'lydian' | 'mixolydian' | 'aeolian' | 'locrian'
-  | 'melodic' | 'lydDom' | 'altered' | 'halfWhole' | 'wholeHalf' | 'phrygDom' | 'locrian2' | 'lydAug' | 'wholeTone' | 'mixoB13'
+  | 'melodic' | 'harmonic' | 'lydDom' | 'altered' | 'halfWhole' | 'wholeHalf' | 'phrygDom' | 'locrian2' | 'lydAug' | 'wholeTone' | 'mixoB13'
 
 export const SCALES: Record<ScaleId, { name: string; ivs: number[] }> = {
   ionian: { name: 'Ionian (major)', ivs: [0, 2, 4, 5, 7, 9, 11] },
@@ -19,6 +19,7 @@ export const SCALES: Record<ScaleId, { name: string; ivs: number[] }> = {
   aeolian: { name: 'Aeolian (natural minor)', ivs: [0, 2, 3, 5, 7, 8, 10] },
   locrian: { name: 'Locrian', ivs: [0, 1, 3, 5, 6, 8, 10] },
   melodic: { name: 'melodic minor', ivs: [0, 2, 3, 5, 7, 9, 11] },
+  harmonic: { name: 'harmonic minor', ivs: [0, 2, 3, 5, 7, 8, 11] },
   lydDom: { name: 'Lydian dominant', ivs: [0, 2, 4, 6, 7, 9, 10] },
   altered: { name: 'altered', ivs: [0, 1, 3, 4, 6, 8, 10] },
   halfWhole: { name: 'half–whole diminished', ivs: [0, 1, 3, 4, 6, 7, 9, 10] },
@@ -74,6 +75,8 @@ export interface ScaleContext {
   next?: string
   /** Pitch classes the scale must hold: the notes the shape itself plays. */
   must?: number[]
+  /** Use this scale, whatever the context says (a lesson that is about one scale). */
+  force?: ScaleId
 }
 
 const has = (c: ChordSym, ...t: string[]) => t.some((x) => c.rest.includes(x))
@@ -184,12 +187,12 @@ function choose(c: ChordSym, ctx: ScaleContext): [ScaleId, string] {
 /** The scale for one chord. With a context (key, next chord) the choice follows the progression. */
 export function chordScale(sym: string, ctx: ScaleContext = {}): ChordScale {
   const c = parseSym(sym)
-  let [id, why] = choose(c, ctx)
+  let [id, why] = ctx.force ? [ctx.force, 'the scale this lesson is about'] : choose(c, ctx)
   const core = CORE[c.fam]
   // the shape plays a note the usual scale does not have (a 9 on a half-diminished chord …): take the first scale that holds it
   const need = (ctx.must ?? []).map((pc) => (pc - c.root + 12) % 12)
   const holds = (x: ScaleId) => need.every((iv) => SCALES[x].ivs.includes(iv))
-  if (!holds(id)) {
+  if (!ctx.force && !holds(id)) {
     const alt = (Object.keys(SCALES) as ScaleId[]).find((x) => holds(x) && core.every((iv) => SCALES[x].ivs.includes(iv)))
     if (alt) [id, why] = [alt, 'chosen for the colours this shape plays']
   }

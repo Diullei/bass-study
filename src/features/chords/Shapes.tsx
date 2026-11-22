@@ -265,7 +265,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
 }
 
 /** A `shapes` block: cards, or for a progression (seq) the voice lines and the moves between chords. */
-export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { title?: string; rows: string[]; caption?: string; seq?: boolean; tempo?: number; zones?: boolean }) {
+export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones, scales }: { title?: string; rows: string[]; caption?: string; seq?: boolean; tempo?: number; zones?: boolean; /** A scale per row, when the page has already chosen them. */ scales?: (ChordScale | undefined)[] }) {
   const P = useClip<number>()
   const [addRoot, setAddRoot] = useState(true)
   const items = rows.map(parseRow).map((r) => ({ ...r, I: info(r.sym, r.shape) }))
@@ -291,7 +291,7 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { 
       {seq && items.length > 1 && <Progression items={items} at={P.cue} onPick={playOne} />}
       <div className={cx(s.cards, seq && s.cardsSeq)}>
         {items.map((x, i) => (
-          <ShapeCard key={i} I={x.I} note={x.note} on={P.cue === i} active={P.cue === i} onPlay={() => playOne(i)} sf={seqF ? seqF[i] : undefined} zones={zones} scale={seqScales?.[i]} />
+          <ShapeCard key={i} I={x.I} note={x.note} on={P.cue === i} active={P.cue === i} onPlay={() => playOne(i)} sf={seqF ? seqF[i] : undefined} zones={zones} scale={scales?.[i] ?? seqScales?.[i]} />
         ))}
       </div>
       {caption && (

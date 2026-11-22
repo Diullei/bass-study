@@ -6,6 +6,8 @@ import { NotebookHeader } from '../shell/NotebookHeader'
 import { BlockView, CheckList } from './Blocks'
 import { HarmonyQuiz } from './HarmonyQuiz'
 import { HText, RuleRef, rulesIn } from './HText'
+import { Practice } from '../chords/Practice'
+import { HARMONY_PLANS } from './practice'
 import { lessonById, LESSONS, PARTS, type HLesson } from './lessons'
 import { HARMONY_PATH, harmonyLessonPath } from './paths'
 import { PASS, useHarmonyProgress } from './progress'
@@ -79,6 +81,7 @@ function LessonView({ L }: { L: HLesson }) {
           <SectionTitle>Practice</SectionTitle>
           <FactList items={L.practice.map((x, i) => <HText key={i} text={x} />)} />
         </Section>
+        <Practice key={L.id} chapter={`harmony:${L.id}`} plan={HARMONY_PLANS[k]} />
         {L.check.length > 0 && (
           <Section>
             <SectionTitle>Check yourself</SectionTitle>

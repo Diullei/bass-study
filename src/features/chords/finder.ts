@@ -80,10 +80,33 @@ const TRIAD: Record<Kind, string[]> = {
   maj7: ['R', '3', '5'], '6': ['R', '3', '5'], '7': ['R', '3', '5'], sus: ['R', '4', '5'], m7: ['R', '♭3', '5'], m6: ['R', '♭3', '5'], mmaj: ['R', '♭3', '5'], hdim: ['R', '♭3', '♭5'], dim: ['R', '♭3', '♭5'],
 }
 
+/** The colours a symbol asks for by name: G13 → 13, Dm9 → 9, G7♯9♭13 → ♯9 ♭13, G7alt → ♯9 ♭13. */
+export function namedColours(c: ChordSym): string[] {
+  const r = c.rest.replace(/^m7b5/, 'm7').replace(/sus4?/, '')
+  if (r.includes('alt')) return ['♯9', '♭13']
+  const out: string[] = []
+  if (r.includes('b9')) out.push('♭9')
+  if (r.includes('#9')) out.push('♯9')
+  if (/(?<![b#\d])9/.test(r)) out.push('9')
+  if (r.includes('#11')) out.push('♯11')
+  else if (/(?<![#\d])11/.test(r)) out.push('11')
+  if (r.includes('b13')) out.push('♭13')
+  else if (/(?<![b\d])13/.test(r)) out.push('13')
+  if (r.includes('#5')) out.push('♯5')
+  return out.filter((d) => FAM[c.fam][DEG[d]] != null)
+}
+
 /** The degree sets to search for a chord in a layer (alternatives). */
 export function degreeSets(c: ChordSym, layer: Layer, dom: string[]): string[][] {
   const k = kindOf(c)
   const P = PAIR[k]
+  const N = namedColours(c)
+  // a symbol that names its colours gets them: one on a shell or a rootless shape, two on the grid
+  if (N.length && layer !== 'triad' && layer !== 'quartal' && layer !== 'pair' && layer !== 'root2') {
+    if (layer === 'grid') return [[...P, N[0], N[1] ?? (k === 'maj7' || k === 'm7' ? '5' : dom.find((d) => DEG[d] !== DEG[N[0]] && Math.abs(DEG[d] - DEG[N[0]]) > 1) ?? '5')]]
+    if (layer === 'rootless') return N.slice(0, 2).map((x) => [...P, x])
+    return N.slice(0, 2).map((x) => ['R', ...P, x])
+  }
   const C = colours(k, dom)
   switch (layer) {
     case 'root2':
@@ -224,7 +247,10 @@ export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto'
     const next = C.slice(i + 1).find((x) => x.sym !== c.sym) ?? C[0]
     const dc = kindOf(c) === '7' ? domColours(c, next === c ? null : next, pref) : null
     const sets = degreeSets(c, layer, dc?.degs ?? ['9', '13'])
-    const every = sets.flatMap((d) => find(c.root, d.filter((x) => FAM[c.fam][DEG[x]] != null || x === '6' || x === '°7'), layer))
+    const search = (S: string[][]) => S.flatMap((d) => find(c.root, d.filter((x) => FAM[c.fam][DEG[x]] != null || x === '6' || x === '°7'), layer))
+    // a half-diminished shell shows its ♭5 when the hand can reach it: without it the shape is a plain m7
+    const withB5 = kindOf(c) === 'hdim' && layer === 'shell' ? search(sets.filter((d) => d.includes('♭5'))) : []
+    const every = withB5.length ? withB5 : search(sets)
     // shapes the hand cannot hold are left out, unless nothing else exists
     const held = playable ? every.filter(playable) : every
     const all = held.length ? held : every
