@@ -432,7 +432,20 @@
   height: 10px;
   border-width: 1.5px;
 }
+.swSq {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-width: 1.2px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ink) 15%, var(--paper-sheet));
+}
+.swSqColour {
+  border-color: var(--blue-pen);
+  background: color-mix(in srgb, var(--blue-pen) 15%, var(--paper-sheet));
+}
 .swPass {
+  background: var(--paper-sheet);
   border-color: var(--pencil);
   border-style: dashed;
 }

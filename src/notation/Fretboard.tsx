@@ -209,8 +209,11 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
               {d.warn && <circle className={styles.warnRing} cx={x} cy={y} r={14} />}
               {d.harmonic ? (
                 <path className={styles.dot} d={`M${x} ${y - 12} L${x + 12} ${y} L${x} ${y + 12} L${x - 12} ${y} Z`} />
+              ) : d.ghost ? (
+                // a helper note is a small square: never mistaken for a note of the shape
+                <rect className={styles.dot} x={x - 7.8} y={y - 7.8} width={15.6} height={15.6} rx={3.2} />
               ) : (
-                <circle className={styles.dot} cx={x} cy={y} r={d.ghost ? 8.4 : 10.5} />
+                <circle className={styles.dot} cx={x} cy={y} r={10.5} />
               )}
               <text className={styles.dlab} x={x} y={y + (d.ghost ? 3 : 4)} textAnchor="middle">
                 {d.label}

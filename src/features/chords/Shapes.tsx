@@ -46,16 +46,19 @@ export function ScaleKey() {
       {
         <ul>
           <li>
-            <span className={cx(s.sw, s.swSmall)} /> small dots: the other notes of the scale that fits the chord, under the same hand
+            <span className={cx(s.sw, s.swSq)} />
+            <span>
+              <b>small squares</b>: the other notes of the scale, under the same hand. Round dots are the notes of the chord shape
+            </span>
           </li>
           <li>
-            <span className={cx(s.sw, s.swSmall, s.swColour)} />
+            <span className={cx(s.sw, s.swSq, s.swSqColour)} />
             <span>
               <b>blue</b>: a colour you can hold over the chord
             </span>
           </li>
           <li>
-            <span className={cx(s.sw, s.swSmall, s.swPass)} />
+            <span className={cx(s.sw, s.swSq, s.swPass)} />
             <span>
               <b>dashed</b>: a passing note, a half step above a chord tone. Play through it, do not stop on it
             </span>
