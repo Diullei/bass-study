@@ -1,0 +1,128 @@
+/* PROPOSAL: a chord shape inside a sentence (see ShapeRef.tsx) */
+
+/* A: five cells, the string over its fret */
+.a {
+  display: inline-flex;
+  margin: 0 2px;
+  vertical-align: middle;
+  border: 1px solid var(--pencil-light);
+  border-radius: 4px;
+  background: var(--paper-sheet);
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1;
+}
+.a > span {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 1.25em;
+}
+.a > span + span {
+  border-left: 1px solid var(--pencil-light);
+}
+.a i {
+  align-self: stretch;
+  padding: 1px 0;
+  font: 700 0.6em var(--font-hand);
+  text-align: center;
+  color: var(--paper-sheet);
+  background: var(--ink-soft);
+}
+.a b {
+  padding: 1px 3px 2px;
+  font: 600 0.8em var(--font-mono);
+  color: var(--ink);
+}
+.aOff i {
+  color: var(--pencil);
+  background: color-mix(in srgb, var(--pencil-light), transparent 55%);
+}
+.aOff b {
+  font-weight: 400;
+  color: var(--pencil-light);
+}
+
+/* B: one line; only the strings that sound are named, a muted string is a thin slot */
+.b {
+  display: inline-flex;
+  align-items: stretch;
+  margin: 0 2px;
+  vertical-align: baseline;
+  border: 1px solid var(--pencil-light);
+  border-radius: 4px;
+  background: var(--paper-sheet);
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1.15;
+}
+.b > span + span {
+  border-left: 1px solid var(--pencil-light);
+}
+.bOn {
+  display: inline-flex;
+  align-items: baseline;
+}
+.bOn i {
+  padding: 0 3px;
+  font: 700 0.82em var(--font-hand);
+  color: var(--paper-sheet);
+  background: var(--ink-soft);
+}
+.bOn b {
+  padding: 0 4px;
+  font: 600 0.88em var(--font-mono);
+  color: var(--ink);
+}
+.bOff {
+  width: 7px;
+  background: repeating-linear-gradient(135deg, transparent 0 2px, var(--pencil-light) 2px 3px);
+}
+
+/* C: a tiny neck, then the frets as they are written today */
+.c {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 2px;
+  padding: 0 5px 0 3px;
+  vertical-align: baseline;
+  border: 1px solid var(--pencil-light);
+  border-radius: 4px;
+  background: var(--paper-sheet);
+  white-space: nowrap;
+  line-height: 1.15;
+}
+.c code {
+  font: 600 0.88em var(--font-mono);
+  color: var(--ink);
+}
+.glyph {
+  height: 1.55em;
+  align-self: center;
+}
+.gString {
+  stroke: var(--ink-soft);
+  stroke-width: 0.6;
+}
+.gMute {
+  stroke: var(--pencil-light);
+  stroke-width: 0.5;
+  stroke-dasharray: 1.2 1.6;
+}
+.gWire {
+  stroke: var(--pencil-light);
+  stroke-width: 0.5;
+}
+.gNut {
+  stroke: var(--ink-soft);
+  stroke-width: 1.4;
+}
+.gDot {
+  fill: var(--ink);
+}
+.gOpen {
+  fill: var(--paper-sheet);
+  stroke: var(--ink);
+  stroke-width: 0.7;
+}
