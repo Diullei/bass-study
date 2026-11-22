@@ -193,6 +193,7 @@ export const LAWS: Law[] = [
       { t: 'h', text: 'Example: the same notes, low and high' },
       {
         t: 'shapes',
+        zones: true,
         rows: [
           'G | x-3-2-x-x | a major 3rd at E‑3: below its floor, a rumble',
           'C | x-x-x-10-9 | a major 3rd at D‑10: inside the chord band, clear',
@@ -209,6 +210,7 @@ export const LAWS: Law[] = [
       },
       {
         t: 'shapes',
+        zones: true,
         rows: [
           'C | x-8-7-x-x | the 3rd next: a major 3rd on C2, almost an octave under its floor (B2). Mud',
           'C | x-8-10-x-x | the 5th next: a fifth on C2, one half step under its floor (C♯2). Dull, and it does not name the chord',
@@ -220,6 +222,7 @@ export const LAWS: Law[] = [
       { t: 'h', text: 'The same repair on other chords' },
       {
         t: 'shapes',
+        zones: true,
         rows: [
           'G7 | x-3-2-3-x | 3rd right above a low root: mud',
           'G7 | x-3-x-3-4 | the 3rd moved up an octave: a 7th at the bottom, a tritone on top',

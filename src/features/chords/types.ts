@@ -31,7 +31,7 @@ export type CBlock =
    * Notes and degrees are computed. `seq` = a progression: played in order, with its top line shown.
    * Rootless shapes get their root added by the "thumb" on playback (it can be switched off).
    */
-  | { t: 'shapes'; title?: string; rows: string[]; caption?: string; seq?: boolean; tempo?: number }
+  | { t: 'shapes'; title?: string; rows: string[]; caption?: string; seq?: boolean; tempo?: number; zones?: boolean }
   /** Chapter 1: the interval map, computed from Law 1. Click a cell to hear it. `down`: the map backwards, from a note to the notes below it. */
   | { t: 'map'; down?: boolean }
   /** Law 1: the reach solver. A root, its string and a degree → every placement the hand can hold, and how to get there when the first answer is out of reach. */

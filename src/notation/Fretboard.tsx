@@ -17,6 +17,8 @@ export interface FretDot {
   active?: boolean
   /** Fretting-hand finger, 1–4: a small pencil tag on the dot. */
   finger?: number
+  /** Selected: a dashed halo around the dot. */
+  picked?: boolean
 }
 
 /** One finger laid flat across several strings at one fret (a barre). */
@@ -68,6 +70,8 @@ export interface FretboardProps {
   lefty?: boolean
   /** Make the neck answerable: called with the string and fret of the place that was clicked. */
   onPick?: (str: number, fret: number) => void
+  /** Make the dots clickable: called with the index of the dot in `dots`. */
+  onDot?: (i: number) => void
   /** Number every fret, not only the inlay frets. */
   allNumbers?: boolean
   className?: string
@@ -77,7 +81,7 @@ const NAMES = { 4: ['E', 'A', 'D', 'G'], 5: ['B', 'E', 'A', 'D', 'G'] }
 const INLAY = [3, 5, 7, 9, 15, 17, 19, 21]
 
 /** A hand-drawn bass neck, G string on top (as in tab), with labelled dots. */
-export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands = [], barres = [], hand, lefty: leftyProp, allNumbers = false, onPick, className }: FretboardProps) {
+export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands = [], barres = [], hand, lefty: leftyProp, allNumbers = false, onPick, onDot, className }: FretboardProps) {
   const [leftySetting] = useLefty()
   const lefty = leftyProp ?? leftySetting
   const n = to - (from === 0 ? 1 : from) + 1
@@ -170,12 +174,32 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
         </g>
       )}
       {dots
-        .filter((d) => inWindow(d.fret) && d.str < strings)
-        .map((d, i) => {
+        .map((d, i) => [d, i] as const)
+        .filter(([d]) => inWindow(d.fret) && d.str < strings)
+        .map(([d, i]) => {
           const x = X(d.harmonic ? wireX(d.fret) : cx(d.fret))
           const y = yOf(d.str)
           return (
-            <g key={i} className={`${d.pen ?? ''} ${d.root ? styles.root : ''} ${d.active ? styles.active : ''}`}>
+            <g
+              key={i}
+              className={`${d.pen ?? ''} ${d.root ? styles.root : ''} ${d.active ? styles.active : ''} ${onDot ? styles.tap : ''}`}
+              {...(onDot
+                ? {
+                    role: 'button',
+                    tabIndex: 0,
+                    'aria-pressed': !!d.picked,
+                    'aria-label': `${NAMES[strings][d.str]} string, fret ${d.fret}: show what is clear with it`,
+                    onClick: () => onDot(i),
+                    onKeyDown: (e: React.KeyboardEvent) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        onDot(i)
+                      }
+                    },
+                  }
+                : {})}
+            >
+              {d.picked && <circle className={styles.halo} cx={x} cy={y} r={15} />}
               {d.harmonic ? (
                 <path className={styles.dot} d={`M${x} ${y - 12} L${x + 12} ${y} L${x} ${y + 12} L${x - 12} ${y} Z`} />
               ) : (

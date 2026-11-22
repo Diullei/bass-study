@@ -1,4 +1,4 @@
-import { Fretboard, type FretBarre, type FretDot, type FretHand } from './Fretboard'
+import { Fretboard, type FretBand, type FretBarre, type FretDot, type FretHand } from './Fretboard'
 
 export interface ChordShapeProps {
   /** Frets low string to high, e.g. "x-8-x-9-9"; "0" open, "h7" a harmonic over fret 7. */
@@ -17,6 +17,12 @@ export interface ChordShapeProps {
   barres?: FretBarre[]
   /** The hand position marker under the neck. */
   hand?: FretHand
+  /** Shaded stretches behind the shape (e.g. the clear zones around one note). */
+  bands?: FretBand[]
+  /** Make the notes clickable: called with the index of the sounding note. */
+  onNote?: (i: number) => void
+  /** The selected sounding note (a dashed halo). */
+  picked?: number | null
   /** Mirror for a left-handed player. */
   lefty?: boolean
   /** At least this many frets in the window (default 4). */
@@ -39,7 +45,7 @@ export function shapeDots(shape: string) {
  * A chord shape on a short piece of the neck: the window fits the shape, muted strings get an ×,
  * harmonics are diamonds over the fret wire. Every fret of the window is numbered, so a shape can be found at once.
  */
-export function ChordShape({ shape, labels, pens, roots, active = [], fingers, barres, hand, lefty, minFrets = 4, className }: ChordShapeProps) {
+export function ChordShape({ shape, labels, pens, roots, active = [], fingers, barres, hand, bands, onNote, picked, lefty, minFrets = 4, className }: ChordShapeProps) {
   const toks = shape.split('-')
   const strings = toks.length === 4 ? 4 : 5
   const notes = shapeDots(shape)
@@ -59,6 +65,7 @@ export function ChordShape({ shape, labels, pens, roots, active = [], fingers, b
     root: roots?.[i],
     active: active.includes(i),
     finger: fingers?.[i] || undefined,
+    picked: picked === i,
   }))
-  return <Fretboard strings={strings} from={from} to={to} dots={dots} muted={muted} barres={barres} hand={hand} lefty={lefty} allNumbers className={className} />
+  return <Fretboard strings={strings} from={from} to={to} dots={dots} muted={muted} bands={bands} onDot={onNote} barres={barres} hand={hand} lefty={lefty} allNumbers className={className} />
 }

@@ -218,6 +218,58 @@ export const IV_NAME: Record<number, string> = {
   8: 'minor 6th', 9: 'major 6th', 10: 'minor 7th', 11: 'major 7th',
 }
 
+// ───────────── clear zones around one note (Law 2) ─────────────
+
+/**
+ * Two notes together: clear (true), mud (false), or the same pitch (null). The same rule as the checker:
+ * the lower note must be at or above the floor of the interval; an octave or more is always clear,
+ * and a low root under a 6th or 7th passes.
+ */
+export function clearPair(a: number, b: number, root: number): boolean | null {
+  const lo = Math.min(a, b)
+  const iv = Math.abs(a - b)
+  if (iv === 0) return null
+  if (iv >= 12) return true
+  if ((lo - root + 120) % 12 === 0 && iv >= 8) return true
+  return lo >= LIMITS[iv]
+}
+
+/** The neck around one held note, string by string: runs of frets where a second note is clear with it, or mud. */
+export function zonesAround(midi: number, root: number, strings = 5, last = 24): { str: number; from: number; to: number; clear: boolean }[] {
+  const out: { str: number; from: number; to: number; clear: boolean }[] = []
+  for (let str = 0; str < strings; str++) {
+    let run: (typeof out)[number] | null = null
+    for (let f = 1; f <= last; f++) {
+      const c = clearPair(midi, OPEN[str] + f, root)
+      if (c === null) {
+        run = null
+        continue
+      }
+      if (run && run.clear === c) run.to = f
+      else out.push((run = { str, from: f, to: f, clear: c }))
+    }
+  }
+  return out
+}
+
+const FAMILY: [string, number[]][] = [['2nds', [1, 2]], ['3rds', [3, 4]], ['a 4th', [5]], ['a tritone', [6]], ['a 5th', [7]], ['6ths', [8, 9]], ['7ths', [10, 11]]]
+
+/** In words: which intervals above a held note are mud at its height, and which are clear. */
+export function zoneWords(midi: number, root: number): { mud: string[]; clear: string[] } {
+  const mud: string[] = []
+  const clear: string[] = []
+  FAMILY.forEach(([name, ivs]) => {
+    const ok = ivs.map((iv) => clearPair(midi, midi + iv, root) === true)
+    if (ok.every(Boolean)) clear.push(name)
+    else if (ok.some(Boolean)) {
+      // the major one passes first: its floor is a half step lower
+      mud.push(`the ${IV_NAME[ivs[0]]}`)
+      clear.push(`the ${IV_NAME[ivs[1]]}`)
+    } else mud.push(name)
+  })
+  return { mud, clear }
+}
+
 // ───────────── registers (Chapter 1) ─────────────
 
 export type Band = 'bass' | 'chord' | 'melody'

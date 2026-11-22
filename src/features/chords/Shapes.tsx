@@ -9,7 +9,7 @@ import { fingerMoveText, fingerText, useFingers, type ShapeFingers } from './fin
 import { useLefty } from './progress'
 import { info, parseRow, penOf, shapeBar, type ShapeInfo } from './render'
 import { useClip } from './sound'
-import { bandsOf, IV_NAME } from './voicing'
+import { bandsOf, IV_NAME, pitchName, zonesAround, zoneWords } from './voicing'
 import s from './Chords.module.css'
 
 export const degsOf = (I: ShapeInfo) => I.a.notes.map((n) => n.deg)
@@ -35,6 +35,9 @@ export function PenKey() {
           <span className={s.sw} /> 5th
         </li>
       </ul>
+      <p className={s.zoneKey}>
+        Tap a note of a shape: <span className={cx(s.sw, s.swClear)} /> a second note here is clear with it · <span className={cx(s.sw, s.swMud)} /> mud (<CText text="[[Law2]]" />)
+      </p>
       {F.show && <FingerKey />}
     </div>
   )
@@ -50,7 +53,12 @@ export function mudNote(I: ShapeInfo): string | null {
 }
 
 /** A shape as a card: name, diagram, frets, notes and degrees (computed), the author's note. Click to hear it. */
-export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given }: { I: ShapeInfo; note?: string; on?: boolean; active?: boolean; onPlay?: () => void; compact?: boolean; sf?: ShapeFingers | null }) {
+export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zones }: { I: ShapeInfo; note?: string; on?: boolean; active?: boolean; onPlay?: () => void; compact?: boolean; sf?: ShapeFingers | null; /** Start with the clear zones of the lowest note shown. */ zones?: boolean }) {
+  // the note whose clear zones are shaded (Law 2); tap a note to choose it, tap it again to clear
+  const [pick, setPick] = useState<number | null>(zones ? 0 : null)
+  const held = pick != null ? I.a.notes[pick] : undefined
+  const bands = held ? zonesAround(held.midi, I.a.chord.root).map((z) => ({ str: z.str, from: z.from, to: z.to, cls: z.clear ? 'zone-clear' : 'zone-mud' })) : undefined
+  const words = held ? zoneWords(held.midi, I.a.chord.root) : null
   const [lefty] = useLefty()
   const F = useFingers()
   // the fingering chosen for the progression when there is one, else the best for this shape alone
@@ -62,7 +70,18 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given }: {
         <b className={s.cardSym}>{I.sym}</b>
         <span className={s.cardPlay}>{active ? '■' : '▶'}</span>
       </button>
-      <ChordShape shape={I.shape} labels={degsOf(I)} pens={pensOf(I)} roots={rootsOf(I)} lefty={lefty} active={active ? I.a.notes.map((_, i) => i) : []} {...F.props(sf)} />
+      <ChordShape
+        shape={I.shape}
+        labels={degsOf(I)}
+        pens={pensOf(I)}
+        roots={rootsOf(I)}
+        lefty={lefty}
+        active={active ? I.a.notes.map((_, i) => i) : []}
+        bands={bands}
+        picked={pick}
+        onNote={(i) => setPick(pick === i ? null : i)}
+        {...F.props(sf)}
+      />
       <figcaption>
         <code className={s.frets}>{I.shape}</code>
         {I.a.stretch && <span className={s.stretch}>stretch</span>}
@@ -82,6 +101,20 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given }: {
         {!compact && mud && (
           <span className={s.mud}>
             <CText text={mud} />
+            {pick !== I.a.mud[0].at && (
+              <>
+                {' '}
+                <button type="button" className={s.zoneBtn} onClick={() => setPick(I.a.mud[0].at)}>
+                  show on the neck
+                </button>
+              </>
+            )}
+          </span>
+        )}
+        {held && words && (
+          <span className={s.zoneNote}>
+            Above {held.deg} ({pitchName(held.midi)}): {words.mud.length ? <>mud = {words.mud.join(', ')}</> : 'nothing is mud'}
+            {words.clear.length ? <> · clear = {words.clear.join(', ')}, and an octave or more</> : ' · clear = an octave or more'}
           </span>
         )}
       </figcaption>
@@ -90,7 +123,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given }: {
 }
 
 /** A `shapes` block: cards, or for a progression (seq) the voice lines and the moves between chords. */
-export function ShapesBlock({ title, rows, caption, seq, tempo = 72 }: { title?: string; rows: string[]; caption?: string; seq?: boolean; tempo?: number }) {
+export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { title?: string; rows: string[]; caption?: string; seq?: boolean; tempo?: number; zones?: boolean }) {
   const P = useClip<number>()
   const [addRoot, setAddRoot] = useState(true)
   const items = rows.map(parseRow).map((r) => ({ ...r, I: info(r.sym, r.shape) }))
@@ -114,7 +147,7 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72 }: { title?:
       {seq && items.length > 1 && <Progression items={items} at={P.cue} onPick={playOne} />}
       <div className={cx(s.cards, seq && s.cardsSeq)}>
         {items.map((x, i) => (
-          <ShapeCard key={i} I={x.I} note={x.note} on={P.cue === i} active={P.cue === i} onPlay={() => playOne(i)} sf={seqF ? seqF[i] : undefined} />
+          <ShapeCard key={i} I={x.I} note={x.note} on={P.cue === i} active={P.cue === i} onPlay={() => playOne(i)} sf={seqF ? seqF[i] : undefined} zones={zones} />
         ))}
       </div>
       {caption && (

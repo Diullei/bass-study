@@ -67,6 +67,28 @@
 .board :global(.band-clear) {
   fill: #a9dbb7;
 }
+/* clear zones around one note (Law 2): faint, behind everything */
+.board :global(.zone-clear) {
+  fill: #58b377;
+  opacity: 0.26;
+}
+.board :global(.zone-mud) {
+  fill: var(--red-pen);
+  opacity: 0.2;
+}
+.board .tap {
+  cursor: pointer;
+  outline: none;
+}
+.board .tap:focus-visible .dot {
+  stroke-width: 3;
+}
+.board .halo {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 3;
+}
 .board :global(.band-melody) {
   fill: var(--highlighter-strong);
 }
