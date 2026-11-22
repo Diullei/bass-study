@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { audioContext, bassTone } from '../../audio/synth'
-import { MiniNeck } from '../../notation/MiniNeck'
+import { Fretboard } from '../../notation/Fretboard'
 import { cx } from '../../ui'
 import s from './IntervalRuler.module.css'
 
@@ -45,21 +45,19 @@ function splits(n: number) {
   return out.sort((a, b) => Math.abs(a.df) - Math.abs(b.df))
 }
 const sum = (su: number, df: number) => (su === 0 ? `${df}` : `5 × ${su}${df === 0 ? '' : ` ${df > 0 ? '+' : '−'} ${Math.abs(df)}`}`)
-const upWords = (su: number, df: number) =>
-  `${su === 0 ? 'same string' : `${plural(su, 'string')} up`}, ${df === 0 ? 'same fret' : `${plural(Math.abs(df), 'fret')} ${df > 0 ? 'forward' : 'back'}`}`
-const downWords = (su: number, df: number) =>
-  `${su === 0 ? 'same string' : `${plural(su, 'string')} down`}, ${df === 0 ? 'same fret' : `${plural(Math.abs(df), 'fret')} ${df > 0 ? 'back' : 'forward'}`}`
+/** "2 strings apart, 1 fret back": how far the two notes are from each other, said from the root. */
+const apart = (su: number, df: number) =>
+  `${su === 0 ? 'on the same string' : `${plural(su, 'string')} apart`}, ${df === 0 ? 'same fret' : `${plural(Math.abs(df), 'fret')} ${df > 0 ? 'forward' : 'back'}`}`
 
 /**
  * The interval ruler: two octaves of half steps with the degree written over each one, like a slide rule.
  * Pick a degree to read its half steps, the split into strings and frets (interval = 5 × strings + frets),
- * and where that puts it on the neck, up from a root and down to a root.
+ * and every place that puts it on the neck around a root. One picture reads both ways: up from the root, or down to it.
  */
 export function IntervalRuler() {
   const [pick, setPick] = useState(10)
   const d = DEGREES[pick]
   const S = splits(d.n)
-  const best = S[0]
   const play = (n: number) => {
     setPick(n)
     const AC = audioContext()
@@ -91,25 +89,47 @@ export function IntervalRuler() {
             {d.also ? ` · also ${d.also}` : ''}
           </span>
         </div>
-        {best ? (
-          <div className={s.necks}>
-            <div>
-              <b>Up from the root</b>
-              <span>
-                {d.n} = {sum(best.su, best.df)}: {upWords(best.su, best.df)}
-              </span>
-              <MiniNeck strings={best.su} frets={best.df} label={d.name} className={s.neck} />
+        {d.n === 0 ? (
+          <p className={s.legend}>The root itself.</p>
+        ) : S.length === 0 ? (
+          <p className={s.legend}>Too far for one hand in one piece: take an octave off (2 strings and 2 frets), or put the root on a lower string.</p>
+        ) : (
+          <div className={s.where}>
+            <div className={s.ways}>
+              <b>Where it is</b>
+              <ol>
+                {S.map((x, k) => (
+                  <li key={k} className={cx(k === 0 && s.first)}>
+                    <span className={cx(s.mark, k === 0 ? s.markFirst : s.markOther)} aria-hidden />
+                    <span>
+                      {x.su > 0 && (
+                        <span className={s.sum}>
+                          {d.n} = {sum(x.su, x.df)}
+                        </span>
+                      )}
+                      {apart(x.su, x.df)}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p className={s.legend}>
+                It is one distance, so it reads both ways: from the root <b>up</b> to the {d.name}, or from the {d.name} <b>down</b> to the root.
+              </p>
             </div>
-            <div>
-              <b>Down to the root</b>
-              <span>your note is the {d.name}: {downWords(best.su, best.df)}</span>
-              <MiniNeck down strings={best.su} frets={-best.df} label={d.name} className={s.neck} />
+            <div className={s.neck}>
+              <Fretboard
+                strings={5}
+                from={5}
+                to={11}
+                allNumbers
+                dots={[
+                  { str: 0, fret: 8, label: 'R', root: true },
+                  ...S.map((x, k) => ({ str: x.su, fret: 8 + x.df, label: d.name, pen: k === 0 ? 'pen-green' : 'pen-blue' })),
+                ]}
+              />
             </div>
           </div>
-        ) : (
-          <p className={s.legend}>{d.n === 0 ? 'The root itself.' : 'Too far for one hand in one piece: take an octave off (2 strings and 2 frets), or put the root on a lower string.'}</p>
         )}
-        {S.length > 1 && <p className={s.legend}>Other ways: {S.slice(1).map((x) => `${sum(x.su, x.df)} (${upWords(x.su, x.df)})`).join(' · ')}</p>}
       </div>
     </div>
   )

@@ -559,7 +559,7 @@ export function DesignSystemPage() {
               id="interval-ruler"
               name="Interval ruler"
               path="features/intervals/IntervalRuler · IntervalWidget"
-              text="Two octaves of half steps drawn as a ruler, the degree over each one: long ticks and ink for the degrees of the major scale, short ticks and pencil for the lowered and raised ones. Pick a degree for its half steps, the split into strings and frets, and a small neck in each direction. IntervalWidget puts it one click away on every page (the blue note above the metronome)."
+              text="Two octaves of half steps drawn as a ruler, the degree over each one: long ticks and ink for the degrees of the major scale, short ticks and pencil for the lowered and raised ones. Pick a degree for its half steps and every way to split it into strings and frets, all drawn on one neck around a root (green = the easiest, blue = the others). IntervalWidget puts it one click away on every page (the blue note above the metronome)."
               column
             >
               <div style={{ maxWidth: 560 }}>
