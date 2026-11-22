@@ -1,0 +1,76 @@
+/* The tools in the bottom-right corner: a pile of icon tabs that fans out into sticky notes. */
+.dock {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  /* no transform or filter here: the tools' own windows are fixed-position children */
+}
+/* the notes: each tool's first element. The dock lays them out; their own corner offsets no longer apply. */
+.dock > button:not(.cover) {
+  position: static;
+  /* minimized: just wide enough for the icon; the wide gap pushes the name out of sight */
+  max-width: 46px;
+  gap: 13px;
+  /* the right edge fades out, so a name cut off there never shows as a sliver */
+  mask-image: linear-gradient(to right, #000 62%, transparent 92%);
+  margin-top: -9px;
+  padding-left: 12px;
+  padding-right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  justify-content: flex-start;
+  opacity: 0.88;
+  transition:
+    max-width 0.22s ease,
+    gap 0.22s ease,
+    margin-top 0.22s ease,
+    padding 0.22s ease,
+    opacity 0.15s ease;
+}
+.dock > button:not(.cover):first-of-type {
+  margin-top: 0;
+}
+.open > button:not(.cover) {
+  max-width: 260px;
+  gap: 7px;
+  mask-image: none;
+  margin-top: 6px;
+  padding-right: 14px;
+  opacity: 1;
+}
+/* fanned out one after the other, from the bottom up */
+.open > button:not(.cover):nth-of-type(2) {
+  transition-delay: 0.03s;
+}
+.open > button:not(.cover):nth-of-type(1) {
+  transition-delay: 0.06s;
+}
+/* over the pile while it is minimized: one tap opens the stack */
+.cover {
+  position: absolute;
+  inset: -6px;
+  z-index: 1;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+@media (max-width: 640px) {
+  .dock {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock > button:not(.cover) {
+    transition: none;
+  }
+}
+/* the metronome's tab keeps its light next to the note, so a running metronome shows while minimized */
+.dock:not(.open) > button[title='Metronome'] {
+  gap: 5px;
+}

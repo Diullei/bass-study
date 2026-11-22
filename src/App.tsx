@@ -3,6 +3,7 @@ import { LegacyLessonRedirect } from './features/method/MethodRoutes'
 import { Metronome } from './features/metronome/Metronome'
 import { IntervalWidget } from './features/intervals/IntervalWidget'
 import { Settings } from './features/settings/Settings'
+import { CornerDock } from './features/shell/CornerDock'
 import { MetronomeTempoProvider } from './features/metronome/MetronomeTempo'
 import { CoverPage } from './pages/CoverPage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
@@ -24,12 +25,13 @@ export function App() {
             <Route path="/lesson/:id" element={<LegacyLessonRedirect />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          {/* one metronome for the whole app: it keeps running as you move between pages */}
-          <Metronome />
-          {/* the notebook's settings, always one click away */}
-          <Settings />
-          {/* the interval ruler, for when a number is needed */}
-          <IntervalWidget />
+          {/* the tools, minimized in the bottom-right corner: one metronome for the whole app (it keeps running
+              as you move between pages), the interval ruler, the notebook's settings */}
+          <CornerDock>
+            <IntervalWidget />
+            <Metronome />
+            <Settings />
+          </CornerDock>
         </BrowserRouter>
       </MetronomeTempoProvider>
     </AppStateProvider>
