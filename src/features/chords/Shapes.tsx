@@ -213,7 +213,8 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { 
 export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; at: number | null; onPick?: (i: number) => void }) {
   const [lefty] = useLefty()
   const F = useFingers()
-  const [pick, setPick] = useState(1)
+  // step 0 is the first chord alone; each later step is the move into that chord
+  const [pick, setPick] = useState(0)
   const k = Math.min(at ?? pick, items.length - 1)
   const cur = items[k].I
   const prev = k > 0 ? items[k - 1].I : null
@@ -232,7 +233,7 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
       </div>
       <div className={s.progMove}>
         <div className={s.progNav}>
-          <Button size="sm" variant="pencil" disabled={k <= 1} onClick={() => setPick(Math.max(1, k - 1))}>
+          <Button size="sm" variant="pencil" disabled={k <= 0} onClick={() => setPick(Math.max(0, k - 1))}>
             ◀
           </Button>
           <span>
@@ -241,7 +242,9 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
                 <b>{prev.sym}</b> → <b>{cur.sym}</b>
               </>
             ) : (
-              <b>{cur.sym}</b>
+              <>
+                start: <b>{cur.sym}</b>
+              </>
             )}
           </span>
           <Button size="sm" variant="pencil" disabled={k >= items.length - 1} onClick={() => setPick(Math.min(items.length - 1, k + 1))}>
@@ -262,13 +265,14 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
         ) : (
           <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} {...F.props(sfCur)} />
         )}
+        {!prev && <p className={s.moveText}>The first chord. Press ▶ to see how each finger moves to {items[1]?.I.sym ?? 'the next chord'}.</p>}
         {moves && <p className={s.moveText}>{moves}</p>}
         {fmoves && (
           <p className={s.fingerMove}>
             ✋ <CText text={fmoves} />
           </p>
         )}
-        <p className={s.moveKey}>dashed pencil = the chord before · thick ring = the note stays · arrow = the note moves · ½ = a half-step pull · yellow tag = finger</p>
+        {prev && <p className={s.moveKey}>dashed pencil = the chord before · thick ring = the note stays · arrow = the note moves · ½ = a half-step pull · yellow tag = finger</p>}
       </div>
     </div>
   )
