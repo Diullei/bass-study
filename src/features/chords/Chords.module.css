@@ -693,3 +693,13 @@
   align-items: center;
   gap: 8px 28px;
 }
+
+/* a small neck inside a table cell */
+.miniNeck {
+  display: block;
+  width: 128px;
+}
+.table td:has(.miniNeck) {
+  padding: 2px 8px;
+  vertical-align: middle;
+}

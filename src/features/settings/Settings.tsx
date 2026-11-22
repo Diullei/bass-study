@@ -93,7 +93,7 @@ export const SETTINGS: SettingDef[] = [
     id: 'fingers',
     group: 'Fingering',
     label: 'Fingers on chord diagrams',
-    help: 'A yellow tag on each dot is the fretting finger: 1 index, 2 middle, 3 ring, 4 little finger; a grey bar is one finger laid flat across strings (a barre); the bracket under the neck shows which fingers sit at which fret (dashed when it is a stretch).',
+    help: 'A yellow tag on each dot is the fretting finger: 1 index, 2 middle, 3 ring, 4 little finger; a grey bar is one finger laid flat across strings (a barre); the bracket under the neck shows which fingers sit at which fret (dashed when it is a stretch). They are suggestions from a hand model, not rules: the shape checker lists the alternatives, and a fingering that is comfortable for you and keeps the common fingers down is a good one.',
     Control: FingersControl,
   },
   {

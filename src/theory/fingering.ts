@@ -34,8 +34,14 @@ export type HandSize = 'average' | 'large'
  * Largest comfortable distance between two fingertips, in mm, for an average hand.
  * Index 0 = finger 1 (index). Measured generously for a relaxed thumb-behind-the-neck position.
  */
-const REACH: Record<string, number> = { '1-2': 62, '1-3': 90, '1-4': 116, '2-3': 48, '2-4': 76, '3-4': 52 }
-const SIZE: Record<HandSize, number> = { average: 1, large: 1.18 }
+/*
+ * Calibrated on what bass teaching takes for granted on a 34" neck:
+ *   - one finger per fret is comfortable from about the 5th fret up (frets 5–8 are 105 mm from tip to tip);
+ *   - at the nut it is too wide for an average hand (frets 1–4 are 132 mm), which is why the 1‑2‑4 fingering exists;
+ *   - a five-fret reach is a stretch around frets 6–10 (128 mm) and easy above the 12th.
+ */
+const REACH: Record<string, number> = { '1-2': 70, '1-3': 98, '1-4': 130, '2-3': 50, '2-4': 92, '3-4': 54 }
+const SIZE: Record<HandSize, number> = { average: 1, large: 1.15 }
 
 /** One note the fretting hand has to deal with. */
 export interface FNote {
@@ -48,6 +54,8 @@ export interface FNote {
 export interface Barre {
   finger: number
   fret: number
+  /** The finger must bend back at its last joint to clear a higher string that sounds a lower fret. Hard. */
+  bent?: boolean
   /** Lowest and highest string the finger lies across. */
   from: number
   to: number
@@ -102,7 +110,11 @@ export function fingerings(notes: FNote[], hand: HandSize = 'average'): Fingerin
       if (openStrings.some((s) => s > from && s < to)) ok = false
       // a flat finger 2, 3 or 4 holds up to four strings; only the index makes a full barre
       if (f > 1 && to - from > 3) ok = false
-      barres.push({ finger: f, fret: g[0].fret, from, to })
+      // a flat finger lies over every string from its tip to the G string. A higher string that must sound
+      // a lower fret (or ring open) is only possible if the finger bends back to clear it: hard, and rare.
+      const over = notes.some((n) => n.str > to && n.fret < g[0].fret)
+      if (over) cost += 1.3
+      barres.push({ finger: f, fret: g[0].fret, from, to, ...(over ? { bent: true } : {}) })
       // the index is the natural barre; the ring finger the natural flat finger; middle and little are weaker flat
       cost += [0, 0.35, 0.8, 0.5, 0.95][f] + 0.2 * (to - from - 1)
     }
@@ -123,10 +135,15 @@ export function fingerings(notes: FNote[], hand: HandSize = 'average'): Fingerin
         const r = d / limit
         if (r > 1) ok = false
         stretch = Math.max(stretch, r)
-        // gentle up to 70% of the reach, then it climbs fast
-        cost += r > 0.7 ? 6 * (r - 0.7) * (r - 0.7) * 10 : 0
-        // two fingers squeezed into one fret
-        if (hi.fret === lo.fret) cost += Math.abs(hi.str - lo.str) === 1 ? 0.45 : 0.7
+        // free up to 80% of the reach, then it climbs fast
+        cost += r > 0.8 ? 60 * (r - 0.8) * (r - 0.8) : 0
+        if (hi.fret === lo.fret) {
+          // fingers lined up in one fret: each neighbouring pair costs a little (not every pair: three in a row is two squeezes)
+          const between = tips.some((t) => t.fret === lo.fret && t.f > lo.f && t.f < hi.f)
+          if (!between) cost += Math.abs(hi.str - lo.str) === 1 ? 0.45 : 0.7
+          // and they stack one way: the lower-numbered finger on the lower string. The other way round twists the hand.
+          if (hi.str < lo.str) cost += 1.5
+        }
         // skipping a finger between neighbouring frets wastes the hand (1 then 3 on frets n, n+1)
         const gap = hi.fret - lo.fret
         if (gap > 0 && hi.f - lo.f > gap + 1) cost += 0.3
@@ -242,7 +259,10 @@ export function fingeringWords(notes: FNote[], f: Fingering, names: string[]): s
   for (let k = 1; k <= 4; k++) {
     const mine = notes.filter((_, i) => f.fingers[i] === k)
     if (!mine.length) continue
-    if (mine.length > 1) parts.push(`${k} flat across ${mine.map((n) => names[n.str]).join(', ').replace(/, ([^,]*)$/, ' and $1')} at fret ${mine[0].fret}${k === 1 ? ' (barre)' : ''}`)
+    if (mine.length > 1)
+      parts.push(
+        `${k} flat across ${mine.map((n) => names[n.str]).join(', ').replace(/, ([^,]*)$/, ' and $1')} at fret ${mine[0].fret}${k === 1 ? ' (barre)' : ''}${f.barres.find((b) => b.finger === k)?.bent ? ', bent back to clear the higher string' : ''}`,
+      )
     else parts.push(`${k} on ${names[mine[0].str]}‑${mine[0].fret}`)
   }
   return parts.join(' · ')

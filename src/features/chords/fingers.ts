@@ -24,7 +24,7 @@ export function handOf(frets: number[], f: Fingering): FretHand {
   const used = frets.map((fr, i) => ({ fr, k: f.fingers[i] })).filter((x) => x.k > 0)
   for (const { fr } of used) at[fr] = [...new Set(used.filter((x) => x.fr === fr).map((x) => x.k))].sort().join('·')
   const fs = used.map((x) => x.fr)
-  return { from: Math.min(...fs), to: Math.max(...fs), at, stretch: f.stretch > 0.9 }
+  return { from: Math.min(...fs), to: Math.max(...fs), at, stretch: f.stretch > 0.93 }
 }
 
 function pack(I: ShapeInfo, f: Fingering, split = false): ShapeFingers {
