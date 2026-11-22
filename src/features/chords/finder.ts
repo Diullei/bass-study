@@ -5,7 +5,7 @@
  */
 import { DEG, FAM, LIMITS, OPEN, parseSym, shapeOf, type ChordSym } from './voicing'
 
-export type Layer = 'root2' | 'pair' | 'shell' | 'grand' | 'rootless' | 'grid'
+export type Layer = 'root2' | 'pair' | 'shell' | 'grand' | 'rootless' | 'grid' | 'quartal' | 'triad'
 
 export const LAYERS: { value: Layer; label: string; what: string; ch: number }[] = [
   { value: 'root2', label: 'Root shells (2 notes)', what: 'root + 7th or root + 10th', ch: 4 },
@@ -14,6 +14,8 @@ export const LAYERS: { value: Layer; label: string; what: string; ch: number }[]
   { value: 'grand', label: 'Grand (4 notes)', what: 'a shell plus one colour on top', ch: 11 },
   { value: 'rootless', label: 'Rootless (3 notes)', what: '3rd, 7th and a colour; the root comes first or from the loop', ch: 12 },
   { value: 'grid', label: 'Four-string grid', what: '3rd and 7th on E and A, two colours on D and G', ch: 14 },
+  { value: 'quartal', label: 'Fourths (3 notes)', what: 'three notes of the chord stacked in fourths; the root comes from the loop', ch: 16 },
+  { value: 'triad', label: 'Triads (3 notes)', what: 'root, 3rd and 5th in any inversion', ch: 17 },
 ]
 
 export type DomColour = 'auto' | 'plain' | 'altered'
@@ -64,6 +66,20 @@ export function domColours(c: ChordSym, next: ChordSym | null, pref: DomColour):
   return minor ? { degs: ['♭9', '♭13'], why: 'goes to minor: colours from the minor key' } : { degs: ['9', '13'], why: 'goes to major: colours from the major key' }
 }
 
+/** Stacks of fourths that still say the chord, low to high (the order is the stack: it is kept). */
+const QUARTAL: Partial<Record<Kind, string[][]>> = {
+  maj7: [['3', '13', '9'], ['7', '3', '13'], ['13', '9', '5']],
+  '6': [['3', '6', '9'], ['6', '9', '5']],
+  m7: [['11', '♭7', '♭3'], ['R', '11', '♭7'], ['5', 'R', '11']],
+  '7': [['♭7', '3', '13'], ['3', '13', '9']],
+  sus: [['R', '4', '♭7'], ['4', '♭7', '9']],
+  hdim: [['11', '♭7', '♭3'], ['R', '11', '♭7']],
+}
+/** The triad inside each kind of chord. */
+const TRIAD: Record<Kind, string[]> = {
+  maj7: ['R', '3', '5'], '6': ['R', '3', '5'], '7': ['R', '3', '5'], sus: ['R', '4', '5'], m7: ['R', '♭3', '5'], m6: ['R', '♭3', '5'], mmaj: ['R', '♭3', '5'], hdim: ['R', '♭3', '♭5'], dim: ['R', '♭3', '♭5'],
+}
+
 /** The degree sets to search for a chord in a layer (alternatives). */
 export function degreeSets(c: ChordSym, layer: Layer, dom: string[]): string[][] {
   const k = kindOf(c)
@@ -82,11 +98,15 @@ export function degreeSets(c: ChordSym, layer: Layer, dom: string[]): string[][]
       return C.one.filter((x) => x !== 'R').map((x) => [...P, x])
     case 'grid':
       return C.two.map((t) => [...P, ...t])
+    case 'quartal':
+      return QUARTAL[k] ?? C.one.filter((x) => x !== 'R').map((x) => [...P, x])
+    case 'triad':
+      return [TRIAD[k]]
   }
 }
 
 /** Which strings a layer may use (low to high indexes). Null = any. */
-const STRINGS: Record<Layer, number[] | null> = { root2: null, pair: [3, 4], shell: null, grand: null, rootless: [1, 2, 3, 4], grid: [1, 2, 3, 4] }
+const STRINGS: Record<Layer, number[] | null> = { root2: null, pair: [3, 4], shell: null, grand: null, rootless: [1, 2, 3, 4], grid: [1, 2, 3, 4], quartal: [1, 2, 3, 4], triad: [1, 2, 3, 4] }
 
 export interface Found {
   shape: string
@@ -115,12 +135,17 @@ export function find(root: number, degs: string[], layer: Layer | null = null, l
   const n = degs.length
   const out: Found[] = []
   const allowed = (layer && STRINGS[layer]) || [0, 1, 2, 3, 4]
-  const hasRoot = degs.includes('R')
+  // fourths and triads may put any note at the bottom: the root is not the bass of the shape
+  const free = layer === 'quartal' || layer === 'triad'
+  const hasRoot = !free && degs.includes('R')
   for (const strs of combos(allowed.length, n)) {
     const S = strs.map((i) => allowed[i])
     if (layer === 'grid' && S.join() !== '1,2,3,4') continue
     for (const order of perms([...Array(n).keys()])) {
       if (hasRoot && degs[order[0]] !== 'R') continue
+      // a stack of fourths keeps its order; a triad may turn (its inversions) but not skip a string
+      if (layer === 'quartal' && order.some((o, j) => o !== j)) continue
+      if (free && S[n - 1] - S[0] !== n - 1) continue
       const opts = S.map((s, j) => {
         const r: number[] = []
         for (let f = lo; f <= hi; f++) if ((OPEN[s] + f) % 12 === pcs[order[j]]) r.push(f)
@@ -186,15 +211,30 @@ function moveCost(a: Found, b: Found) {
  * One shape per chord, chosen together: each chord's own clarity plus the cost of every move.
  * Repeated chords keep their shape. `around` (a fret) pulls the whole progression towards a hand position.
  */
-export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto', around = 9): Voiced[] {
+export type Style = 'near' | 'closed' | 'open' | 'jump'
+
+/** The form of a shape: which strings it uses and what each one holds (root, 3rd, 7th, other). Two chords of one form are the same grip, moved. */
+const formOf = (f: Found) =>
+  f.shape.split('-').map((t) => (t === 'x' ? 'x' : 'o')).join('') +
+  f.degs.map((d) => (d === 'R' ? 'R' : /3|4/.test(d) && !/13/.test(d) ? 'T' : /7|6/.test(d) ? 'S' : 'c')).join('')
+
+export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto', around = 9, style: Style = 'near', playable?: (f: Found) => boolean): Voiced[] {
   const C = syms.map(parseSym)
   const cands = C.map((c, i) => {
     const next = C.slice(i + 1).find((x) => x.sym !== c.sym) ?? C[0]
     const dc = kindOf(c) === '7' ? domColours(c, next === c ? null : next, pref) : null
     const sets = degreeSets(c, layer, dc?.degs ?? ['9', '13'])
-    const all = sets.flatMap((d) => find(c.root, d.filter((x) => FAM[c.fam][DEG[x]] != null || x === '6' || x === '°7'), layer))
+    const every = sets.flatMap((d) => find(c.root, d.filter((x) => FAM[c.fam][DEG[x]] != null || x === '6' || x === '°7'), layer))
+    // shapes the hand cannot hold are left out, unless nothing else exists
+    const held = playable ? every.filter(playable) : every
+    const all = held.length ? held : every
     const best = all
-      .map((f) => ({ f, own: f.score + Math.abs((f.lo + f.hi) / 2 - around) * 0.25 }))
+      .map((f) => {
+        // closed packs the notes (small pitch span), open spreads them; both still move by the nearest way
+        const wide = f.midis[f.midis.length - 1] - f.midis[0]
+        const spread = style === 'closed' ? wide * 0.45 : style === 'open' ? (28 - wide) * 0.9 : 0
+        return { f, own: f.score + Math.abs((f.lo + f.hi) / 2 - around) * 0.25 + spread }
+      })
       .sort((a, b) => a.own - b.own)
       .slice(0, 40)
     return { best, why: dc?.why }
@@ -212,7 +252,9 @@ export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto'
       let m = Infinity
       let arg = 0
       cands[i - 1].best.forEach((a, j) => {
-        const c = cost[j] + (same ? (a.f.shape === b.f.shape ? 0 : 50) : moveCost(a.f, b.f)) + b.own
+        // jump: one grip for every chord, so the hand travels and the fingers do not change
+        const move = style === 'jump' ? (formOf(a.f) === formOf(b.f) ? 0 : 30) + moveCost(a.f, b.f) * 0.05 : moveCost(a.f, b.f)
+        const c = cost[j] + (same ? (a.f.shape === b.f.shape ? 0 : 50) : move) + b.own
         if (c < m) (m = c), (arg = j)
       })
       row.push(arg)

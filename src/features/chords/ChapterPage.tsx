@@ -5,6 +5,7 @@ import { KEYS, store } from '../../state/storage'
 import { Button, Lead, Notebook, PageTitle, Section, SectionTitle, Select, StickyNote, UnitLabel, type OptionGroup } from '../../ui'
 import { NotebookHeader } from '../shell/NotebookHeader'
 import { Blocks, BlockView, CheckList } from './Blocks'
+import { Practice } from './Practice'
 import { chapterById, CHAPTERS, PARTS } from './chapters'
 import { ChordsQuiz } from './ChordsQuiz'
 import { CText, LawRef, linksIn } from './CText'
@@ -104,6 +105,7 @@ function ChapterView({ C }: { C: Chapter }) {
             </ol>
           </Section>
         )}
+        <Practice key={C.id} chapter={C.id} />
         {C.checks.length > 0 && (
           <Section>
             <SectionTitle>Check yourself</SectionTitle>

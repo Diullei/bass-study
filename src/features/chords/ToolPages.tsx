@@ -40,7 +40,7 @@ function voiced(bars: string[][], layer: Layer, dom: DomColour, around: number) 
   return { V, bars: out, text: out.map((b) => b.map((v) => `${v.sym}:${v.shape}`).join(' ')).join(' | ') }
 }
 
-function Voiced({ V, barsText, title, pattern }: { V: { sym: string; shape: string; why?: string }[]; barsText: string; title: string; pattern?: 'split' | 'four' | 'bossa' | 'charleston' }) {
+export function Voiced({ V, barsText, title, pattern, noKey }: { V: { sym: string; shape: string; why?: string }[]; barsText: string; title: string; pattern?: 'split' | 'four' | 'bossa' | 'charleston'; /** The pen key is already on the page. */ noKey?: boolean }) {
   const seq = V.filter((v, i) => i === 0 || v.shape !== V[i - 1].shape || v.sym !== V[i - 1].sym)
   const items = seq.slice(0, 16).map((v) => ({ I: info(v.sym, v.shape) }))
   const F = useFingers()
@@ -49,7 +49,7 @@ function Voiced({ V, barsText, title, pattern }: { V: { sym: string; shape: stri
   const whys = [...new Map(V.filter((v) => v.why).map((v) => [v.sym, `**${v.sym}**: ${v.why}`])).values()]
   return (
     <>
-      <PenKey />
+      {!noKey && <PenKey />}
       {items.length > 1 && <Progression items={items} at={null} />}
       {whys.length > 0 && (
         <p className={s.caption}>

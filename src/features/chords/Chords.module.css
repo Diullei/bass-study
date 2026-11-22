@@ -107,6 +107,65 @@
   }
 }
 
+/* practice round the keys */
+.practiceTask {
+  margin: 0 0 var(--sp-3);
+  max-width: 74ch;
+}
+.keyRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 0;
+  margin: var(--sp-3) 0 var(--sp-2);
+}
+.keyStep {
+  display: inline-flex;
+  align-items: center;
+}
+.keyArrow {
+  padding: 0 3px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil-light);
+}
+.keyBtn {
+  position: relative;
+  min-width: 38px;
+  padding: 3px 8px;
+  font: 700 var(--fs-md) var(--font-hand);
+  color: var(--ink);
+  background: var(--paper-sheet);
+  border: 1.5px dashed var(--pencil-light);
+  border-radius: var(--wobble-1);
+  cursor: pointer;
+}
+.keyBtn:hover,
+.keyBtn:focus-visible {
+  border-color: var(--ink);
+}
+.keyOn {
+  border: 2px solid var(--ink);
+  background: var(--highlighter);
+}
+.keyDone {
+  color: var(--green-pen);
+}
+.keyBtn i {
+  position: absolute;
+  top: -8px;
+  right: -4px;
+  font: 700 12px var(--font-hand);
+  font-style: normal;
+  color: var(--green-pen);
+}
+.keyActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-bottom: var(--sp-4);
+}
+
 /* diagrams under a drill: the list keeps its reading width for text, the diagrams take the page */
 .steps:has(.drillBlocks) {
   max-width: none;

@@ -1,0 +1,125 @@
+import { useMemo, useState } from 'react'
+import { useHandSize } from '../../state/prefs'
+import { KEYS as STORE, load, store } from '../../state/storage'
+import { fingerings } from '../../theory/fingering'
+import { Button, Field, FieldGrid, Section, SectionTitle, Segmented, Select, cx } from '../../ui'
+import { CText } from './CText'
+import { LAYERS, voiceLead, type Found, type Layer, type Style } from './finder'
+import { PRACTICE } from './practice'
+import { progById, progIn } from './progressions'
+import { Voiced } from './ToolPages'
+import s from './Chords.module.css'
+
+/** The twelve keys in the order of practice: each one a fourth above the last. */
+const CYCLE = ['C', 'F', 'B♭', 'E♭', 'A♭', 'D♭', 'F♯', 'B', 'E', 'A', 'D', 'G']
+
+type PStyle = Exclude<Style, 'near'>
+const STYLES: { value: PStyle; label: string; what: string }[] = [
+  { value: 'closed', label: 'closed', what: '**Closed:** the notes as close together as the neck allows, and the hand stays in one place. The lowest keys can get thick ([[Law2]]): a red ring marks a note in the mud.' },
+  { value: 'open', label: 'open', what: '**Open:** the notes spread wide, the bottom note dropped to a lower string. Clear in any key, and a bigger reach across the strings.' },
+  { value: 'jump', label: 'jump', what: '**Jump:** one grip for every chord. The fingers keep their shape and the whole hand travels ([[Ch10]]).' },
+]
+
+/**
+ * The end of a chapter: its progressions, to take round the twelve keys in fourths, in the voicing the chapter teaches.
+ * The shapes are worked out for the key and the style chosen, so every key shows its own voicing.
+ */
+export function Practice({ chapter }: { chapter: string }) {
+  const plan = PRACTICE[chapter]
+  const [hand] = useHandSize()
+  const [pid, setPid] = useState(plan?.progs[0] ?? '')
+  const [layer, setLayer] = useState<Layer>(plan?.layers[0] ?? 'shell')
+  const [style, setStyle] = useState<PStyle>(plan?.style ?? 'closed')
+  const [key, setKey] = useState('C')
+  const [done, setDone] = useState<Record<string, string[]>>(() => load(STORE.chordsPractice, {}))
+  const p = progById(pid)
+  const slot = `${chapter}:${pid}:${layer}:${style}`
+  const played = done[slot] ?? []
+  const out = useMemo(() => {
+    if (!p) return null
+    const playable = (f: Found) => {
+      const fr = f.shape.split('-').map((t, str) => ({ str, fret: +t })).filter((n) => n.fret > 0)
+      return !fr.length || fingerings(fr, hand).length > 0
+    }
+    const bars = progIn(p, key)
+    const run = (st: Style) => voiceLead(bars.flat(), layer, 'auto', 9, st, playable)
+    const V = run(style)
+    let k = 0
+    const text = bars.map((b) => b.map(() => V[k++]).map((v) => `${v.sym}:${v.shape}`).join(' ')).join(' | ')
+    // closed and open can land on the same shapes (two notes on two strings leave no choice): say so
+    const twin = style !== 'jump' && run(style === 'closed' ? 'open' : 'closed').every((v, i) => v.shape === V[i].shape)
+    return { V, text, twin }
+  }, [p, key, layer, style, hand])
+  if (!plan || !p || !out) return null
+  const mark = () => {
+    const next = { ...done, [slot]: played.includes(key) ? played : [...played, key] }
+    setDone(next)
+    store(STORE.chordsPractice, next)
+    setKey(CYCLE[(CYCLE.indexOf(key) + 1) % 12])
+  }
+  const reset = () => {
+    const next = { ...done, [slot]: [] }
+    setDone(next)
+    store(STORE.chordsPractice, next)
+  }
+  const what = STYLES.find((x) => x.value === style)!.what
+  return (
+    <Section>
+      <SectionTitle>Practice: round the twelve keys</SectionTitle>
+      <p className={s.practiceTask}>
+        <CText text={plan.task} />
+      </p>
+      <FieldGrid>
+        <Field label="Progression (easiest first)">
+          <Select value={pid} options={plan.progs.map((id, i) => ({ value: id, label: `${i + 1}. ${progById(id)?.name ?? id}` }))} onChange={setPid} />
+        </Field>
+        {plan.layers.length > 1 && (
+          <Field label="Voicing">
+            <Select value={layer} options={plan.layers.map((l) => ({ value: l, label: LAYERS.find((x) => x.value === l)!.label }))} onChange={(v) => setLayer(v as Layer)} />
+          </Field>
+        )}
+        <Field label="How the chords are laid out">
+          <Segmented label="How the chords are laid out" value={style} options={STYLES.map(({ value, label }) => ({ value, label }))} onChange={setStyle} />
+        </Field>
+      </FieldGrid>
+      <p className={s.caption}>
+        <CText text={what} />
+        {out.twin && ' In this key and voicing, closed and open give the same shapes.'}
+      </p>
+      <div className={s.keyRow} role="radiogroup" aria-label="Key, in fourths">
+        {CYCLE.map((k, i) => (
+          <span key={k} className={s.keyStep}>
+            {i > 0 && (
+              <span className={s.keyArrow} aria-hidden>
+                →
+              </span>
+            )}
+            <button type="button" role="radio" aria-checked={k === key} className={cx(s.keyBtn, k === key && s.keyOn, played.includes(k) && s.keyDone)} onClick={() => setKey(k)}>
+              {k}
+              {p.minor ? 'm' : ''}
+              {played.includes(k) && <i aria-label="played">✓</i>}
+            </button>
+          </span>
+        ))}
+      </div>
+      <div className={s.keyActions}>
+        <Button variant="ink" size="sm" onClick={mark}>
+          ✓ Played in {key}
+          {p.minor ? ' minor' : ''}: next key, up a fourth
+        </Button>
+        <span className={s.pencil}>
+          {played.length} of 12 keys with this progression and layout
+          {played.length > 0 && (
+            <>
+              {' · '}
+              <button type="button" className={s.zoneBtn} onClick={reset}>
+                start again
+              </button>
+            </>
+          )}
+        </span>
+      </div>
+      <Voiced key={out.text} V={out.V} barsText={out.text} title={`${p.name} in ${key}${p.minor ? ' minor' : ''}`} pattern={pid.includes('blues') ? 'four' : pid === 'bossa' ? 'bossa' : 'split'} noKey />
+    </Section>
+  )
+}

@@ -49,6 +49,22 @@ export const PROGS: Prog[] = [
   { id: 'subv', name: 'II – ♭II – I (tritone sub)', bars: 'Dm7 | D♭7 | Cmaj7 | Cmaj7', key: 'C', ch: 13 },
   { id: 'backdoor', name: 'Backdoor IVm – ♭VII7 – I', bars: 'Fm7 | B♭7 | Cmaj7 | Cmaj7', key: 'C', ch: 23 },
   { id: 'fifths', name: 'Falling fifths through a key', bars: 'Cm7 | F7 | B♭maj7 | E♭maj7 | Am7♭5 | D7 | Gm6 | Gm6', key: 'B♭', ch: 23 },
+  // practice progressions of the chapters, from the easiest
+  { id: 'one-four', name: 'I – IV', bars: 'Cmaj7 | Fmaj7 | Cmaj7 | Fmaj7', key: 'C' },
+  { id: 'cycle-doms', name: 'Four dominants up in fourths', bars: 'C7 | F7 | B♭7 | E♭7', key: 'C' },
+  { id: 'one-six-two-five', name: 'I – VI – II – V in the key', bars: 'Cmaj7 Am7 | Dm7 G7 | Cmaj7 Am7 | Dm7 G7', key: 'C' },
+  { id: 'three-six-two-five', name: 'III – VI – II – V – I', bars: 'Em7 A7 | Dm7 G7 | Cmaj7 | Cmaj7', key: 'C' },
+  { id: 'dim-pass', name: 'I – ♯I° – II – V (passing diminished)', bars: 'Cmaj7 C♯°7 | Dm7 G7 | Cmaj7 C♯°7 | Dm7 G7', key: 'C' },
+  { id: 'minor-turn', name: 'Minor turnaround', bars: 'Cm6 Am7♭5 | Dm7♭5 G7 | Cm6 Am7♭5 | Dm7♭5 G7', key: 'C', minor: true },
+  { id: 'modal', name: 'Modal vamp, up a half step and back', bars: 'Dm7 | Dm7 | E♭m7 | E♭m7', key: 'D', minor: true },
+  { id: 'triads-145', name: 'I – IV – V – I in triads', bars: 'C | F | G | C', key: 'C' },
+  { id: 'triads-pop', name: 'I – V – VI – IV in triads', bars: 'C | G | Am | F', key: 'C' },
+  { id: 'line-cliche', name: 'Minor line: 8 – 7 – ♭7 – 6', bars: 'Cm | CmMaj7 | Cm7 | Cm6', key: 'C', minor: true },
+  { id: 'maj-colours', name: 'One major chord: maj7 and 6', bars: 'Cmaj7 | C6 | Cmaj7 | C6', key: 'C' },
+  { id: 'sus', name: 'Vsus – V – I', bars: 'G7sus | G7 | Cmaj7 | Cmaj7', key: 'C' },
+  { id: 'bossa', name: 'I – II7 – II – ♭II7 (bossa)', bars: 'Cmaj7 | D7 | Dm7 | D♭7', key: 'C' },
+  { id: 'rhythm-a', name: 'Rhythm changes, first four bars', bars: 'Cmaj7 A7 | Dm7 G7 | Em7 A7 | Dm7 G7', key: 'C' },
+  { id: 'ladybird', name: 'Major 7ths in a turnaround', bars: 'Cmaj7 E♭maj7 | A♭maj7 D♭maj7 | Cmaj7 E♭maj7 | A♭maj7 D♭maj7', key: 'C' },
   { id: 'thirds', name: 'Key centres a major 3rd apart', bars: 'Cmaj7 | E♭7 | A♭maj7 | B7 | Emaj7 | G7 | Cmaj7 | Cmaj7', key: 'C', ch: 23 },
 ]
 
