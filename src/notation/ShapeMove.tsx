@@ -70,8 +70,14 @@ export function ShapeMove({ from, to, lefty: leftyProp, className }: ShapeMovePr
   const lo = all.length ? Math.min(...all) : 1
   const hi = all.length ? Math.max(...all) : 4
   const open = [...A, ...B].some((n) => n.fret === 0 && !n.harmonic)
-  const start = open || lo <= 2 ? 0 : lo - 1
-  const end = Math.max(hi + 1, (start || 1) + 3)
+  let start = open || lo <= 2 ? 0 : lo - 1
+  let end = Math.max(hi + 1, (start || 1) + 3)
+  // a scale needs five frets (see ChordShape)
+  if (to.fill)
+    while (end - start + 1 < 5) {
+      if (start > 1) start--
+      else end++
+    }
   const moves = pairVoices(from.shape, to.shape)
   const heldB = new Set(moves.filter((m) => m.held).map((m) => m.b))
   const heldA = new Set(moves.filter((m) => m.held).map((m) => m.a))

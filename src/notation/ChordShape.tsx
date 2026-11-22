@@ -62,8 +62,14 @@ export function ChordShape({ shape, labels, pens, roots, active = [], fingers, b
   const hasOpen = notes.some((n) => !n.harmonic && n.fret === 0)
   const lo = frets.length ? Math.min(...frets) : 1
   const hi = frets.length ? Math.max(...frets) : 4
-  const from = hasOpen || lo <= 2 ? 0 : lo - 1
-  const to = Math.max(hi + 1, (from || 1) + minFrets - 1)
+  let from = hasOpen || lo <= 2 ? 0 : lo - 1
+  let to = Math.max(hi + 1, (from || 1) + minFrets - 1)
+  // a scale needs five frets: the strings are five half steps apart, so four frets leave one pitch out between each pair
+  if (fill)
+    while (to - from + 1 < 5) {
+      if (from > 1) from--
+      else to++
+    }
   const muted = toks.map((t, i) => (t === 'x' ? i : -1)).filter((i) => i >= 0)
   const dots: FretDot[] = notes.map((n, i) => ({
     str: n.str,
