@@ -467,7 +467,7 @@ export function DesignSystemPage() {
               id="chord-shape"
               name="ChordShape"
               path="notation/ChordShape"
-              text="One chord shape from its frets, low string to high (x-8-x-9-9): the window fits the shape, every fret is numbered, labels and pens per sounding note. Used by the chord method's cards, chips and play-along. Marks on top of a shape: a dashed halo is the note the reader tapped; faint green and red stretches of string say where a second note is clear with it or mud (Law 2); a red ring with a ! tag is a note of the chord that sits in the mud. Red appears only for that: something is wrong."
+              text="One chord shape from its frets, low string to high (x-8-x-9-9): the window fits the shape, every fret is numbered, labels and pens per sounding note. Used by the chord method's cards, chips and play-along. Marks on top of a shape: a dashed halo is the note the reader tapped; faint green and red stretches of string say where a second note is clear with it or mud (Law 2); a red ring with a ! tag is a note of the chord that sits in the mud. Red appears only for that: something is wrong. Two kinds of harmonic: h7 is a natural harmonic, a diamond over the fret wire (where the finger touches); a9 is an artificial harmonic, a diamond in the fret space (where the finger presses) marked +12, because the plucking hand touches twelve frets higher."
             >
               <div style={{ width: 230 }}>
                 <ChordShape shape="x-8-x-9-9" labels={['R', '7', '3']} pens={[undefined, 'pen-green', 'pen-green']} roots={[true, false, false]} />
@@ -499,6 +499,10 @@ export function DesignSystemPage() {
               <div style={{ width: 230 }}>
                 <ChordShape shape="x-8-h7-h7-h7" labels={['R', '3', '6', '9']} pens={[undefined, 'pen-green', 'pen-green', 'pen-blue']} roots={[true]} active={[1, 2, 3]} />
                 <Caption>C6/9 with harmonics, sounding</Caption>
+              </div>
+              <div style={{ width: 230 }}>
+                <ChordShape shape="x-8-x-a9-a9" labels={['R', '7', '3']} pens={[undefined, 'pen-green', 'pen-green']} roots={[true]} />
+                <Caption>Cmaj7, upper notes as artificial harmonics (a9): a diamond in the fret space, +12</Caption>
               </div>
             </Spec>
             <Spec

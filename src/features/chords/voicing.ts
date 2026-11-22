@@ -7,8 +7,11 @@
 /** Open strings, low to high: B0 E1 A1 D2 G2 (MIDI). Each string is 5 above the last (Law 1). */
 export const OPEN = [23, 28, 33, 38, 43]
 export const STRING_NAMES = ['B', 'E', 'A', 'D', 'G']
-/** Natural harmonics: touch over fret → semitones above the open string. */
-export const HARM: Record<number, number> = { 12: 12, 7: 19, 5: 24, 4: 28, 9: 28 }
+/**
+ * Natural harmonics: touch over fret → semitones above the open string. The string divides in 2 (fret 12), 3 (7 or 19),
+ * 4 (5 or 24), 5 (4, 9 or 16) and 6 parts (just past fret 3, written h3).
+ */
+export const HARM: Record<number, number> = { 12: 12, 7: 19, 19: 19, 5: 24, 24: 24, 4: 28, 9: 28, 16: 28, 3: 31 }
 
 const LETTERS = 'CDEFGAB'
 const NAT: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }
@@ -109,17 +112,23 @@ export interface ShapeNote {
   /** Fret, or the harmonic's fret for a harmonic. 0 = open. */
   fret: number
   harmonic: boolean
+  /** An artificial harmonic: the note is fretted here and the plucking hand touches the string twelve frets higher. It sounds an octave up. */
+  artificial?: boolean
   midi: number
 }
 
-/** "x-8-x-9-9", "x-8-h7-h7-h7" → notes, low string to high. Throws if it is not five tokens. */
+/** "x-8-x-9-9", "x-8-h7-h7-h7", "x-8-x-a9-a9" → notes, low string to high. Throws if it is not five tokens. */
 export function parseShape(shape: string): ShapeNote[] {
   const toks = shape.trim().split('-')
   if (toks.length !== 5) throw new Error(`${shape}: need 5 strings`)
   const out: ShapeNote[] = []
   toks.forEach((t, str) => {
     if (t === 'x') return
-    if (t.startsWith('h')) {
+    if (t.startsWith('a')) {
+      const f = +t.slice(1)
+      if (!Number.isInteger(f) || f < 1 || f > 12) throw new Error(`${shape}: an artificial harmonic needs a fretted note from 1 to 12, got ${t}`)
+      out.push({ str, fret: f, harmonic: false, artificial: true, midi: OPEN[str] + f + 12 })
+    } else if (t.startsWith('h')) {
       const f = +t.slice(1)
       if (!(f in HARM)) throw new Error(`${shape}: no harmonic over fret ${f}`)
       out.push({ str, fret: f, harmonic: true, midi: OPEN[str] + HARM[f] })
@@ -198,7 +207,8 @@ export function analyse(sym: string, shape: string): Analysis {
   const ps = notes.map((n) => n.midi)
   if (ps.some((p, i) => i && p < ps[i - 1])) warnings.push('the notes do not rise from string to string')
   const mud: Analysis['mud'] = []
-  const plain = notes.filter((n) => !n.harmonic)
+  // harmonics of both kinds ring far above the floors: they are never mud
+  const plain = notes.filter((n) => !n.harmonic && !n.artificial)
   plain.forEach((a, i) => {
     const b = plain[i + 1]
     if (!b) return

@@ -151,9 +151,9 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
   const bands = held ? zonesAround(held.midi, I.a.chord.root).map((z) => ({ str: z.str, from: z.from, to: z.to, cls: z.clear ? 'zone-clear' : 'zone-mud' })) : undefined
   const words = held ? zoneWords(held.midi, I.a.chord.root) : null
   // notes in the wrong place: with a note tapped, every note that is mud with it; else the pairs the checker flags
-  const plain = I.a.notes.filter((n) => !n.harmonic)
+  const plain = I.a.notes.filter((n) => !n.harmonic && !n.artificial)
   const warn = held
-    ? I.a.notes.map((n, i) => (!n.harmonic && !held.harmonic && clearPair(held.midi, n.midi, I.a.chord.root) === false ? i : -1)).filter((i) => i >= 0)
+    ? I.a.notes.map((n, i) => (!n.harmonic && !n.artificial && !held.harmonic && !held.artificial && clearPair(held.midi, n.midi, I.a.chord.root) === false ? i : -1)).filter((i) => i >= 0)
     : I.a.mud.flatMap((m) => [I.a.notes[m.at], plain[plain.indexOf(I.a.notes[m.at]) + 1]]).map((n) => I.a.notes.indexOf(n))
   const [lefty] = useLefty()
   const F = useFingers()

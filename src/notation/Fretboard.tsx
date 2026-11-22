@@ -13,6 +13,8 @@ export interface FretDot {
   root?: boolean
   /** A natural harmonic touched over this fret: drawn as a diamond. */
   harmonic?: boolean
+  /** An artificial harmonic: fretted here, touched twelve frets higher by the plucking hand. A diamond in the fret space, with "+12". */
+  artificial?: boolean
   /** Sounding now: the red playback pen. */
   active?: boolean
   /** Fretting-hand finger, 1–4: a small pencil tag on the dot. */
@@ -207,7 +209,14 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
             >
               {d.picked && <circle className={styles.halo} cx={x} cy={y} r={15} />}
               {d.warn && <circle className={styles.warnRing} cx={x} cy={y} r={14} />}
-              {d.harmonic ? (
+              {d.artificial ? (
+                <>
+                  <path className={styles.dot} d={`M${x} ${y - 12} L${x + 12} ${y} L${x} ${y + 12} L${x - 12} ${y} Z`} />
+                  <text className={styles.art} x={x + (lefty ? 13 : -13)} y={y - 8} textAnchor="middle">
+                    +12
+                  </text>
+                </>
+              ) : d.harmonic ? (
                 <path className={styles.dot} d={`M${x} ${y - 12} L${x + 12} ${y} L${x} ${y + 12} L${x - 12} ${y} Z`} />
               ) : d.ghost ? (
                 // a helper note is a small square: never mistaken for a note of the shape

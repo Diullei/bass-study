@@ -437,8 +437,9 @@ function HarmonicsBlock() {
   const P = useClip<string>()
   const hear = (str: number, f: number) =>
     P.once([{ notes: [{ t: 0, midi: OPEN[str] + HARM[f], dur: 3, harm: true }], cues: [{ t: 0, v: `${str}-${f}` }], beats: 3 }], 80)
-  const frets = [12, 7, 5, 4]
-  const what: Record<number, string> = { 12: 'one octave up', 7: 'an octave and a fifth up', 5: 'two octaves up', 4: 'two octaves and a major 3rd (a little flat)' }
+  const frets = [12, 7, 5, 4, 3]
+  const what: Record<number, string> = { 12: 'one octave up', 7: 'an octave and a fifth up', 5: 'two octaves up', 4: 'two octaves and a major 3rd (a little flat)', 3: 'two octaves and a fifth up' }
+  const where: Record<number, string> = { 12: '12', 7: '7 (or 19)', 5: '5 (or 24)', 4: '4 (or 9, 16)', 3: 'just past 3' }
   return (
     <figure className={s.tableFig}>
       <div className={s.tableWrap}>
@@ -455,7 +456,7 @@ function HarmonicsBlock() {
           <tbody>
             {frets.map((f) => (
               <tr key={f}>
-                <th>{f}</th>
+                <th>{where[f]}</th>
                 <td>{what[f]}</td>
                 {OPEN.map((o, str) => (
                   <td key={str}>

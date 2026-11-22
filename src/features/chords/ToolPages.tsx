@@ -263,7 +263,7 @@ export function CheckerPage() {
           <Field label="Chord symbol">
             <input className={s.input} value={sym} onChange={(e) => setSym(e.target.value)} />
           </Field>
-          <Field label="Frets (x muted, 0 open, h7 harmonic)">
+          <Field label="Frets (x muted, 0 open, h7 harmonic, a9 artificial harmonic)">
             <input className={s.input} value={shape} onChange={(e) => setShape(e.target.value)} />
           </Field>
         </FieldGrid>
@@ -311,7 +311,7 @@ export function CheckerPage() {
                 {r.notes.map((n) => (
                   <tr key={n.str}>
                     <td>{STRING_NAMES[n.str]}</td>
-                    <td>{n.harmonic ? `harmonic over ${n.fret}` : n.fret}</td>
+                    <td>{n.harmonic ? `harmonic over ${n.fret}` : n.artificial ? `${n.fret}, touched at ${n.fret + 12}` : n.fret}</td>
                     <td>{pitchName(n.midi)}</td>
                     <td>{n.name}</td>
                     <td>{n.deg}</td>

@@ -79,7 +79,7 @@ export type Texture = 'block' | 'roll'
 export function shapeBar<C>(s: ShapeInfo, texture: Texture, beats: number, cue: C, addRoot: boolean): Bar<C> {
   const notes: CNote[] = []
   const all = [...(s.thumb == null && addRoot ? [s.root] : []), ...s.midis]
-  const harm = new Set(s.a.notes.filter((n) => n.harmonic).map((n) => n.midi))
+  const harm = new Set(s.a.notes.filter((n) => n.harmonic || n.artificial).map((n) => n.midi))
   all.forEach((m, i) => notes.push({ t: texture === 'roll' ? i * 0.12 : 0, midi: m, dur: beats - 0.1, vel: 0.8, harm: harm.has(m) }))
   return { notes, cues: [{ t: 0, v: cue }], beats }
 }
@@ -122,7 +122,7 @@ export interface PatCue {
 export function patternNotes(chords: { s: ShapeInfo; index: number }[], p: Pattern, barInPattern: number, withThumb: boolean): { notes: CNote[]; at: (slot: number) => number } {
   const notes: CNote[] = []
   const per = 8 / chords.length
-  const harmOf = (s: ShapeInfo) => new Set(s.a.notes.filter((n) => n.harmonic).map((n) => n.midi))
+  const harmOf = (s: ShapeInfo) => new Set(s.a.notes.filter((n) => n.harmonic || n.artificial).map((n) => n.midi))
   for (const h of p.hits) {
     const slot = h.at - barInPattern * 8
     if (slot < 0 || slot >= 8) continue

@@ -62,7 +62,7 @@ export function ShapeChip({ sym, shape }: { sym: string; shape: string }) {
   )
 }
 
-const TOKEN = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*|\[\[neck:(?:up|down):\d:-?\d:[^\]]+\]\]|\[\[(?:Law\d|Ch\d+|R\d|HL\d+|TP|GEN|FIND|CHECK)\]\]|\{[A-G][^:{}\s]*:[xh0-9-]+\})/g
+const TOKEN = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*|\[\[neck:(?:up|down):\d:-?\d:[^\]]+\]\]|\[\[(?:Law\d|Ch\d+|R\d|HL\d+|TP|GEN|FIND|CHECK)\]\]|\{[A-G][^:{}\s]*:[xha0-9-]+\})/g
 
 const TOOLS: Record<string, [string, string]> = {
   TP: [TESTS_PATH, 'the four test progressions'],

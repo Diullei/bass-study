@@ -13,6 +13,8 @@ export interface PracticePlan {
   progs: string[]
   /** The style to start with. Default: closed. */
   style?: Exclude<Style, 'near'>
+  /** Offer the upper notes as artificial harmonics (the harmonics chapter). */
+  artificial?: boolean
 }
 
 export const PRACTICE: Record<string, PracticePlan> = {
@@ -124,10 +126,10 @@ export const PRACTICE: Record<string, PracticePlan> = {
     progs: ['blues', 'jazz-blues', 'rhythm-a'],
   },
   harmonics: {
-    task: 'Harmonics exist only for a few notes (over frets 12, 7, 5 and 4), so they do not follow you round the keys. In each key, **find which chord tones are available as harmonics** and swap them in for the top notes of the shape shown; where none fits, play the fretted shape.',
-    layers: ['shell'],
-    progs: ['one-four', 'two-five'],
-    style: 'open',
+    task: 'Natural harmonics do not follow you round the keys, artificial ones do. The shapes are the shells you know; **the upper notes are played as artificial harmonics** (touch twelve frets above the finger). Root first, then the bells, one at a time. In the sharp keys, also look for a natural harmonic that could replace one of them.',
+    layers: ['shell', 'pair'],
+    progs: ['one-four', 'two-five', 'one-six-two-five'],
+    artificial: true,
   },
   workbook: {
     task: 'The long forms. Pick a voicing, take one progression through the twelve keys, then change the voicing and go round again. **Do not stop the loop to think**: if a key breaks, slow the tempo instead.',

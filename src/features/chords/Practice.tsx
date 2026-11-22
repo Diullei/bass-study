@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useHandSize } from '../../state/prefs'
 import { KEYS as STORE, load, store } from '../../state/storage'
-import { Button, Field, FieldGrid, Section, SectionTitle, Segmented, Select, cx } from '../../ui'
+import { Button, Checkbox, Field, FieldGrid, Section, SectionTitle, Segmented, Select, cx } from '../../ui'
 import { CText } from './CText'
 import { LAYERS, voiceLead, type Layer, type Style } from './finder'
 import { playableBy } from './OnBass'
@@ -31,6 +31,7 @@ export function Practice({ chapter, plan: given }: { /** An id for remembering t
   const [layer, setLayer] = useState<Layer>(plan?.layers[0] ?? 'shell')
   const [style, setStyle] = useState<PStyle>(plan?.style ?? 'closed')
   const [key, setKey] = useState('C')
+  const [bells, setBells] = useState(!!plan?.artificial)
   const [done, setDone] = useState<Record<string, string[]>>(() => load(STORE.chordsPractice, {}))
   const p = progById(pid)
   const slot = `${chapter}:${pid}:${layer}:${style}`
@@ -40,13 +41,27 @@ export function Practice({ chapter, plan: given }: { /** An id for remembering t
     const playable = playableBy(hand)
     const bars = progIn(p, key)
     const run = (st: Style) => voiceLead(bars.flat(), layer, 'auto', 9, st, playable)
-    const V = run(style)
+    // the harmonics chapter: every note above the lowest becomes an artificial harmonic of itself
+    const asBells = (shape: string) => {
+      let low = true
+      return shape
+        .split('-')
+        .map((t) => {
+          if (t === 'x') return t
+          const first = low
+          low = false
+          return first || +t < 1 || +t > 12 ? t : `a${t}`
+        })
+        .join('-')
+    }
+    const raw = run(style)
+    const V = raw.map((v) => (bells ? { ...v, shape: asBells(v.shape) } : v))
     let k = 0
     const text = bars.map((b) => b.map(() => V[k++]).map((v) => `${v.sym}:${v.shape}`).join(' ')).join(' | ')
     // closed and open can land on the same shapes (two notes on two strings leave no choice): say so
-    const twin = style !== 'jump' && run(style === 'closed' ? 'open' : 'closed').every((v, i) => v.shape === V[i].shape)
+    const twin = style !== 'jump' && run(style === 'closed' ? 'open' : 'closed').every((v, i) => v.shape === raw[i].shape)
     return { V, text, twin }
-  }, [p, key, layer, style, hand])
+  }, [p, key, layer, style, hand, bells])
   if (!plan || !p || !out) return null
   const mark = () => {
     const next = { ...done, [slot]: played.includes(key) ? played : [...played, key] }
@@ -79,6 +94,7 @@ export function Practice({ chapter, plan: given }: { /** An id for remembering t
           <Segmented label="How the chords are laid out" value={style} options={STYLES.map(({ value, label }) => ({ value, label }))} onChange={setStyle} />
         </Field>
       </FieldGrid>
+      {plan.artificial && <Checkbox label="upper notes as artificial harmonics" checked={bells} onChange={setBells} />}
       <p className={s.caption}>
         <CText text={what} />
         {out.twin && ' In this key and voicing, closed and open give the same shapes.'}

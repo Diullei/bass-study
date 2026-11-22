@@ -96,7 +96,7 @@ export function ChordsHome() {
           <FactList
             items={[
               <CText key="1" text="Shapes are written low string to high string, **B‑E‑A‑D‑G**: {Cmaj7:x-8-x-9-9} means B muted, E fret 8, A muted, D fret 9, G fret 9. Hover it to see it, click it to hear it." />,
-              <CText key="2" text="`0` is an open string; `h7` is a natural harmonic touched over fret 7 (a diamond in the diagrams)." />,
+              <CText key="2" text="`0` is an open string; `h7` is a natural harmonic touched over fret 7 (a diamond over the fret wire); `a9` is an artificial harmonic on the note fretted at 9 (a diamond in the fret space, [[Ch22]])." />,
               <CText key="3" text="Degrees use the numbers of the harmony course ([[HL1]]): R, ♭3, 3, 5, ♭7, 7, 9, 11, 13." />,
               <CText key="4" text="This method never says left or right hand: it says **fretting hand** and **plucking hand**, so it reads the same for left-handed players. Tab is the same both ways; the diagrams can be mirrored with **left-handed view** at the top." />,
               <CText key="f" text="**Fingers.** A yellow tag on a dot is the fretting finger (1 index, 2 middle, 3 ring, 4 little finger: the hand next to the colour key shows them); a grey bar is one finger laid flat across strings (a barre); the bracket under the neck shows which fingers sit at which fret. They are worked out by a hand model that measures the neck in millimetres, so nothing shown is out of reach, and in a progression the fingers are chosen together so one can stay down or slide ([[Ch10]]). They are a good default, not the only right answer: the [[CHECK]] lists the alternatives for any shape. Set your hand size, or hide the fingers, in ⚙ Settings (bottom right)." />,

@@ -81,11 +81,12 @@ export function ShapeMove({ from, to, lefty: leftyProp, className }: ShapeMovePr
   const moves = pairVoices(from.shape, to.shape)
   const heldB = new Set(moves.filter((m) => m.held).map((m) => m.b))
   const heldA = new Set(moves.filter((m) => m.held).map((m) => m.a))
-  const ghost: FretDot[] = A.map((n) => ({ str: n.str, fret: n.fret, harmonic: n.harmonic, label: '', pen: styles.ghost })).filter((_, i) => !heldA.has(i))
+  const ghost: FretDot[] = A.map((n) => ({ str: n.str, fret: n.fret, harmonic: n.harmonic, artificial: n.artificial, label: '', pen: styles.ghost })).filter((_, i) => !heldA.has(i))
   const solid: FretDot[] = B.map((n, i) => ({
     str: n.str,
     fret: n.fret,
     harmonic: n.harmonic,
+    artificial: n.artificial,
     label: to.labels?.[i] ?? '',
     pen: `${to.pens?.[i] ?? ''} ${heldB.has(i) ? styles.held : ''}`,
     root: to.roots?.[i],

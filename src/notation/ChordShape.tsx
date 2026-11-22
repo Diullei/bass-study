@@ -1,7 +1,7 @@
 import { Fretboard, type FretBand, type FretBarre, type FretDot, type FretHand } from './Fretboard'
 
 export interface ChordShapeProps {
-  /** Frets low string to high, e.g. "x-8-x-9-9"; "0" open, "h7" a harmonic over fret 7. */
+  /** Frets low string to high, e.g. "x-8-x-9-9"; "0" open, "h7" a harmonic over fret 7, "a9" an artificial harmonic on the note fretted at 9. */
   shape: string
   /** One label per sounding note, low to high (a degree like "3" or "♭7"). */
   labels?: string[]
@@ -41,10 +41,11 @@ const OPEN = [23, 28, 33, 38, 43]
 
 /** Fret tokens → sounding notes: { str, fret, harmonic }. */
 export function shapeDots(shape: string) {
-  const out: { str: number; fret: number; harmonic: boolean }[] = []
+  const out: { str: number; fret: number; harmonic: boolean; artificial?: boolean }[] = []
   shape.split('-').forEach((t, str) => {
     if (t === 'x' || t === '') return
-    if (t.startsWith('h')) out.push({ str, fret: +t.slice(1), harmonic: true })
+    if (t.startsWith('a')) out.push({ str, fret: +t.slice(1), harmonic: false, artificial: true })
+    else if (t.startsWith('h')) out.push({ str, fret: +t.slice(1), harmonic: true })
     else out.push({ str, fret: +t, harmonic: false })
   })
   return out
@@ -75,6 +76,7 @@ export function ChordShape({ shape, labels, pens, roots, active = [], fingers, b
     str: n.str,
     fret: n.fret,
     harmonic: n.harmonic,
+    artificial: n.artificial,
     label: labels?.[i] ?? '',
     pen: pens?.[i],
     root: roots?.[i],
