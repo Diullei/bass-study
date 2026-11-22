@@ -584,7 +584,7 @@ export function DesignSystemPage() {
               id="scale"
               name="Chord scale on the neck"
               path="notation/ChordShape fill · ShapeMove fill · notation/ScaleStrip"
-              text="The scale that fits a chord, drawn on the fretboard itself: small dots around the shape, under the same hand, each with its degree over the chord in the pen of its job (root filled, 3rd and 7th green, 5th ink, colours blue, passing notes dashed pencil). No red: red is for errors. ScaleStrip, under a chord card, is the same scale as a row, root to root, with gaps to scale (½ marks a half step); the sounding note is highlighted. Off until the reader ticks “chord scales”."
+              text="The scale that fits a chord, drawn on the fretboard itself: small dots around the shape, under the same hand, each with its degree over the chord in the pen of its job (root filled, 3rd and 7th green, 5th ink, colours blue, passing notes dashed pencil). No red: red is for errors. ScaleStrip, under a chord card, is the same scale as a row, root to root, with gaps to scale (½ marks a half step); the sounding note is highlighted. Off until the reader presses the small “scale” switch in the corner of that neck; each neck is switched on its own."
               column
             >
               <ScaleStrip

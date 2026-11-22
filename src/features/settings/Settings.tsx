@@ -2,7 +2,7 @@ import { useState, type ComponentType } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
 import { FingerKey } from '../../notation/FingerKey'
 import { ShapeRef } from '../../notation/ShapeRef'
-import { useHandSize, useLefty, useShapeStyle, useShowFingers, useShowScales } from '../../state/prefs'
+import { useHandSize, useLefty, useShapeStyle, useShowFingers } from '../../state/prefs'
 import { Button, Modal, Segmented } from '../../ui'
 import s from './Settings.module.css'
 
@@ -103,23 +103,6 @@ function ShapeStyleControl() {
   )
 }
 
-function ScalesControl() {
-  const [on, setOn] = useShowScales()
-  return (
-    <div className={s.control}>
-      <Segmented
-        label="Chord scales"
-        value={on ? 'on' : 'off'}
-        options={[
-          { value: 'off', label: 'hide' },
-          { value: 'on', label: 'show scales' },
-        ]}
-        onChange={(v) => setOn(v === 'on')}
-      />
-    </div>
-  )
-}
-
 export const SETTINGS: SettingDef[] = [
   {
     id: 'lefty',
@@ -134,13 +117,6 @@ export const SETTINGS: SettingDef[] = [
     label: 'Shapes written in text',
     help: 'How a shape such as x-8-x-9-9 (frets from the B string to the G string) is drawn inside sentences and under diagrams. Five cells: every string over its fret, muted strings in pencil. One line: only the strings that sound, a hatched slot for each muted string. Tiny neck: a small drawing of the dots, then the frets.',
     Control: ShapeStyleControl,
-  },
-  {
-    id: 'scales',
-    group: 'Chord shapes',
-    label: 'Chord scales',
-    help: 'Draws the scale that fits each chord on the fretboard itself: small dots around the shape, under the same hand, each with its degree over the chord. Blue notes are colours you can hold, dashed notes are passing notes. Under each card the scale is written root to root, with a button to hear it over the chord. The same switch is the “chord scales” box on every page of the chord method.',
-    Control: ScalesControl,
   },
   {
     id: 'fingers',

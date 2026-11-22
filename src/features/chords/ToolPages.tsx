@@ -8,7 +8,6 @@ import { fingerings } from '../../theory/fingering'
 import { find, LAYERS, voiceLead, type DomColour, type Layer } from './finder'
 import { KEYS, progById, progIn, PROGS, TESTS } from './progressions'
 import { info } from './render'
-import { useShowScales } from '../../state/prefs'
 import { progressionScales } from './scales'
 import { PenKey, Progression, ShapeCard } from './Shapes'
 import { analyse, bandsOf, DEG, FAM, parseSym, pitchName, STRING_NAMES } from './voicing'
@@ -46,8 +45,7 @@ function Voiced({ V, barsText, title, pattern }: { V: { sym: string; shape: stri
   const items = seq.slice(0, 16).map((v) => ({ I: info(v.sym, v.shape) }))
   const F = useFingers()
   const seqF = F.seq(seq.map((v) => info(v.sym, v.shape)), true)
-  const [scalesOn] = useShowScales()
-  const scales = scalesOn ? progressionScales(seq.map((v) => v.sym)).scales : null
+  const scales = progressionScales(seq.map((v) => v.sym)).scales
   const whys = [...new Map(V.filter((v) => v.why).map((v) => [v.sym, `**${v.sym}**: ${v.why}`])).values()]
   return (
     <>
@@ -61,7 +59,7 @@ function Voiced({ V, barsText, title, pattern }: { V: { sym: string; shape: stri
       <Along key={barsText} title={title} bars={barsText} pattern={pattern ?? 'split'} tempo={100} noProg />
       <div className={s.cards}>
         {seq.map((v, i) => (
-          <ShapeCard key={i} I={info(v.sym, v.shape)} compact sf={seqF[i]} scale={scales?.[i]} />
+          <ShapeCard key={i} I={info(v.sym, v.shape)} compact sf={seqF[i]} scale={scales[i]} />
         ))}
       </div>
     </>

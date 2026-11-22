@@ -52,6 +52,3 @@ export const useShapeStyle = () =>
     const v = load<string>(KEYS.shapeStyle, 'a')
     return v === 'b' || v === 'c' ? v : 'a'
   })
-
-/** Show the chord scale around every chord shape, and the scale map under progressions. */
-export const useShowScales = () => usePref<boolean>(KEYS.scales, () => load<boolean>(KEYS.scales, false))

@@ -48,8 +48,6 @@ export const KEYS = {
   hand: 'bs.hand',
   /** How a chord shape is written inside text: 'a' five cells (default), 'b' one line, 'c' a tiny neck and the frets. */
   shapeStyle: 'bs.shapeStyle',
-  /** Chord scales drawn around chord shapes and under progressions. */
-  scales: 'bs.scales',
   /** Backing track for practice: band feel and whether the written line is played. */
   backing: 'bs.backing',
 } as const

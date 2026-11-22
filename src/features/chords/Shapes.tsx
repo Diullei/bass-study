@@ -4,7 +4,6 @@ import { ShapeRef } from '../../notation/ShapeRef'
 import { FingerKey } from '../../notation/FingerKey'
 import { ScaleStrip } from '../../notation/ScaleStrip'
 import { ShapeMove } from '../../notation/ShapeMove'
-import { useShowScales } from '../../state/prefs'
 import { VoiceLines } from '../../notation/VoiceLines'
 import { Button, Checkbox, cx } from '../../ui'
 import { CText } from './CText'
@@ -26,29 +25,24 @@ const fillOf = (sc: ChordScale) =>
     sc.notes.map((n) => [n.pc, { label: n.deg, root: n.role === 'root', pen: n.role === 'guide' ? 'pen-green' : n.role === 'colour' ? 'pen-blue' : n.role === 'pass' ? 'pen-pencil' : undefined, dashed: n.role === 'pass' }]),
   )
 
-/**
- * The scale switch of one fretboard: the notebook's setting until this neck is switched by hand.
- * Returns whether the scale shows, and the small button that sits in the corner of the neck.
- */
+/** The scale switch of one fretboard: off until this neck is switched. Returns the state and the small button for the neck's corner. */
 function useNeckScale(lefty: boolean) {
-  const [global] = useShowScales()
-  const [own, setOwn] = useState<{ v: boolean; g: boolean } | null>(null)
-  // a change of the notebook's setting wins again over an older choice made on this neck
-  const on = own && own.g === global ? own.v : global
+  const [on, setOn] = useState(false)
   const button = (
-    <button type="button" className={cx(s.scaleTog, on && s.scaleTogOn, lefty && s.scaleTogLefty)} aria-pressed={on} title={on ? 'Hide the chord scale on this neck' : 'Show the chord scale on this neck'} onClick={() => setOwn({ v: !on, g: global })}>
+    <button type="button" className={cx(s.scaleTog, on && s.scaleTogOn, lefty && s.scaleTogLefty)} aria-pressed={on} title={on ? 'Hide the chord scale on this neck' : 'Show the chord scale on this neck'} onClick={() => setOn(!on)}>
       scale
     </button>
   )
   return { on, button }
 }
 
-/** The switch for chord scales (one setting for the whole notebook) and what the small dots mean. */
+/** What the scale switch of a neck shows. */
 export function ScaleKey() {
-  const [on, setOn] = useShowScales()
   return (
     <div className={s.zoneKey}>
-      <Checkbox label="chord scales" checked={on} onChange={setOn} />
+      <b className={s.zoneKeyTitle}>
+        <span className={cx(s.scaleTog, s.scaleTogDemo)}>scale</span> in the corner of a neck: the scale that fits the chord
+      </b>
       {
         <ul>
           <li>
@@ -66,10 +60,7 @@ export function ScaleKey() {
               <b>dashed</b>: a passing note, a half step above a chord tone. Play through it, do not stop on it
             </span>
           </li>
-          <li>under each card: the scale root to root, ½ marks the half steps, and ▶ hear it</li>
-          <li>
-            <span className={cx(s.scaleTog, s.scaleTogDemo)}>scale</span> in the corner of a neck switches that neck alone
-          </li>
+          <li>under the card: the scale root to root, ½ marks the half steps, and ▶ hear it</li>
         </ul>
       }
     </div>
@@ -278,7 +269,6 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { 
   const anyRootless = items.some((x) => x.I.rootless)
   const F = useFingers()
   const seqF = seq ? F.seq(items.map((x) => x.I)) : null
-  const [scalesOn, setScalesOn] = useShowScales()
   // in a progression each chord's scale follows the key and the chord it goes to
   const seqScales = seq ? progressionScales(items.map((x) => x.I.sym)).scales : null
   const playOne = (i: number) => (P.playing && P.cue === i ? P.stop() : P.once([shapeBar(items[i].I, 'roll', 3, i, addRoot)], tempo))
@@ -294,7 +284,6 @@ export function ShapesBlock({ title, rows, caption, seq, tempo = 72, zones }: { 
           </Button>
         )}
         {anyRootless && <Checkbox label="thumb adds the root" checked={addRoot} onChange={setAddRoot} />}
-        <Checkbox label="chord scales" checked={scalesOn} onChange={setScalesOn} />
       </figcaption>
       {seq && items.length > 1 && <Progression items={items} at={P.cue} onPick={playOne} />}
       <div className={cx(s.cards, seq && s.cardsSeq)}>
