@@ -271,12 +271,14 @@ export function LawOneDrill() {
           <Button variant="pencil" onClick={() => hear(q.start)}>
             ▶ Hear the note
           </Button>
-          <span className={s.pencil}>{picked ? `your answer: ${name(picked)} (click another place to change it)` : 'click a place on the neck'}</span>
+          <span className={s.pencil}>
+            <CText text={picked ? `your answer: ${name(picked)} (click another place to change it)` : 'click a place on the neck'} />
+          </span>
         </Row>
       ) : (
         <>
           <div className={verdict?.ok ? s.drillRight : s.drillWrong}>
-            <b>{verdict?.title}</b> {verdict?.text}
+            <b>{verdict?.title}</b> <CText text={verdict?.text ?? ''} />
           </div>
           <div className={s.drillWhy}>
             <b>The reasoning</b>

@@ -518,7 +518,7 @@ export const CHAPTERS_2: Chapter[] = [
       {
         t: 'shapes',
         rows: ['Dm11 | x-x-15-15-14 | top three notes: ♭7 ♭3 5', 'Dm11 | x-15-15-15-14 | top four', 'Dm11 | 15-15-15-15-14 | all five: D G C F A'],
-        caption: 'The five-note grip needs a ring-finger barre at fret 15 with finger 1 on the G string at 14, and its lowest fourths are below the clear zone ([[Law2]]). Treat it as a special effect, rolled slowly. The three- and four-note versions are the everyday ones. These are the second chord of the tune\'s famous two-chord figure; slide any of them up two frets for the first (E A D G B).',
+        caption: 'The five-note grip needs a ring-finger barre at fret 15 with finger 1 at G‑14, and its lowest fourths are below the clear zone ([[Law2]]). Treat it as a special effect, rolled slowly. The three- and four-note versions are the everyday ones. These are the second chord of the tune\'s famous two-chord figure; slide any of them up two frets for the first (E A D G B).',
       },
       {
         t: 'along',
@@ -695,7 +695,7 @@ export const CHAPTERS_2: Chapter[] = [
     ],
     drills: [
       'The C6 ladder, up and down, block and broken.',
-      'The same on F6: start at {F6:x-x-8-7-7} and build the rest yourself, using form B on the upper strings or moving to the E string at fret 13.',
+      'The same on F6: start at {F6:x-x-8-7-7} and build the rest yourself, using form B on the upper strings or moving the root to E‑13.',
       'Four bars of Dm7 at 80 bpm: fill them using inversions, planing in fourths ([[Ch16]]) and one side-slip.',
     ],
     ready: 'A four-bar chord no longer makes you nervous.',
@@ -796,7 +796,7 @@ export const CHAPTERS_2: Chapter[] = [
       {
         q: 'Drill 2: what is the melody note B over D♭7, and which shape fits?',
         a: 'The ♭7 (written C♭): form C, {D♭7:14-x-x-15-16}.',
-        why: 'Melody on the 7th → the 3rd on the string below, root under it. D♭ on the B string at 14, F on the D string at 15, the melody on top.',
+        why: 'Melody on the 7th → the 3rd on the string below, root under it. D♭ at B‑14, F at D‑15, the melody on top.',
       },
     ],
     quiz: ['shapeDeg', 'below', 'form', 'nameShape'],

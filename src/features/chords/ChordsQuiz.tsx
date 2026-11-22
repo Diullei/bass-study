@@ -56,7 +56,7 @@ export function ChordsQuiz({ id, types }: { id: string; types: QType[] }) {
           <ChoiceList>
             {run.q.options.map((o) => (
               <Choice key={o} state={stateOf(o)} disabled={!!run.picked} onClick={() => answer(o)}>
-                {o}
+                <CText text={o} inert />
               </Choice>
             ))}
           </ChoiceList>

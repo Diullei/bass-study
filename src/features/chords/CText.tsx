@@ -1,7 +1,8 @@
 import { Fragment, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { ChordShape } from '../../notation/ChordShape'
-import { Fretboard } from '../../notation/Fretboard'
+import { MiniNeck } from '../../notation/MiniNeck'
+import { fretRefs } from '../../notation/FretRef'
 import { LessonRef, RuleRef } from '../harmony/HText'
 import { CHAPTERS } from './chapters'
 import { useFingers } from './fingers'
@@ -62,39 +63,6 @@ export function ShapeChip({ sym, shape }: { sym: string; shape: string }) {
 
 const TOKEN = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*|\[\[neck:(?:up|down):\d:-?\d:[^\]]+\]\]|\[\[(?:Law\d|Ch\d+|R\d|HL\d+|TP|GEN|FIND|CHECK)\]\]|\{[A-G][^:{}\s]*:[xh0-9-]+\})/g
 
-/**
- * A small neck for a table cell: a root and one other note, `strings` apart and `frets` along (Law 1).
- * `down`: the held note is on top and the root is found below it. Only the frets that matter are drawn.
- */
-export function MiniNeck({ down, strings, frets, label }: { down?: boolean; strings: number; frets: number; label: string }) {
-  // the root sits where the other note still fits on five strings
-  const rootStr = down ? 4 - strings : strings === 4 ? 0 : 1
-  const otherStr = down ? 4 : rootStr + strings
-  const rootFret = down ? 8 + frets : 8
-  const otherFret = down ? 8 : 8 + frets
-  let lo = Math.min(rootFret, otherFret)
-  let hi = Math.max(rootFret, otherFret)
-  // at least three frets, so the picture has a shape
-  if (hi - lo < 2) {
-    if (hi === lo) lo -= 1
-    hi += 1
-  }
-  return (
-    <span className={s.miniNeck}>
-      <Fretboard
-        strings={5}
-        from={lo}
-        to={hi}
-        allNumbers
-        dots={[
-          { str: rootStr, fret: rootFret, label: 'R', root: true },
-          { str: otherStr, fret: otherFret, label, pen: 'pen-green' },
-        ]}
-      />
-    </span>
-  )
-}
-
 const TOOLS: Record<string, [string, string]> = {
   TP: [TESTS_PATH, 'the four test progressions'],
   GEN: [GEN_PATH, 'progression generator'],
@@ -103,15 +71,15 @@ const TOOLS: Record<string, [string, string]> = {
 }
 
 /** Rich text of the chord method (see types.ts for the tokens). */
-export function CText({ text }: { text: string }) {
+export function CText({ text, inert }: { text: string; inert?: boolean }) {
   const out: ReactNode[] = []
   text.split(TOKEN).forEach((part, i) => {
     if (!part) return
-    if (part.startsWith('**')) out.push(<b key={i}><CText text={part.slice(2, -2)} /></b>)
+    if (part.startsWith('**')) out.push(<b key={i}><CText text={part.slice(2, -2)} inert={inert} /></b>)
     else if (part.startsWith('`')) out.push(<code key={i} className={s.code}>{part.slice(1, -1)}</code>)
     else if (part.startsWith('[[neck:')) {
       const [, dir, su, df, label] = part.slice(2, -2).split(':')
-      out.push(<MiniNeck key={i} down={dir === 'down'} strings={+su} frets={+df} label={label} />)
+      out.push(<MiniNeck key={i} down={dir === 'down'} strings={+su} frets={+df} label={label} className={s.miniNeck} />)
     } else if (part.startsWith('[[Law')) out.push(<LawRef key={i} n={+part.slice(5, -2)} />)
     else if (part.startsWith('[[Ch')) out.push(<ChapterRef key={i} n={+part.slice(4, -2)} />)
     else if (part.startsWith('[[R')) out.push(<RuleRef key={i} n={+part.slice(3, -2)} />)
@@ -127,7 +95,7 @@ export function CText({ text }: { text: string }) {
       const k = part.indexOf(':')
       out.push(<ShapeChip key={i} sym={part.slice(1, k)} shape={part.slice(k + 1, -1)} />)
     } else if (part.startsWith('*') && part.length > 2) out.push(<i key={i}>{part.slice(1, -1)}</i>)
-    else out.push(<Fragment key={i}>{part}</Fragment>)
+    else out.push(<Fragment key={i}>{fretRefs(part, inert)}</Fragment>)
   })
   return <>{out}</>
 }

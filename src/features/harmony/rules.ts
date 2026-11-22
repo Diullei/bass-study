@@ -45,7 +45,7 @@ export const RULES: Rule[] = [
       {
         t: 'tip',
         title: 'On the bass',
-        text: 'Hold a C (A string, 3rd fret) and play B, one fret lower, then go back. Then play D, two frets higher. The B "wants" to go back; the D can stay. One fret is a half step: on the bass you can see Rule 1.',
+        text: 'Hold a C (A‑3) and play B, one fret lower, then go back. Then play D, two frets higher. The B "wants" to go back; the D can stay. One fret is a half step: on the bass you can see Rule 1.',
       },
     ],
     tries: [

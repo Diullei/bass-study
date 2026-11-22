@@ -1,3 +1,4 @@
+import { fretRefs } from '../../notation/FretRef'
 import { useMemo } from 'react'
 import { UNITS } from '../../curriculum/lessons'
 import type { Lesson } from '../../curriculum/types'
@@ -37,7 +38,7 @@ export function LessonIntro({ lesson: L, number, prev }: { lesson: Lesson; numbe
       <PageTitle number={`${number}.`} tags={L.tag || L.song || L.chart ? tags : undefined}>
         {L.t}
       </PageTitle>
-      <Lead>{L.txt}</Lead>
+      <Lead>{fretRefs(L.txt)}</Lead>
       <FactList items={intro.facts.map(renderFact)} />
       {intro.paper && (
         <Paper tape tilt="left" label="new">

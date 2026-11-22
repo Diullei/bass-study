@@ -155,12 +155,12 @@ export const LAWS: Law[] = [
         why: '21 semitones need four strings (20 + 1), and the E string has only three above it. Putting the root one string lower adds a string above it; taking an octave off (two strings and two frets) turns 21 into 9 = 10 − 1.',
       },
       {
-        q: 'You hold the ♭7 of a chord on the G string, fret 10. Where is the root?',
+        q: 'You hold the ♭7 of a chord at G‑10. Where is the root?',
         a: 'Two strings down, same fret: A‑10 (G). The chord is some kind of G7.',
         why: 'The ♭7 is 10 semitones above the root, and 10 = 5 + 5: two strings, no fret change. G‑10 is F, and F is the ♭7 of G.',
       },
       {
-        q: 'You hold the 3rd on the D string, fret 9. Where is the root on a lower string?',
+        q: 'You hold the 3rd at D‑9. Where is the root on a lower string?',
         a: 'One string down, one fret forward: A‑10 (G). For the root an octave lower: three strings down, one fret back, B‑8.',
         why: 'The 3rd is 4 semitones above the root, and 4 = 5 − 1: one string down (−5), one fret forward (+1). D‑9 is B, the 3rd of G; A‑10 is G. An octave lower the gap is 16 = 15 + 1: three strings down, one fret back, B‑8 (G1).',
       },

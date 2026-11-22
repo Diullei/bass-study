@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from 'react'
 import { Link } from 'react-router'
+import { fretRefs } from '../../notation/FretRef'
 import { LESSONS } from './lessons'
 import { harmonyLessonPath, rulePath, WORKSHOP_PATH } from './paths'
 import { RULES } from './rules'
@@ -45,7 +46,7 @@ export function HText({ text }: { text: string }) {
         </Link>,
       )
     else if (part.startsWith('*') && part.length > 2) out.push(<i key={i}>{part.slice(1, -1)}</i>)
-    else out.push(<Fragment key={i}>{part}</Fragment>)
+    else out.push(<Fragment key={i}>{fretRefs(part)}</Fragment>)
   })
   return <>{out}</>
 }

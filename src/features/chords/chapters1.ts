@@ -87,7 +87,7 @@ export const CHAPTERS_1: Chapter[] = [
       { t: "h", text: "Registers are diagonal, not fret ranges" },
       {
         t: "p",
-        text: "A piano has registers you can point at: bass on the left, chords around the middle, melody on the right. A bass has the same three registers, but they are **not** fret ranges. Fret 8 on the B string is a deep bass note; fret 8 on the G string is in the middle of the chord register. A register is a range of *pitch*, and by [[Law1]] the same pitch sits five frets higher on each lower string. So each register is a **diagonal band** across the neck.",
+        text: "A piano has registers you can point at: bass on the left, chords around the middle, melody on the right. A bass has the same three registers, but they are **not** fret ranges. B‑8 is a deep bass note; G‑8, the same fret, is in the middle of the chord register. A register is a range of *pitch*, and by [[Law1]] the same pitch sits five frets higher on each lower string. So each register is a **diagonal band** across the neck.",
       },
       { t: "registers" },
       {
@@ -114,7 +114,7 @@ export const CHAPTERS_1: Chapter[] = [
       },
     ],
     drills: [
-      "**Rebuild the map.** Without looking, write the row for “1 string up”. Check it with arithmetic, then on the bass from C (E string, fret 8). Next day do “2 strings up”, and so on.",
+      "**Rebuild the map.** Without looking, write the row for “1 string up”. Check it with arithmetic, then on the bass from C (E‑8). Next day do “2 strings up”, and so on.",
       "**Name and play.** From C at E‑8, play and say: 3, ♭7, 7, 10th, ♭3 an octave up, 9. Then from F at A‑8, then G at B‑8.",
       "**Mud test.** Play a major 3rd (one string up, one fret back) starting on E‑3, E‑8, A‑8, A‑14, D‑9. Notice where it starts to sound like a chord and not a rumble. You have just found your own floor for 3rds.",
       "**Same note, three colours.** Play E3 at G‑9, D‑14 and A‑19. Then play the pair C3 + E3 as D‑10 with G‑9, and as A‑15 with D‑14. Same notes, different chord. Decide which you would use under a melody.",
@@ -145,7 +145,7 @@ export const CHAPTERS_1: Chapter[] = [
         why: "The 3rd is 4 semitones above the root: 4 = 5 − 1, one string down and one fret forward ([[Law1]] backwards). An octave lower the gap is 16 = 15 + 1: three strings down, one fret back. That is exactly the root of {Cmaj7:x-8-x-9-9}.",
       },
       {
-        q: "Fret 10 on the E string and fret 10 on the G string: which registers?",
+        q: "E‑10 and G‑10, the same fret on two strings: which registers?",
         a: "E‑10 is D2, bass register. G‑10 is F3, upper chord register, inside the melody band too.",
         why: "Registers are pitch, not frets. E‑10 = 28 + 10 = 38 (D2), below F2, so bass. G‑10 = 43 + 10 = 53 (F3): above F2 and above E3, so the top of the chord band, where the melody band starts.",
       },
@@ -368,7 +368,7 @@ export const CHAPTERS_1: Chapter[] = [
       {
         q: "Write the root + 7 shape for E♭maj7 with the root on the A string.",
         a: "{E♭maj7:x-x-6-x-7}",
-        why: "E♭ is at A‑6. The major 7 is two strings up, one fret forward ([[Law1]]: 5 × 2 + 1 = 11 semitones): G string, fret 7.",
+        why: "E♭ is at A‑6. The major 7 is two strings up, one fret forward ([[Law1]]: 5 × 2 + 1 = 11 semitones): G‑7.",
       },
       {
         q: "In the 10ths scale of F major starting at E‑1, is the 10th on G (E‑3) major or minor, and why?",
@@ -652,7 +652,7 @@ export const CHAPTERS_1: Chapter[] = [
       },
       {
         q: "In Route 2, which note of C7 was already under your finger in Gm7?",
-        a: "B♭ on the D string, fret 8.",
+        a: "B♭ at D‑8.",
         why: "The ♭3 of Gm7 is B♭, and the ♭7 of C7 is B♭ too. A common tone stays put ([[Law4]]); only the root and the other note move.",
       },
     ],
@@ -744,9 +744,9 @@ export const CHAPTERS_1: Chapter[] = [
         t: "table",
         head: ["Root C2 on…", "Hand position", "The D and G strings under that hand are in…"],
         rows: [
-          ["A string, fret 3", "frets 2–5", "the bottom of the chord band, under the floor for 3rds: 3rds will be muddy"],
-          ["E string, fret 8", "frets 7–10", "the chord band: shells are clear"],
-          ["B string, fret 13", "frets 12–16", "the top of the chord band, touching melody"],
+          ["A‑3", "frets 2–5", "the bottom of the chord band, under the floor for 3rds: 3rds will be muddy"],
+          ["E‑8", "frets 7–10", "the chord band: shells are clear"],
+          ["B‑13", "frets 12–16", "the top of the chord band, touching melody"],
         ],
       },
       {
@@ -867,7 +867,7 @@ export const CHAPTERS_1: Chapter[] = [
     checks: [
       {
         q: "You hold {Cmaj7:x-8-x-9-9} and the next chord is Fmaj7. Where is the nearest F root, and which form goes with it?",
-        a: "A string, fret 8 (same fret, next string up): form B, {Fmaj7:x-x-8-7-9}.",
+        a: "A‑8 (same fret, next string up): form B, {Fmaj7:x-x-8-7-9}.",
         why: "Technique 1, trade a string first. F is a fourth above C, and by [[Law1]] a fourth is one string up at the same fret. No shift at all; the form changes because the root changed string.",
       },
       {
@@ -877,7 +877,7 @@ export const CHAPTERS_1: Chapter[] = [
       },
       {
         q: "Dm7 {Dm7:x-10-x-10-10} to G7 {G7:x-x-10-9-10}: which finger never lifts?",
-        a: "The one on the G string, fret 10 (F).",
+        a: "The one at G‑10 (F).",
         why: "F is the ♭3 of Dm7 and the ♭7 of G7: a common tone. Hold it and rotate the hand around it (technique 3, [[Law4]]).",
       },
     ],

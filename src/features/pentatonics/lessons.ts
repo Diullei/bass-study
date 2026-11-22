@@ -71,7 +71,7 @@ export const LESSONS: PentLesson[] = [
       {
         t: 'list',
         items: [
-          'Root on the E string, 5th fret. Fingers 1 and 4 on the E and A strings, 1 and 3 on the D and G strings.',
+          'Root at E‑5. Fingers 1 and 4 on the E and A strings, 1 and 3 on the D and G strings.',
           'Say the degrees while you play: 1, ♭3, 4, 5, ♭7, 1.',
           'The shape is the scale; the fret is the key. Move it and you have the same scale in a new key.',
         ],

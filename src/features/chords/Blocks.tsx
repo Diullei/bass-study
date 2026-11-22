@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Fretboard, type FretBand } from '../../notation/Fretboard'
+import { FretRef } from '../../notation/FretRef'
 import { BeatGrid, Button, FactList, Field, FieldGrid, Segmented, Select, StickyNote, cx } from '../../ui'
 import { fingerings } from '../../theory/fingering'
 import { handOf } from './fingers'
@@ -112,13 +113,13 @@ function MapBlock({ down = false }: { down?: boolean }) {
           <p className={s.caption}>
             {down ? (
               <>
-                From your note, C at G‑5: {pick[0]} string{pick[0] > 1 ? 's' : ''} down {words(pick[1])} is 5 × {pick[0]}{pick[1] === 0 ? '' : ` ${pick[1] > 0 ? '−' : '+'} ${Math.abs(pick[1])}`} ={' '}
+                From your note, C at <FretRef string="G" fret={5} />: {pick[0]} string{pick[0] > 1 ? 's' : ''} down {words(pick[1])} is 5 × {pick[0]}{pick[1] === 0 ? '' : ` ${pick[1] > 0 ? '−' : '+'} ${Math.abs(pick[1])}`} ={' '}
                 <b>{ivOf(pick[0], pick[1])} semitones below</b>. So if your note is the {name(ivOf(pick[0], pick[1]))}, the root is there. Click any cell to hear your note, then the
                 root.
               </>
             ) : (
               <>
-                From C at E‑8: {pick[0]} string{pick[0] > 1 ? 's' : ''} up {words(pick[1])} is 5 × {pick[0]}{pick[1] === 0 ? '' : ` ${pick[1] > 0 ? '+' : '−'} ${Math.abs(pick[1])}`} ={' '}
+                From C at <FretRef string="E" fret={8} />: {pick[0]} string{pick[0] > 1 ? 's' : ''} up {words(pick[1])} is 5 × {pick[0]}{pick[1] === 0 ? '' : ` ${pick[1] > 0 ? '+' : '−'} ${Math.abs(pick[1])}`} ={' '}
                 <b>{ivOf(pick[0], pick[1])} semitones</b>: the {name(ivOf(pick[0], pick[1]))}. Click any cell to hear it.
               </>
             )}
@@ -208,7 +209,7 @@ function ReachBlock({ root = 'C', string = 1, degree = '13' }: { root?: string; 
       <figure className={s.card}>
         <button type="button" className={s.cardHead} onClick={() => hear(p)}>
           <b className={s.cardSym}>
-            {STRING_NAMES[p.rs]}‑{p.rf} → {STRING_NAMES[p.ts]}‑{p.tf}
+            <FretRef string={STRING_NAMES[p.rs]} fret={p.rf} inert /> → <FretRef string={STRING_NAMES[p.ts]} fret={p.tf} inert />
           </b>
           <span className={s.cardPlay}>▶</span>
         </button>
@@ -238,12 +239,12 @@ function ReachBlock({ root = 'C', string = 1, degree = '13' }: { root?: string; 
         </Field>
       </FieldGrid>
       <p className={s.para}>
-        The root {r} is at <b>{STRING_NAMES[rs]}‑{rf}</b>, with {4 - rs} string{4 - rs > 1 ? 's' : ''} above it. The {short} is <b>{iv} semitones</b> up.{' '}
+        The root {r} is at <FretRef string={STRING_NAMES[rs]} fret={rf} />, with {4 - rs} string{4 - rs > 1 ? 's' : ''} above it. The {short} is <b>{iv} semitones</b> up.{' '}
         {hereOk.length > 0 ? (
           <>It fits as it is:</>
         ) : best ? (
           <>
-            The most the strings give is 5 × {best.su} = {5 * best.su}, which leaves <b>{best.df > 0 ? '+' : '−'}{Math.abs(best.df)} frets</b> ({STRING_NAMES[best.ts]}‑{best.tf}): out of reach for one hand. Law 1 has three ways out.
+            The most the strings give is 5 × {best.su} = {5 * best.su}, which leaves <b>{best.df > 0 ? '+' : '−'}{Math.abs(best.df)} frets</b> (<FretRef string={STRING_NAMES[best.ts]} fret={best.tf} />): out of reach for one hand. Law 1 has three ways out.
           </>
         ) : (
           <>There is no string above the root that holds it. Law 1 has three ways out.</>
@@ -584,7 +585,7 @@ export function BlockView({ b }: { b: CBlock }) {
                   <tr key={i}>
                     {r.map((x, j) => (
                       <td key={j}>
-                        <CText text={x} />
+                        <CText text={x} inert />
                       </td>
                     ))}
                   </tr>

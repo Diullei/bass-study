@@ -343,7 +343,7 @@ function FingeringList({ sym, shape, hand }: { sym: string; shape: string; hand:
         <ol className={s.steps}>
           {all.map((f, i) => (
             <li key={i}>
-              {fingerText(I, { f, fingers: f.fingers, barres: f.barres, hand: handOf(notes.map((n) => n.fret), f) })} · index at fret {f.pos} · <b>{effort(f.cost)}</b>
+              <CText text={fingerText(I, { f, fingers: f.fingers, barres: f.barres, hand: handOf(notes.map((n) => n.fret), f) })} /> · index at fret {f.pos} · <b>{effort(f.cost)}</b>
               {i === 0 ? ' (shown above)' : ''}
             </li>
           ))}

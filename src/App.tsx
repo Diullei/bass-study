@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { LegacyLessonRedirect } from './features/method/MethodRoutes'
 import { Metronome } from './features/metronome/Metronome'
+import { IntervalWidget } from './features/intervals/IntervalWidget'
 import { Settings } from './features/settings/Settings'
 import { MetronomeTempoProvider } from './features/metronome/MetronomeTempo'
 import { CoverPage } from './pages/CoverPage'
@@ -27,6 +28,8 @@ export function App() {
           <Metronome />
           {/* the notebook's settings, always one click away */}
           <Settings />
+          {/* the interval ruler, for when a number is needed */}
+          <IntervalWidget />
         </BrowserRouter>
       </MetronomeTempoProvider>
     </AppStateProvider>

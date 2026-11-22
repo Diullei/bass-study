@@ -121,7 +121,7 @@ const GEN: Record<Exclude<QType, 'mapDown' | 'below'>, () => CQuestion> = {
     const m = OPEN[str] + fret
     const label = { bass: 'bass band (roots)', chord: 'chord band (3rds, 7ths, colours)', melody: 'melody band (top voice)' }
     return {
-      prompt: `Fret ${fret} on the ${STRING_NAMES[str]} string: which register is it in?`,
+      prompt: `${STRING_NAMES[str]}‑${fret}: which register is it in?`,
       options: Object.values(label),
       answer: label[bands[0]],
       why: `${STRING_NAMES[str]} open is ${pitchName(OPEN[str])}, so fret ${fret} is ${pitchName(m)}. The bands are pitch ranges: bass ${pitchName(BANDS.bass[0])}–${pitchName(BANDS.bass[1])}, chord ${pitchName(BANDS.chord[0])}–${pitchName(BANDS.chord[1])}, melody from ${pitchName(BANDS.melody[0])}. A register is a diagonal, not a fret range.`,
@@ -310,10 +310,10 @@ const GEN: Record<Exclude<QType, 'mapDown' | 'below'>, () => CQuestion> = {
     const f = 3 + rnd(10)
     const root = pcName(OPEN[str] + f)
     const lower = STRING_NAMES[str - 1]
-    const ans = `${lower} string, fret ${f}`
+    const ans = `${lower}‑${f}`
     return {
       prompt: `The thumb plays ${root} at ${STRING_NAMES[str]}‑${f}. Where is the 5th below it, for the bossa's beat 3?`,
-      options: shuffle([ans, `${lower} string, fret ${f + 2}`, `${STRING_NAMES[str + 1]} string, fret ${f + 2}`, `${STRING_NAMES[str + 1]} string, fret ${f}`]),
+      options: shuffle([ans, `${lower}‑${f + 2}`, `${STRING_NAMES[str + 1]}‑${f + 2}`, `${STRING_NAMES[str + 1]}‑${f}`]),
       answer: ans,
       why: `One string down is 5 semitones down ([[Law1]]): a perfect 4th below, which is the 5th of the chord an octave lower. Same fret, no hand movement ([[Ch20]]).`,
     }

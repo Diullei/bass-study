@@ -43,7 +43,7 @@ export const LESSON_DEFS: LessonDef[] = [
   demo:{type:'intervals',root:'C3',list:['m2','M2','m3','M3']},quiz:{types:['interval'],set:['m2','M2','m3','M3'],n:15}},
  {u:2,t:'Song: Hot Cross Buns',song:'hotcross',tempo:80,txt:'A tiny tune on the D string with eighth notes. Then it repeats.'},
  // ---------- Unit 4
- {u:3,t:'B on the A string',pool:['A0','A2'],nw:['A2'],R:6,bars:8,tempo:65,txt:'A string, fret 2, 2nd finger. B sits on the 2nd line.'},
+ {u:3,t:'B on the A string',pool:['A0','A2'],nw:['A2'],R:6,bars:8,tempo:65,txt:'A‑2, 2nd finger. B sits on the 2nd line.'},
  {u:3,t:'C on the A string — 3rd finger',pool:['A0','A2','A3'],nw:['A3'],R:7,bars:8,tempo:65,txt:'C is fret 3. New: eighth rests — notes that start on the "+" of the beat.'},
  {u:3,t:'The C major scale on three strings',pool:['A0','A2','A3','D0','D2','D3','G0','G2','G4'],R:7,bars:8,tempo:70,key:'C',txt:'C D E F G A B — your first scale, spread over the A, D and G strings.'},
  {u:3,t:'Theory: the major scale & scale degrees',pool:['A0','A2','A3','D0','D2','D3','G0','G2','G4'],R:7,bars:8,tempo:70,key:'C',tag:'theory',

@@ -140,7 +140,7 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
   )
 }
 
-/** A sticky note in the bottom-left corner of every page that opens the settings. */
+/** A sticky note in the bottom-right corner of every page that opens the settings. */
 export function Settings() {
   const [open, setOpen] = useState(false)
   return (

@@ -5,6 +5,7 @@ import { LESSONS } from '../curriculum/lessons'
 import { generate, lessonIntro, type Score } from '../engine'
 import { ChordShape } from '../notation/ChordShape'
 import { FingerKey } from '../notation/FingerKey'
+import { FretRef } from '../notation/FretRef'
 import { Fretboard } from '../notation/Fretboard'
 import { ShapeMove } from '../notation/ShapeMove'
 import { VoiceLines } from '../notation/VoiceLines'
@@ -41,6 +42,7 @@ import {
   UnitLabel,
 } from '../ui'
 import { PenHead } from '../features/ideas/RoleLegend'
+import { IntervalRuler } from '../features/intervals/IntervalRuler'
 import { NotebookHeader } from '../features/shell/NotebookHeader'
 import s from './DesignSystemPage.module.css'
 
@@ -174,6 +176,8 @@ export function DesignSystemPage() {
           <a href="#voice-lines">VoiceLines</a>
           <a href="#beat-grid">BeatGrid</a>
           <a href="#modal">Modal</a>
+          <a href="#fret-ref">FretRef</a>
+          <a href="#interval-ruler">Interval ruler</a>
         </nav>
 
         <main>
@@ -536,10 +540,37 @@ export function DesignSystemPage() {
               />
             </Spec>
             <Spec
+              id="fret-ref"
+              name="FretRef"
+              path="notation/FretRef · fretRefs()"
+              text="A place on the neck named inside a sentence: the string on a small dark label, then the fret. Hover shows the place on a small neck and the note it sounds; click plays it. In lesson text it is written E‑8 (the string's letter, a non-breaking hyphen, the fret) and every text renderer turns that into this tag. Never “E string, fret 8” or “fret 8 on the E string” for one exact place. inert is the plain version for inside buttons."
+              column
+            >
+              <p style={{ margin: 0, maxWidth: '70ch', lineHeight: 'var(--ruled)' }}>
+                From C at <FretRef string="E" fret={8} />, the 3rd is one string up and one fret back, <FretRef string="A" fret={7} />; the same C is also at <FretRef string="B" fret={13} />, and the 13 from there is{' '}
+                <FretRef string="G" fret={14} />.
+              </p>
+              <Caption>inert, inside a button:</Caption>
+              <Button size="sm">
+                <FretRef string="E" fret={8} inert /> → <FretRef string="A" fret={12} inert />
+              </Button>
+            </Spec>
+            <Spec
+              id="interval-ruler"
+              name="Interval ruler"
+              path="features/intervals/IntervalRuler · IntervalWidget"
+              text="Two octaves of half steps drawn as a ruler, the degree over each one: long ticks and ink for the degrees of the major scale, short ticks and pencil for the lowered and raised ones. Pick a degree for its half steps, the split into strings and frets, and a small neck in each direction. IntervalWidget puts it one click away on every page (the blue note above the metronome)."
+              column
+            >
+              <div style={{ maxWidth: 560 }}>
+                <IntervalRuler />
+              </div>
+            </Spec>
+            <Spec
               id="modal"
               name="Modal"
               path="ui/Modal"
-              text="A sheet of notebook paper taped over a dimmed desk, on the native <dialog>: Esc or a click on the desk closes it, and focus stays inside while it is open. Used by the notebook's settings (the green note in the bottom-left corner)."
+              text="A sheet of notebook paper taped over a dimmed desk, on the native <dialog>: Esc or a click on the desk closes it, and focus stays inside while it is open. Used by the notebook's settings (the green note in the bottom-right corner)."
             >
               <ModalDemo />
             </Spec>

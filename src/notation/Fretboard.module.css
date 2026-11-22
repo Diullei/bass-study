@@ -266,3 +266,70 @@
   border: 1px solid var(--pencil-light);
   border-radius: 50%;
 }
+
+/* FretRef: a place on the neck named inside a sentence */
+.fretRef {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  margin: 0 1px;
+  padding: 0;
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+/* the string on a small dark label, the fret next to it */
+.fretRef {
+  border: 1px solid var(--pencil-light);
+  border-radius: 4px;
+  background: var(--paper-sheet);
+  line-height: 1.15;
+}
+span.fretRef {
+  cursor: default;
+}
+.frString {
+  padding: 0 4px;
+  font: 700 0.82em var(--font-hand);
+  color: var(--paper-sheet);
+  background: var(--ink-soft);
+  border-radius: 3px 0 0 3px;
+}
+.frFret {
+  padding: 0 5px;
+  font: 600 0.88em var(--font-mono);
+  border-radius: 0 3px 3px 0;
+}
+button.fretRef:hover .frFret,
+button.fretRef:focus-visible .frFret {
+  background-color: var(--highlighter);
+}
+.frPop {
+  position: absolute;
+  z-index: 30;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  width: 190px;
+  padding: 6px 8px;
+  transform: translateX(-50%) rotate(-0.5deg);
+  white-space: normal;
+  text-align: left;
+  font: 400 var(--fs-xs) var(--font-hand);
+  color: var(--pencil);
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--ink-soft);
+  border-radius: var(--wobble-2);
+  box-shadow: var(--shadow-note);
+  pointer-events: none;
+}
+.fretRef:hover .frPop,
+.fretRef:focus-visible .frPop {
+  display: flex;
+}

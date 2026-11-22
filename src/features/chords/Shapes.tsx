@@ -74,7 +74,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given }: {
         )}
         {F.show && sf && (
           <span className={s.fingers}>
-            ✋ {fingerText(I, sf)}
+            ✋ <CText text={fingerText(I, sf)} />
             {sf.split ? ' · root first, then the harmonics' : sf.f.stretch > 0.93 ? ' · a stretch' : ''}
           </span>
         )}
@@ -180,7 +180,11 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
           <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} {...F.props(sfCur)} />
         )}
         {moves && <p className={s.moveText}>{moves}</p>}
-        {fmoves && <p className={s.fingerMove}>✋ {fmoves}</p>}
+        {fmoves && (
+          <p className={s.fingerMove}>
+            ✋ <CText text={fmoves} />
+          </p>
+        )}
         <p className={s.moveKey}>dashed pencil = the chord before · thick ring = the note stays · arrow = the note moves · ½ = a half-step pull · yellow tag = finger</p>
       </div>
     </div>

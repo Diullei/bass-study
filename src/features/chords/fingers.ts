@@ -79,7 +79,7 @@ export function fingerMoveText(a: { I: ShapeInfo; sf: ShapeFingers }, b: { I: Sh
   const out: string[] = []
   for (const m of moves) {
     if (m.kind === 'stays') out.push(`finger ${m.finger} stays on ${STRING_NAMES[m.str!]}‑${m.to} (pivot)`)
-    else if (m.kind === 'slides') out.push(`finger ${m.finger} slides ${STRING_NAMES[m.str!]}‑${m.from} → ${m.to} (guide finger)`)
+    else if (m.kind === 'slides') out.push(`finger ${m.finger} slides ${STRING_NAMES[m.str!]}‑${m.from} → ${STRING_NAMES[m.str!]}‑${m.to} (guide finger)`)
   }
   const d = b.sf.f.pos - a.sf.f.pos
   if (d !== 0 && !out.some((x) => x.includes('stays'))) out.push(`the hand shifts ${Math.abs(d)} fret${Math.abs(d) > 1 ? 's' : ''} ${d > 0 ? 'up' : 'down'}`)

@@ -1,0 +1,185 @@
+.ruler {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+/* a row of the ruler: one cell per half step */
+.row {
+  display: grid;
+  grid-template-columns: repeat(13, minmax(0, 1fr));
+  border-bottom: 2px solid var(--ink-soft);
+}
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 3px 0 2px;
+  font: inherit;
+  color: var(--pencil);
+  background: none;
+  border: 0;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+}
+.cell:hover,
+.cell:focus-visible {
+  background: var(--highlighter);
+}
+.deg {
+  font: 400 var(--fs-sm) var(--font-hand);
+  white-space: nowrap;
+}
+.major .deg {
+  font-weight: 700;
+  color: var(--ink);
+}
+/* the ruler's tick: long for a scale degree, short for the notes between */
+.tick {
+  width: 1.5px;
+  height: 6px;
+  background: var(--pencil-light);
+}
+.major .tick {
+  height: 11px;
+  background: var(--ink-soft);
+}
+.num {
+  font: 600 var(--fs-xs) var(--font-mono);
+  color: var(--pencil);
+}
+.on {
+  background: var(--red-pen-soft);
+}
+.on .deg,
+.on .num {
+  color: var(--red-pen);
+}
+.legend {
+  margin: 0;
+  font: 400 var(--fs-xs) / 1.4 var(--font-hand);
+  color: var(--pencil);
+}
+.legend b {
+  color: var(--ink);
+}
+.pencil {
+  color: var(--pencil-light);
+}
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-top: var(--sp-2);
+  border-top: 1px dashed var(--pencil-light);
+}
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  font: 400 var(--fs-md) var(--font-hand);
+}
+.bigDeg {
+  min-width: 44px;
+  padding: 0 8px;
+  font: 700 var(--fs-xl) var(--font-hand);
+  text-align: center;
+  color: var(--ink);
+  background: var(--highlighter);
+  border-radius: var(--wobble-3);
+}
+.necks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+.necks > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font: 400 var(--fs-sm) / 1.35 var(--font-hand);
+  color: var(--ink-soft);
+}
+.necks b {
+  color: var(--ink);
+}
+.neck {
+  display: block;
+  width: 150px;
+  max-width: 100%;
+}
+
+/* the widget: a sticky note in the corner and a card that opens over any page */
+.fab {
+  position: fixed;
+  right: 18px;
+  bottom: 106px;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 6px;
+  font: 700 17px var(--font-hand);
+  color: var(--ink);
+  background: var(--tab-blue);
+  border: 0;
+  box-shadow: var(--shadow-note);
+  transform: rotate(1.5deg);
+  cursor: pointer;
+}
+.fab:hover,
+.fab:focus-visible {
+  transform: rotate(0.5deg) translateY(-1px);
+}
+.panel {
+  position: fixed;
+  right: 18px;
+  bottom: 152px;
+  z-index: 31;
+  width: min(560px, calc(100vw - 36px));
+  max-height: calc(100vh - 172px);
+  overflow-y: auto;
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--ink-soft);
+  border-radius: var(--wobble-1);
+  box-shadow: var(--shadow-sheet), 0 14px 30px -14px rgba(40, 32, 18, 0.5);
+}
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-2);
+  font: 700 var(--fs-lg) var(--font-hand);
+}
+.close {
+  width: 30px;
+  height: 30px;
+  font: 700 22px/1 var(--font-hand);
+  color: var(--ink-soft);
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: var(--wobble-1);
+  cursor: pointer;
+}
+.close:hover,
+.close:focus-visible {
+  color: var(--red-pen);
+  border-color: var(--red-pen);
+}
+@media (max-width: 640px) {
+  .fab {
+    right: 10px;
+  }
+  .panel {
+    right: 8px;
+    width: calc(100vw - 16px);
+    padding: var(--sp-2) var(--sp-3) var(--sp-3);
+  }
+  .deg {
+    font-size: 11px;
+  }
+  .num {
+    font-size: 10px;
+  }
+}
