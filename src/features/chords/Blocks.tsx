@@ -5,6 +5,7 @@ import { fingerings } from '../../theory/fingering'
 import { handOf } from './fingers'
 import { Along, patternRows } from './Along'
 import { CText } from './CText'
+import { LawOneDrill } from './LawOneDrill'
 import { useFingers } from './fingers'
 import { PATTERNS, type PatternId } from './patterns'
 import { useLefty } from './progress'
@@ -604,6 +605,8 @@ export function BlockView({ b }: { b: CBlock }) {
       return <MapBlock down={b.down} />
     case 'reach':
       return <ReachBlock root={b.root} string={b.string} degree={b.degree} />
+    case 'drill':
+      return <LawOneDrill />
     case 'zones':
       return <ZonesBlock />
     case 'registers':

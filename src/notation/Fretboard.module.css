@@ -68,6 +68,22 @@
   fill: var(--highlighter-strong);
 }
 
+/* an answerable neck: every place on it can be clicked */
+.board .pick {
+  fill: transparent;
+  cursor: pointer;
+  outline: none;
+}
+.board .pick:hover,
+.board .pick:focus-visible {
+  fill: var(--highlighter);
+  fill-opacity: 0.45;
+}
+/* a correction, in the red pen */
+.board :global(.pen-red) {
+  color: var(--red-pen);
+}
+
 /* fingering: a flat finger across strings, finger tags, the hand under the neck */
 .board .barre {
   stroke: var(--ink-soft);

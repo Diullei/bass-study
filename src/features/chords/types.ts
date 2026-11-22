@@ -36,6 +36,8 @@ export type CBlock =
   | { t: 'map'; down?: boolean }
   /** Law 1: the reach solver. A root, its string and a degree → every placement the hand can hold, and how to get there when the first answer is out of reach. */
   | { t: 'reach'; root?: string; string?: number; degree?: string }
+  /** Law 1 trainer: a starting note on the neck, you click the answer, the feedback gives the reasoning. */
+  | { t: 'drill' }
   /** Chapter 1: the clear zones, computed from the low interval limits. */
   | { t: 'zones' }
   /** Chapter 1: the neck shaded by register (bass, chord, melody bands). */

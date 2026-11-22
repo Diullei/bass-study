@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router'
 import { ChapterPage } from './ChapterPage'
 import { ChordsHome } from './ChordsHome'
-import { LawsPage } from './LawsPage'
+import { LawPage, LawsPage } from './LawsPage'
 import { CHORDS_PATH } from './paths'
 import { CheckerPage, FinderPage, GeneratorPage, TestsPage } from './ToolPages'
 
@@ -11,6 +11,7 @@ export function ChordsRoutes() {
     <Routes>
       <Route index element={<ChordsHome />} />
       <Route path="laws" element={<LawsPage />} />
+      <Route path="laws/:n" element={<LawPage />} />
       <Route path="test-progressions" element={<TestsPage />} />
       <Route path="generator" element={<GeneratorPage />} />
       <Route path="finder" element={<FinderPage />} />

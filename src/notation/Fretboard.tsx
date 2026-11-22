@@ -66,6 +66,8 @@ export interface FretboardProps {
   hand?: FretHand
   /** Mirror the neck (nut on the right), as a left-handed player sees it. Default: the notebook's left-handed setting. */
   lefty?: boolean
+  /** Make the neck answerable: called with the string and fret of the place that was clicked. */
+  onPick?: (str: number, fret: number) => void
   /** Number every fret, not only the inlay frets. */
   allNumbers?: boolean
   className?: string
@@ -75,7 +77,7 @@ const NAMES = { 4: ['E', 'A', 'D', 'G'], 5: ['B', 'E', 'A', 'D', 'G'] }
 const INLAY = [3, 5, 7, 9, 15, 17, 19, 21]
 
 /** A hand-drawn bass neck, G string on top (as in tab), with labelled dots. */
-export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands = [], barres = [], hand, lefty: leftyProp, allNumbers = false, className }: FretboardProps) {
+export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands = [], barres = [], hand, lefty: leftyProp, allNumbers = false, onPick, className }: FretboardProps) {
   const [leftySetting] = useLefty()
   const lefty = leftyProp ?? leftySetting
   const n = to - (from === 0 ? 1 : from) + 1
@@ -193,6 +195,30 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
             </g>
           )
         })}
+      {onPick &&
+        Array.from({ length: strings }, (_, str) =>
+          wires.map((f) => (
+            <rect
+              key={`${str}-${f}`}
+              className={styles.pick}
+              x={Math.min(X(cx(f) - fw / 2 + 1), X(cx(f) + fw / 2 - 1))}
+              y={yOf(str) - sp / 2 + 1}
+              width={fw - 2}
+              height={sp - 2}
+              rx={6}
+              role="button"
+              tabIndex={0}
+              aria-label={`${NAMES[strings][str]} string, fret ${f}`}
+              onClick={() => onPick(str, f)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onPick(str, f)
+                }
+              }}
+            />
+          )),
+        )}
     </svg>
   )
 }

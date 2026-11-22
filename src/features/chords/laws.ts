@@ -121,6 +121,12 @@ export const LAWS: Law[] = [
         text: 'The same thinking covers the other dead ends. **No string above the root** (the root is on the G string): go along the string (a 3rd is 4 frets forward, a stretch), or move the root to a lower string. **Too many frets back** (the fret would be below the nut): the note is on the next string down, five frets higher. Try any case here: choose a root, its string and the degree you want.',
       },
       { t: 'reach', root: 'C', string: 1, degree: '13' },
+      { t: 'h', text: 'Train it: answer on the neck' },
+      {
+        t: 'p',
+        text: 'A starting note is on the neck. Work out where the asked note is, click that place, then check. The answer comes with the reasoning, and if you miss, with what you actually picked and why it is a different interval. Use the hints only after you have tried: the point is to do the arithmetic yourself, in every direction.',
+      },
+      { t: 'drill' },
     ],
     tries: [
       {

@@ -703,3 +703,52 @@
   padding: 2px 8px;
   vertical-align: middle;
 }
+
+/* the Law 1 trainer */
+.drill {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  background: var(--paper-sheet);
+  border: 1.5px solid var(--paper-edge);
+  border-radius: var(--wobble-1);
+  box-shadow: var(--shadow-sheet);
+  min-width: 0;
+}
+.drillNeck {
+  max-width: 760px;
+}
+.drillRight,
+.drillWrong {
+  max-width: 78ch;
+  padding: 8px 12px;
+  line-height: 1.45;
+}
+.drillRight {
+  background: var(--sticky-green);
+  border-left: 3px solid var(--green-pen);
+}
+.drillWrong {
+  background: var(--red-pen-soft);
+  border-left: 3px solid var(--red-pen);
+}
+.drillWhy {
+  max-width: 78ch;
+  padding: 6px 12px;
+  border-left: 3px solid var(--ink-soft);
+}
+.drillWhy ol {
+  margin: 4px 0 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lawNav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
