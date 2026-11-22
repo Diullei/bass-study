@@ -68,7 +68,7 @@ export function LawsPage() {
         ))}
         <Section>
           <SectionTitle>Quiz on the laws</SectionTitle>
-          <ChordsQuiz id="laws" types={['map', 'where', 'register', 'mud', 'shapeDeg', 'fifthBelow']} />
+          <ChordsQuiz id="laws" types={['map', 'where', 'mapDown', 'below', 'register', 'mud', 'shapeDeg', 'fifthBelow']} />
         </Section>
       </main>
     </Notebook>

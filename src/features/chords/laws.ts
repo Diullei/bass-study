@@ -55,6 +55,39 @@ export const LAWS: Law[] = [
         title: 'Reverse it to find notes below',
         text: 'The formula works downwards too. One string **down**, same fret, is 5 semitones down: the 5th below the root. That is where the thumb finds its second note for a bossa (from C at E‑8, G at B‑8, [[Ch20]]).',
       },
+      { t: 'h', text: 'Backwards: from any note to the root' },
+      {
+        t: 'p',
+        text: 'The formula has no direction. One string **down** takes 5 semitones away, one fret **forward** gives one back. So from any note you are holding, the same arithmetic finds the notes below it, the root above all. This is how you open a chord from the middle: from its 3rd, from its 7th, from the melody note on top ([[Ch19]]), or from a rootless grip whose root the thumb has to find ([[Ch12]]).',
+      },
+      { t: 'big', text: 'interval below = 5 × strings down − frets forward' },
+      {
+        t: 'table',
+        head: ['Your note is the…', 'Semitones above the root', 'Split', 'So the root is'],
+        rows: [
+          ['♭3', '3', '5 − 2', 'one string down, two frets forward'],
+          ['3', '4', '5 − 1', 'one string down, one fret forward'],
+          ['5', '7', '5 + 2', 'one string down, two frets back'],
+          ['6 (13)', '9', '10 − 1', 'two strings down, one fret forward'],
+          ['♭7', '10', '5 + 5', 'two strings down, same fret'],
+          ['7', '11', '10 + 1', 'two strings down, one fret back'],
+          ['9', '14', '15 − 1', 'three strings down, one fret forward'],
+          ['♭3 an octave up (♭10)', '15', '5 + 5 + 5', 'three strings down, same fret'],
+          ['3 an octave up (10)', '16', '15 + 1', 'three strings down, one fret back'],
+          ['13', '21', '20 + 1', 'four strings down, one fret back'],
+        ],
+        caption: 'The same splits as going up, with the direction of the fret turned round. Nothing new to learn: it is the map read from the other end.',
+      },
+      { t: 'map', down: true },
+      {
+        t: 'shapes',
+        rows: [
+          'Cmaj7 | x-8-x-9-9 | hold the 3 (G‑9): three strings down, one fret back is the root (E‑8)',
+          'Fmaj7 | x-x-8-7-9 | hold the 7 (G‑9): two strings down, one fret back is the root (A‑8)',
+          'G13 | x-x-8-9-9 | rootless: hold the 3 (D‑9), one string down and one fret forward is G (A‑10), where the thumb goes',
+        ],
+        caption: 'Find each root from the note named in the caption before you look at the diagram.',
+      },
     ],
     tries: [
       {
@@ -71,6 +104,16 @@ export const LAWS: Law[] = [
         q: 'A guitarist says "this shape changes when it crosses the B string". Why does a bassist never have that problem?',
         a: 'Every pair of neighbouring bass strings is a fourth apart, so the arithmetic never changes.',
         why: 'The formula 5 × strings + frets assumes 5 semitones per string. On a guitar one pair (G–B) is 4 semitones, so shapes crossing it move one fret. On a bass the 5 holds everywhere.',
+      },
+      {
+        q: 'You hold the ♭7 of a chord on the G string, fret 10. Where is the root?',
+        a: 'Two strings down, same fret: A‑10 (G). The chord is some kind of G7.',
+        why: 'The ♭7 is 10 semitones above the root, and 10 = 5 + 5: two strings, no fret change. G‑10 is F, and F is the ♭7 of G.',
+      },
+      {
+        q: 'You hold the 3rd on the D string, fret 9. Where is the root on a lower string?',
+        a: 'One string down, one fret forward: A‑10 (G). For the root an octave lower: three strings down, one fret back, B‑8.',
+        why: 'The 3rd is 4 semitones above the root, and 4 = 5 − 1: one string down (−5), one fret forward (+1). D‑9 is B, the 3rd of G; A‑10 is G. An octave lower the gap is 16 = 15 + 1: three strings down, one fret back, B‑8 (G1).',
       },
     ],
   },

@@ -17,33 +17,39 @@ import s from './Chords.module.css'
 // ───────────── Chapter 1: the map ─────────────
 
 const ROOT = 36 // C2 at E‑8
+const TOP = 48 // C3 at G‑5: the note you hold, for the map backwards
 
-/** The interval map, computed from Law 1. Every cell is 5 × strings + frets; click it to hear root and note. */
-function MapBlock() {
+/**
+ * The interval map, computed from Law 1. Every cell is 5 × strings + frets; click it to hear it.
+ * `down` runs it backwards: from the note you hold, how far below each place is. Read a cell as
+ * "if my note is the ♭7, the root is here".
+ */
+function MapBlock({ down = false }: { down?: boolean }) {
   const P = useClip<string>()
-  const [lefty] = useLefty()
-  const [pick, setPick] = useState<[number, number] | null>([3, 1])
-  const offs = [-2, -1, 0, 1, 2, 3]
+  const [pick, setPick] = useState<[number, number] | null>(down ? [2, 0] : [3, 1])
+  // fret moves, in the order a player reads them across the neck
+  const offs = down ? [2, 1, 0, -1, -2, -3] : [-2, -1, 0, 1, 2, 3]
+  const ivOf = (su: number, f: number) => (down ? 5 * su - f : 5 * su + f)
   const hear = (su: number, f: number) => {
     setPick([su, f])
-    const m = ROOT + 5 * su + f
-    P.once(
-      [
-        { notes: [{ t: 0, midi: ROOT, dur: 2.6 }, { t: 1, midi: m, dur: 1.6 }], cues: [{ t: 0, v: `${su},${f}` }], beats: 3 },
-      ],
-      90,
-    )
+    const iv = ivOf(su, f)
+    const notes = down
+      ? [{ t: 0, midi: TOP, dur: 2.6 }, { t: 1, midi: TOP - iv, dur: 1.6 }]
+      : [{ t: 0, midi: ROOT, dur: 2.6 }, { t: 1, midi: ROOT + iv, dur: 1.6 }]
+    P.once([{ notes, cues: [{ t: 0, v: `${su},${f}` }], beats: 3 }], 90)
   }
   const name = (iv: number) => (iv === 12 ? 'octave' : iv === 15 ? '♭3 (minor 10th)' : iv === 16 ? '3 (major 10th)' : MAP_NAME[((iv % 12) + 12) % 12])
+  const fw = (f: number) => (f === 0 ? 'same fret' : `${f > 0 ? '+' : '−'}${Math.abs(f)} fret${Math.abs(f) > 1 ? 's' : ''}`)
+  const words = (f: number) => (f === 0 ? 'at the same fret' : `and ${Math.abs(f)} fret${Math.abs(f) > 1 ? 's' : ''} ${f > 0 ? 'forward' : 'back'}`)
   return (
     <figure className={s.tableFig}>
       <div className={s.tableWrap}>
         <table className={cx(s.table, s.mapTable)}>
           <thead>
             <tr>
-              <th>Strings up</th>
+              <th>{down ? 'Strings down' : 'Strings up'}</th>
               {offs.map((f) => (
-                <th key={f}>{f === 0 ? 'same fret' : `${f > 0 ? '+' : '−'}${Math.abs(f)} fret${Math.abs(f) > 1 ? 's' : ''}`}</th>
+                <th key={f}>{fw(f)}</th>
               ))}
             </tr>
           </thead>
@@ -52,11 +58,16 @@ function MapBlock() {
               <tr key={su}>
                 <th>{su}</th>
                 {offs.map((f) => {
-                  const iv = 5 * su + f
+                  const iv = ivOf(su, f)
                   const on = pick?.[0] === su && pick?.[1] === f
                   return (
                     <td key={f}>
-                      <button type="button" className={cx(s.mapCell, on && s.mapOn)} onClick={() => hear(su, f)} title={`${5 * su} ${f >= 0 ? '+' : '−'} ${Math.abs(f)} = ${iv} semitones`}>
+                      <button
+                        type="button"
+                        className={cx(s.mapCell, on && s.mapOn)}
+                        onClick={() => hear(su, f)}
+                        title={down ? `${5 * su} ${f > 0 ? '−' : '+'} ${Math.abs(f)} = ${iv} semitones below` : `${5 * su} ${f >= 0 ? '+' : '−'} ${Math.abs(f)} = ${iv} semitones`}
+                      >
                         {name(iv)}
                       </button>
                     </td>
@@ -70,21 +81,43 @@ function MapBlock() {
       {pick && (
         <>
           <div className={s.mapBoard}>
-          <Fretboard
-            strings={5}
-            from={5}
-            to={12}
-            lefty={lefty}
-            allNumbers
-            dots={[
-              { str: 1, fret: 8, label: 'R', root: true },
-              { str: 1 + pick[0], fret: 8 + pick[1], label: name(5 * pick[0] + pick[1]).split(' ')[0], pen: 'pen-green', active: P.playing },
-            ]}
-          />
+            {down ? (
+              <Fretboard
+                strings={5}
+                from={1}
+                to={9}
+                allNumbers
+                dots={[
+                  { str: 4, fret: 5, label: name(ivOf(pick[0], pick[1])).split(' ')[0], pen: 'pen-green' },
+                  { str: 4 - pick[0], fret: 5 + pick[1], label: 'R', root: true, active: P.playing },
+                ]}
+              />
+            ) : (
+              <Fretboard
+                strings={5}
+                from={5}
+                to={12}
+                allNumbers
+                dots={[
+                  { str: 1, fret: 8, label: 'R', root: true },
+                  { str: 1 + pick[0], fret: 8 + pick[1], label: name(ivOf(pick[0], pick[1])).split(' ')[0], pen: 'pen-green', active: P.playing },
+                ]}
+              />
+            )}
           </div>
           <p className={s.caption}>
-            From C at E‑8: {pick[0]} string{pick[0] > 1 ? 's' : ''} up {pick[1] === 0 ? 'at the same fret' : `and ${Math.abs(pick[1])} fret${Math.abs(pick[1]) > 1 ? 's' : ''} ${pick[1] > 0 ? 'forward' : 'back'}`} is 5 × {pick[0]} {pick[1] >= 0 ? '+' : '−'}{' '}
-            {Math.abs(pick[1])} = <b>{5 * pick[0] + pick[1]} semitones</b>: the {name(5 * pick[0] + pick[1])}. Click any cell to hear it.
+            {down ? (
+              <>
+                From your note, C at G‑5: {pick[0]} string{pick[0] > 1 ? 's' : ''} down {words(pick[1])} is 5 × {pick[0]}{pick[1] === 0 ? '' : ` ${pick[1] > 0 ? '−' : '+'} ${Math.abs(pick[1])}`} ={' '}
+                <b>{ivOf(pick[0], pick[1])} semitones below</b>. So if your note is the {name(ivOf(pick[0], pick[1]))}, the root is there. Click any cell to hear your note, then the
+                root.
+              </>
+            ) : (
+              <>
+                From C at E‑8: {pick[0]} string{pick[0] > 1 ? 's' : ''} up {words(pick[1])} is 5 × {pick[0]}{pick[1] === 0 ? '' : ` ${pick[1] > 0 ? '+' : '−'} ${Math.abs(pick[1])}`} ={' '}
+                <b>{ivOf(pick[0], pick[1])} semitones</b>: the {name(ivOf(pick[0], pick[1]))}. Click any cell to hear it.
+              </>
+            )}
           </p>
         </>
       )}
@@ -403,7 +436,7 @@ export function BlockView({ b }: { b: CBlock }) {
     case 'shapes':
       return <ShapesBlock {...b} />
     case 'map':
-      return <MapBlock />
+      return <MapBlock down={b.down} />
     case 'zones':
       return <ZonesBlock />
     case 'registers':

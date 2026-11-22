@@ -733,7 +733,7 @@ export const CHAPTERS_2: Chapter[] = [
         items: [
           '**Put the melody on the G string** (or the D string for low phrases), in the melody band: G‑9 and above ([[Ch1]]).',
           '**Ask what degree the melody note is** of the current chord.',
-          '**Fill in below it.** Melody is the 3rd → 7th on the string below (same fret, or one back for a dominant), root under that: form A. Melody is the 7th → 3rd on the string below, root under that: form B or C. Melody is the 5, 9 or 13 → put the 3‑7 pair on the two strings below: a rootless or grand shape with your note as the top colour. Melody is the root → 7th and 3rd below it; let the thumb skip the low root or play it first.',
+          '**Fill in below it.** Melody is the 3rd → 7th on the string below (same fret, or one back for a dominant), root under that: form A. Melody is the 7th → 3rd on the string below, root under that: form B or C. Melody is the 5, 9 or 13 → put the 3‑7 pair on the two strings below: a rootless or grand shape with your note as the top colour. Melody is the root → 7th and 3rd below it; let the thumb skip the low root or play it first. Every one of these is [[Law1]] run backwards: from the note on top, count down to the 3rd, the 7th and the root (the reversed map of [[Ch1]]).',
           '**If the melody moves while the chord holds,** play the chord on the first melody note, then let it ring (or let the reverb hold it) and play the rest of the melody alone.',
           '**If nothing fits under the hand,** split: root on beat 1, melody with its pair on the next beat ([[Law5]]).',
         ],
@@ -799,7 +799,7 @@ export const CHAPTERS_2: Chapter[] = [
         why: 'Melody on the 7th → the 3rd on the string below, root under it. D♭ on the B string at 14, F on the D string at 15, the melody on top.',
       },
     ],
-    quiz: ['shapeDeg', 'form', 'nameShape'],
+    quiz: ['shapeDeg', 'below', 'form', 'nameShape'],
     tone: 'Use the GLASS patch ([[Ch24]]): the exciter brings out the top note, which is the melody.',
   },
 

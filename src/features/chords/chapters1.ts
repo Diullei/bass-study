@@ -39,6 +39,16 @@ export const CHAPTERS_1: Chapter[] = [
         t: "p",
         text: "Row 4 exists only because you have five strings. It is what [[Ch11]] uses to add colour on top. Notice also that a guitar would break this map between its G and B strings; a bass in fourths has no exception anywhere, so one shape works on every string set and in every key.",
       },
+      { t: "h", text: "The map backwards: from a note to its root" },
+      {
+        t: "p",
+        text: "You will often hold a note first and need the root after: the melody note on top of a chord ([[Ch19]]), a guide tone from a pair ([[Ch5]]), a rootless grip ([[Ch12]]). Run [[Law1]] the other way: one string **down** is 5 semitones down, one fret **forward** gives one back. Read each cell as “if my note is this degree, the root is here”.",
+      },
+      { t: "map", down: true },
+      {
+        t: "p",
+        text: "It is the same map with the fret direction turned round. Three to keep: the root of a **3rd** is one string down, one fret forward; the root of a **♭7** is two strings down, same fret; the root of a **7** is two strings down, one fret back.",
+      },
       { t: "h", text: "The clear zones ([[Law2]])" },
       {
         t: "p",
@@ -89,6 +99,7 @@ export const CHAPTERS_1: Chapter[] = [
       "**Mud test.** Play a major 3rd (one string up, one fret back) starting on E‑3, E‑8, A‑8, A‑14, D‑9. Notice where it starts to sound like a chord and not a rumble. You have just found your own floor for 3rds.",
       "**Same note, three colours.** Play E3 at G‑9, D‑14 and A‑19. Then play the pair C3 + E3 as D‑10 with G‑9, and as A‑15 with D‑14. Same notes, different chord. Decide which you would use under a melody.",
       "**Trace a band.** Play F2 on every string that has it (D‑3, A‑8, E‑13, B‑18). That diagonal is the floor of the chord register.",
+      "**Find the root.** Put a finger anywhere on the D or G string. Call the note the 3rd and find its root (one string down, one fret forward); then call it the ♭7, the 7, the 9. Play your note, then the root, and listen: the same note changes its job with every root.",
     ],
     ready: "You can find any degree from any root in under three seconds, by reasoning, without the table.",
     checks: [
@@ -108,12 +119,17 @@ export const CHAPTERS_1: Chapter[] = [
         why: "[[Law2]]: the lower a close interval sits, the more it blurs. The floor for a major 3rd is B2. D‑9 = 38 + 9 = B2, on the floor; E‑3 = 28 + 3 = G1, far under it.",
       },
       {
+        q: "You hold E at G‑9 and want it to be the 3rd of a chord. Where is the root?",
+        a: "One string down, one fret forward: D‑10 (C). Or an octave lower, three strings down and one fret back: E‑8.",
+        why: "The 3rd is 4 semitones above the root: 4 = 5 − 1, one string down and one fret forward ([[Law1]] backwards). An octave lower the gap is 16 = 15 + 1: three strings down, one fret back. That is exactly the root of {Cmaj7:x-8-x-9-9}.",
+      },
+      {
         q: "Fret 10 on the E string and fret 10 on the G string: which registers?",
         a: "E‑10 is D2, bass register. G‑10 is F3, upper chord register, inside the melody band too.",
         why: "Registers are pitch, not frets. E‑10 = 28 + 10 = 38 (D2), below F2, so bass. G‑10 = 43 + 10 = 53 (F3): above F2 and above E3, so the top of the chord band, where the melody band starts.",
       },
     ],
-    quiz: ["map", "where", "register", "mud"],
+    quiz: ["map", "where", "mapDown", "below", "register", "mud"],
   },
   {
     id: "plucking-hand",
@@ -1028,6 +1044,6 @@ export const CHAPTERS_1: Chapter[] = [
         why: "The notes F, C, E over B♭ are the 5, the 9 and the ♯11: a B♭ Lydian sound. The shape never changed; the root decided what it means ([[R7]]).",
       },
     ],
-    quiz: ["rootless", "shapeDeg", "nameShape", "colour"],
+    quiz: ["rootless", "below", "shapeDeg", "nameShape", "colour"],
   },
 ]

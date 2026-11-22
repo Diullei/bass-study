@@ -18,9 +18,11 @@ export type QType =
   | 'quartal' // a fourths barre over a root → its degrees
   | 'sus' // a sus chord → the triad a whole step below
   | 'fifthBelow' // where is the low 5th for the thumb
+  | 'mapDown' // strings down + frets → how far below (Law 1 backwards)
+  | 'below' // a chord tone held in a shape → where is the root
 
 export const QTYPES: QType[] = [
-  'map', 'where', 'register', 'shapeDeg', 'nameShape', 'form', 'pair', 'trade', 'rootless', 'triad', 'harmonic', 'mud', 'colour', 'quartal', 'sus', 'fifthBelow',
+  'map', 'where', 'register', 'shapeDeg', 'nameShape', 'form', 'pair', 'trade', 'rootless', 'triad', 'harmonic', 'mud', 'colour', 'quartal', 'sus', 'fifthBelow', 'mapDown', 'below',
 ]
 
 export interface CQuestion {
@@ -79,7 +81,7 @@ function shell() {
   return { q, shape, form, root, sym: root + q }
 }
 
-const GEN: Record<QType, () => CQuestion> = {
+const GEN: Record<Exclude<QType, 'mapDown' | 'below'>, () => CQuestion> = {
   map() {
     const su = 1 + rnd(4)
     const f = pick([-2, -1, 0, 1, 2, 3])
@@ -318,8 +320,44 @@ const GEN: Record<QType, () => CQuestion> = {
   },
 }
 
+const GEN_BACK: Record<'mapDown' | 'below', () => CQuestion> = {
+  mapDown() {
+    const su = 1 + rnd(4)
+    const f = pick([2, 1, 0, -1, -2, -3])
+    const iv = 5 * su - f
+    const pool: string[] = []
+    for (let a = 1; a <= 4; a++) for (const b of [2, 1, 0, -1, -2, -3]) pool.push(ivName(5 * a - b))
+    return {
+      prompt: `From the note you hold: ${su} string${su > 1 ? 's' : ''} down, ${fretWords(f)}. If that is the root, which degree is your note?`,
+      options: opts(ivName(iv), pool),
+      answer: ivName(iv),
+      why: `Law 1 backwards: each string down is 5 semitones down, each fret forward gives one back. 5 × ${su}${f === 0 ? '' : ` ${f > 0 ? '−' : '+'} ${Math.abs(f)}`} = ${iv} semitones below, so your note is the ${ivName(iv)} of that root.`,
+    }
+  },
+  below() {
+    const { shape, sym } = shell()
+    const a = analyse(sym, shape)
+    const root = a.notes[0]
+    const held = pick(a.notes.slice(1))
+    const sd = held.str - root.str
+    const d = root.fret - held.fret
+    const iv = held.midi - root.midi
+    const say = (x: number, y: number) => `${x} string${x > 1 ? 's' : ''} down, ${fretWords(y)}`
+    const ans = say(sd, d)
+    const pool: string[] = []
+    for (const x of [sd - 1, sd, sd + 1]) for (const y of [d - 2, d - 1, d, d + 1, d + 2]) if (x >= 1 && x <= 4) pool.push(say(x, y))
+    return {
+      prompt: `${sym} as \`${shape}\`: your finger is on the ${held.deg} (${held.name}) at ${STRING_NAMES[held.str]}‑${held.fret}. Where is the root?`,
+      options: opts(ans, pool),
+      answer: ans,
+      why: `The ${held.deg} is ${iv} semitones above the root. Split it into fives and ones: ${iv} = 5 × ${sd}${d === 0 ? '' : ` ${d > 0 ? '−' : '+'} ${Math.abs(d)}`}. So the root is ${sd} string${sd > 1 ? 's' : ''} down, ${fretWords(d)}: ${STRING_NAMES[root.str]}‑${root.fret} (${root.name}). [[Law1]] backwards.`,
+    }
+  },
+}
+
 export function genCQuestion(types: QType[]): CQuestion {
-  return GEN[pick(types.length ? types : QTYPES)]()
+  const t = pick(types.length ? types : QTYPES)
+  return t === 'mapDown' || t === 'below' ? GEN_BACK[t]() : GEN[t]()
 }
 
 /** Kept for spelling checks in tests. */

@@ -32,8 +32,8 @@ export type CBlock =
    * Rootless shapes get their root added by the "thumb" on playback (it can be switched off).
    */
   | { t: 'shapes'; title?: string; rows: string[]; caption?: string; seq?: boolean; tempo?: number }
-  /** Chapter 1: the interval map, computed from Law 1. Click a cell to hear it. */
-  | { t: 'map' }
+  /** Chapter 1: the interval map, computed from Law 1. Click a cell to hear it. `down`: the map backwards, from a note to the notes below it. */
+  | { t: 'map'; down?: boolean }
   /** Chapter 1: the clear zones, computed from the low interval limits. */
   | { t: 'zones' }
   /** Chapter 1: the neck shaded by register (bass, chord, melody bands). */
