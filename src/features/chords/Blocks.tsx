@@ -14,6 +14,7 @@ import { info, patternNotes, type ShapeInfo } from './render'
 import { degsOf, PenKey, pensOf, rootsOf, ShapesBlock } from './Shapes'
 import { useClip } from './sound'
 import { ChordShape } from '../../notation/ChordShape'
+import { ShapeRef } from '../../notation/ShapeRef'
 import type { Check } from '../harmony/types'
 import type { CBlock } from './types'
 import { BANDS, HARM, LIMITS, MAP_NAME, OPEN, pitchName, STRING_NAMES } from './voicing'
@@ -498,7 +499,7 @@ function PatternsBlock({ chord, shape, ids, caption }: { chord: string; shape: s
     <figure className={s.patterns}>
       <figcaption className={s.shapesHead}>
         <span className={s.shapesTitle}>
-          {chord} <code>{shape}</code>
+          {chord} <ShapeRef shape={shape} />
         </span>
         <Button size="sm" variant={P.playing ? 'ink' : 'default'} onClick={P.playing ? P.stop : play}>
           {P.playing ? '■ Stop' : '▶ Loop it'}

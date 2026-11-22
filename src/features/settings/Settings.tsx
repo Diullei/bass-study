@@ -1,7 +1,8 @@
 import { useState, type ComponentType } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
 import { FingerKey } from '../../notation/FingerKey'
-import { useHandSize, useLefty, useShowFingers } from '../../state/prefs'
+import { ShapeRef } from '../../notation/ShapeRef'
+import { useHandSize, useLefty, useShapeStyle, useShowFingers } from '../../state/prefs'
 import { Button, Modal, Segmented } from '../../ui'
 import s from './Settings.module.css'
 
@@ -81,6 +82,27 @@ function HandControl() {
   )
 }
 
+function ShapeStyleControl() {
+  const [style, setStyle] = useShapeStyle()
+  return (
+    <div className={s.control}>
+      <Segmented
+        label="Chord shapes in text"
+        value={style}
+        options={[
+          { value: 'c', label: 'tiny neck' },
+          { value: 'a', label: 'five cells' },
+          { value: 'b', label: 'one line' },
+        ]}
+        onChange={setStyle}
+      />
+      <p style={{ margin: 0 }} aria-hidden>
+        Cmaj7 <ShapeRef shape="x-8-x-9-9" /> · G13 <ShapeRef shape="8-x-8-9-9" />
+      </p>
+    </div>
+  )
+}
+
 export const SETTINGS: SettingDef[] = [
   {
     id: 'lefty',
@@ -88,6 +110,13 @@ export const SETTINGS: SettingDef[] = [
     label: 'Neck orientation',
     help: 'Left-handed mirrors every neck in the notebook, nut on the right, as a left-handed player sees it. Tab and shape names (x-8-x-9-9) read the same both ways.',
     Control: LeftyControl,
+  },
+  {
+    id: 'shapeStyle',
+    group: 'Chord shapes',
+    label: 'Shapes written in text',
+    help: 'How a shape such as x-8-x-9-9 (frets from the B string to the G string) is drawn inside sentences and under diagrams. Tiny neck: a small drawing of the dots, then the frets. Five cells: every string over its fret, muted strings in pencil. One line: only the strings that sound, a hatched slot for each muted string.',
+    Control: ShapeStyleControl,
   },
   {
     id: 'fingers',

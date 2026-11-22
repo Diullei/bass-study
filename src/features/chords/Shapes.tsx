@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChordShape } from '../../notation/ChordShape'
+import { ShapeRef } from '../../notation/ShapeRef'
 import { FingerKey } from '../../notation/FingerKey'
 import { ShapeMove } from '../../notation/ShapeMove'
 import { VoiceLines } from '../../notation/VoiceLines'
@@ -125,7 +126,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
         {...F.props(sf)}
       />
       <figcaption>
-        <code className={s.frets}>{I.shape}</code>
+        <ShapeRef shape={I.shape} />
         {I.a.stretch && <span className={s.stretch}>stretch</span>}
         <span className={s.notes}>{I.a.notes.map((n) => n.name).join(' ')}</span>
         {!compact && note && (

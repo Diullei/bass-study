@@ -186,15 +186,12 @@
   border: 0;
   cursor: pointer;
 }
-.chip code {
-  font: 500 0.92em var(--font-mono);
-  padding: 0 4px;
-  background: color-mix(in srgb, var(--tab-purple), transparent 40%);
-  border-radius: 3px;
-  white-space: nowrap;
+/* the shape itself is a ShapeRef; in a chip it is tinted, to say "this one plays" */
+.chip > span:first-child {
+  background: color-mix(in srgb, var(--tab-purple), transparent 55%);
 }
-.chip:hover code,
-.chip:focus-visible code {
+.chip:hover > span:first-child,
+.chip:focus-visible > span:first-child {
   background: var(--highlighter);
 }
 .chipPop {

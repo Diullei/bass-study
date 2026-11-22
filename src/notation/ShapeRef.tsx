@@ -1,3 +1,4 @@
+import { useShapeStyle } from '../state/prefs'
 import s from './ShapeRef.module.css'
 
 const NAMES = ['B', 'E', 'A', 'D', 'G']
@@ -5,7 +6,7 @@ const NAMES = ['B', 'E', 'A', 'D', 'G']
 export interface ShapeRefProps {
   /** Frets low string to high, e.g. "x-8-7-x-x"; "0" open, "h7" a harmonic. */
   shape: string
-  /** PROPOSAL: the three candidate looks. a = five cells, b = one-line strip, c = a tiny neck and the frets. */
+  /** The look: c = a tiny neck and the frets, a = five cells, b = one line. Default: the notebook's setting (c). */
   variant?: 'a' | 'b' | 'c'
 }
 
@@ -48,11 +49,16 @@ function Glyph({ toks }: { toks: string[] }) {
   )
 }
 
+/** Text that is a chord shape: four or five fret tokens joined by hyphens. */
+export const IS_SHAPE = /^(?:x|h?\d{1,2})(?:-(?:x|h?\d{1,2})){4}$/
+
 /**
- * PROPOSAL (design system only): a chord shape named inside a sentence.
- * Today it is plain mono text, `x-8-7-x-x`, and the reader must count the hyphens to find the string.
+ * A chord shape named inside a sentence or under a diagram. One look for the whole notebook,
+ * chosen in Settings: a tiny neck and the frets (default), five cells, or one line.
  */
-export function ShapeRef({ shape, variant = 'a' }: ShapeRefProps) {
+export function ShapeRef({ shape, variant: given }: ShapeRefProps) {
+  const [setting] = useShapeStyle()
+  const variant = given ?? setting
   const toks = shape.split('-')
   const title = say(toks)
   const fret = (t: string) => (t === 'x' ? '×' : t.startsWith('h') ? `◇${t.slice(1)}` : t)

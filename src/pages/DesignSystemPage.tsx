@@ -178,7 +178,7 @@ export function DesignSystemPage() {
           <a href="#beat-grid">BeatGrid</a>
           <a href="#modal">Modal</a>
           <a href="#fret-ref">FretRef</a>
-          <a href="#shape-ref">ShapeRef (proposal)</a>
+          <a href="#shape-ref">ShapeRef</a>
           <a href="#interval-ruler">Interval ruler</a>
         </nav>
 
@@ -559,14 +559,14 @@ export function DesignSystemPage() {
             </Spec>
             <Spec
               id="shape-ref"
-              name="ShapeRef (proposal)"
+              name="ShapeRef"
               path="notation/ShapeRef"
-              text="PROPOSAL, not used in the book yet. A chord shape named inside a sentence. Today it is mono text, x-8-7-x-x, and the reader counts hyphens to find the string. Three candidates: A = five cells, each string over its fret, muted strings in pencil; B = one line in the FretRef family, only the strings that sound are named and a muted string is a thin hatched slot; C = a tiny neck with the dots, then the frets as written today. Whichever is chosen keeps today's behaviour: hover shows the full diagram, click plays the chord."
+              text="A chord shape named inside a sentence or under a diagram, in place of bare mono text where the reader counts hyphens. Three looks, chosen in Settings (Chord shapes): C, the default = a tiny neck with the dots, then the frets; A = five cells, each string over its fret, muted strings in pencil; B = one line in the FretRef family, only the strings that sound are named and a muted string is a thin hatched slot. In lesson text a shape in backticks, or a {Cmaj7:x-8-x-9-9} chip (hover shows the diagram, click plays), renders as this."
               column
             >
-              {(['a', 'b', 'c'] as const).map((v) => (
+              {(['c', 'a', 'b'] as const).map((v) => (
                 <div key={v} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <Caption>Variant {v.toUpperCase()}</Caption>
+                  <Caption>Variant {v.toUpperCase()}{v === 'c' ? ' (default)' : ''}</Caption>
                   <p style={{ margin: 0, maxWidth: '70ch', lineHeight: 'var(--ruled)' }}>
                     Try the 3rd next, <ShapeRef variant={v} shape="x-8-7-x-x" />: mud. Skip a string and you get form A, <ShapeRef variant={v} shape="x-8-x-9-9" />, or with the root an octave lower, <ShapeRef variant={v} shape="13-x-x-14-16" />.
                   </p>

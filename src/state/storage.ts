@@ -46,6 +46,8 @@ export const KEYS = {
   /** Fingering on chord diagrams: shown or not, and the hand size the fingering engine assumes. */
   fingers: 'bs.fingers',
   hand: 'bs.hand',
+  /** How a chord shape is written inside text: 'c' a tiny neck and the frets, 'a' five cells, 'b' one line. */
+  shapeStyle: 'bs.shapeStyle',
   /** Backing track for practice: band feel and whether the written line is played. */
   backing: 'bs.backing',
 } as const

@@ -43,3 +43,12 @@ export const useShowFingers = () => usePref<boolean>(KEYS.fingers, () => load<bo
 
 /** The size of the fretting hand: it sets how far the fingering engine lets the fingers reach. */
 export const useHandSize = () => usePref<HandSize>(KEYS.hand, () => (load<string>(KEYS.hand, 'average') === 'large' ? 'large' : 'average'))
+
+export type ShapeStyle = 'a' | 'b' | 'c'
+
+/** How a chord shape is written inside text (see notation/ShapeRef): a tiny neck and the frets by default. */
+export const useShapeStyle = () =>
+  usePref<ShapeStyle>(KEYS.shapeStyle, () => {
+    const v = load<string>(KEYS.shapeStyle, 'c')
+    return v === 'a' || v === 'b' ? v : 'c'
+  })

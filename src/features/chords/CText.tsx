@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { ChordShape } from '../../notation/ChordShape'
 import { MiniNeck } from '../../notation/MiniNeck'
 import { fretRefs } from '../../notation/FretRef'
+import { IS_SHAPE, ShapeRef } from '../../notation/ShapeRef'
 import { LessonRef, RuleRef } from '../harmony/HText'
 import { CHAPTERS } from './chapters'
 import { useFingers } from './fingers'
@@ -44,7 +45,7 @@ export function ShapeChip({ sym, shape }: { sym: string; shape: string }) {
   const play = () => (P.playing ? P.stop() : P.once([shapeBar(I, 'roll', 3, 0, true)], 80))
   return (
     <button type="button" className={s.chip} onClick={play} aria-label={`${sym} ${shape}, play`}>
-      <code>{shape}</code>
+      <ShapeRef shape={shape} />
       <span className={s.chipPop} aria-hidden>
         <b>{sym}</b>
         <ChordShape
@@ -76,7 +77,7 @@ export function CText({ text, inert }: { text: string; inert?: boolean }) {
   text.split(TOKEN).forEach((part, i) => {
     if (!part) return
     if (part.startsWith('**')) out.push(<b key={i}><CText text={part.slice(2, -2)} inert={inert} /></b>)
-    else if (part.startsWith('`')) out.push(<code key={i} className={s.code}>{part.slice(1, -1)}</code>)
+    else if (part.startsWith('`')) out.push(IS_SHAPE.test(part.slice(1, -1)) ? <ShapeRef key={i} shape={part.slice(1, -1)} /> : <code key={i} className={s.code}>{part.slice(1, -1)}</code>)
     else if (part.startsWith('[[neck:')) {
       const [, dir, su, df, label] = part.slice(2, -2).split(':')
       out.push(<MiniNeck key={i} down={dir === 'down'} strings={+su} frets={+df} label={label} className={s.miniNeck} />)

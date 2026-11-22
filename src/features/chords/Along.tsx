@@ -1,3 +1,4 @@
+import { ShapeRef } from '../../notation/ShapeRef'
 import { useMemo, useRef, useState } from 'react'
 import { ShapeMove } from '../../notation/ShapeMove'
 import { ChordShape } from '../../notation/ChordShape'
@@ -116,7 +117,7 @@ export function Along({ title, bars: barsText, pattern = 'split', tempo = 90, wa
             <ChordShape shape={cur.shape} labels={degsOf(cur)} pens={pensOf(cur)} roots={rootsOf(cur)} lefty={lefty} {...F.props(sfCur)} />
           )}
           <span className={s.alongSym}>
-            {cur.sym} <code>{cur.shape}</code>
+            {cur.sym} <ShapeRef shape={cur.shape} />
           </span>
         </div>
       )}
