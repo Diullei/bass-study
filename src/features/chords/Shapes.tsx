@@ -9,7 +9,7 @@ import { fingerMoveText, fingerText, useFingers, type ShapeFingers } from './fin
 import { useLefty } from './progress'
 import { info, parseRow, penOf, shapeBar, type ShapeInfo } from './render'
 import { useClip } from './sound'
-import { bandsOf, IV_NAME, pitchName, zonesAround, zoneWords } from './voicing'
+import { bandsOf, clearPair, IV_NAME, pitchName, zonesAround, zoneWords } from './voicing'
 import s from './Chords.module.css'
 
 export const degsOf = (I: ShapeInfo) => I.a.notes.map((n) => n.deg)
@@ -59,6 +59,18 @@ export function PenKey() {
               <b>mud</b>: too close to it for this height
             </span>
           </li>
+          <li>
+            <svg className={s.zoneKeyDot} viewBox="0 0 34 34" aria-hidden>
+              <circle cx="17" cy="19" r="11" fill="none" stroke="var(--red-pen)" strokeWidth="2.6" />
+              <circle cx="8" cy="8" r="6.5" fill="var(--red-pen)" />
+              <text x="8" y="12" textAnchor="middle" fontSize="11" fontWeight="700" fill="var(--paper-sheet)">
+                !
+              </text>
+            </svg>
+            <span>
+              <b>red ring</b>: a note of the chord that sits in the mud
+            </span>
+          </li>
           <li>no shade: the same note · tap again to hide</li>
         </ul>
       </div>
@@ -83,6 +95,11 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
   const held = pick != null ? I.a.notes[pick] : undefined
   const bands = held ? zonesAround(held.midi, I.a.chord.root).map((z) => ({ str: z.str, from: z.from, to: z.to, cls: z.clear ? 'zone-clear' : 'zone-mud' })) : undefined
   const words = held ? zoneWords(held.midi, I.a.chord.root) : null
+  // notes in the wrong place: with a note tapped, every note that is mud with it; else the pairs the checker flags
+  const plain = I.a.notes.filter((n) => !n.harmonic)
+  const warn = held
+    ? I.a.notes.map((n, i) => (!n.harmonic && !held.harmonic && clearPair(held.midi, n.midi, I.a.chord.root) === false ? i : -1)).filter((i) => i >= 0)
+    : I.a.mud.flatMap((m) => [I.a.notes[m.at], plain[plain.indexOf(I.a.notes[m.at]) + 1]]).map((n) => I.a.notes.indexOf(n))
   const [lefty] = useLefty()
   const F = useFingers()
   // the fingering chosen for the progression when there is one, else the best for this shape alone
@@ -103,6 +120,7 @@ export function ShapeCard({ I, note, on, active, onPlay, compact, sf: given, zon
         active={active ? I.a.notes.map((_, i) => i) : []}
         bands={bands}
         picked={pick}
+        warn={warn}
         onNote={(i) => setPick(pick === i ? null : i)}
         {...F.props(sf)}
       />

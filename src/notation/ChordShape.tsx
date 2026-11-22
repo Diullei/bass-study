@@ -21,6 +21,8 @@ export interface ChordShapeProps {
   bands?: FretBand[]
   /** Make the notes clickable: called with the index of the sounding note. */
   onNote?: (i: number) => void
+  /** Sounding notes in a wrong place (a red ring and a "!" tag). */
+  warn?: number[]
   /** The selected sounding note (a dashed halo). */
   picked?: number | null
   /** Mirror for a left-handed player. */
@@ -45,7 +47,7 @@ export function shapeDots(shape: string) {
  * A chord shape on a short piece of the neck: the window fits the shape, muted strings get an ×,
  * harmonics are diamonds over the fret wire. Every fret of the window is numbered, so a shape can be found at once.
  */
-export function ChordShape({ shape, labels, pens, roots, active = [], fingers, barres, hand, bands, onNote, picked, lefty, minFrets = 4, className }: ChordShapeProps) {
+export function ChordShape({ shape, labels, pens, roots, active = [], fingers, barres, hand, bands, onNote, picked, warn, lefty, minFrets = 4, className }: ChordShapeProps) {
   const toks = shape.split('-')
   const strings = toks.length === 4 ? 4 : 5
   const notes = shapeDots(shape)
@@ -66,6 +68,7 @@ export function ChordShape({ shape, labels, pens, roots, active = [], fingers, b
     active: active.includes(i),
     finger: fingers?.[i] || undefined,
     picked: picked === i,
+    warn: warn?.includes(i),
   }))
   return <Fretboard strings={strings} from={from} to={to} dots={dots} muted={muted} bands={bands} onDot={onNote} barres={barres} hand={hand} lefty={lefty} allNumbers className={className} />
 }

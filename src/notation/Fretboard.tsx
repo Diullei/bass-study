@@ -19,6 +19,8 @@ export interface FretDot {
   finger?: number
   /** Selected: a dashed halo around the dot. */
   picked?: boolean
+  /** In a wrong place (e.g. mud with another note): a red ring and a "!" tag. */
+  warn?: boolean
 }
 
 /** One finger laid flat across several strings at one fret (a barre). */
@@ -200,6 +202,7 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
                 : {})}
             >
               {d.picked && <circle className={styles.halo} cx={x} cy={y} r={15} />}
+              {d.warn && <circle className={styles.warnRing} cx={x} cy={y} r={14} />}
               {d.harmonic ? (
                 <path className={styles.dot} d={`M${x} ${y - 12} L${x + 12} ${y} L${x} ${y + 12} L${x - 12} ${y} Z`} />
               ) : (
@@ -208,6 +211,14 @@ export function Fretboard({ strings, from = 0, to = 12, dots, muted = [], bands 
               <text className={styles.dlab} x={x} y={y + 4} textAnchor="middle">
                 {d.label}
               </text>
+              {d.warn && (
+                <g className={styles.warnTag}>
+                  <circle cx={x + (lefty ? 11 : -11)} cy={y - 9} r={5.6} />
+                  <text x={x + (lefty ? 11 : -11)} y={y - 5.8} textAnchor="middle">
+                    !
+                  </text>
+                </g>
+              )}
               {d.finger ? (
                 <g className={styles.finger}>
                   <circle cx={x + (lefty ? -11 : 11)} cy={y + 9} r={6.2} />

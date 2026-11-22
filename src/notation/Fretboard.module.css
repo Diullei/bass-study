@@ -83,6 +83,18 @@
 .board .tap:focus-visible .dot {
   stroke-width: 3;
 }
+.board .warnRing {
+  fill: none;
+  stroke: var(--red-pen);
+  stroke-width: 2.4;
+}
+.board .warnTag circle {
+  fill: var(--red-pen);
+}
+.board .warnTag text {
+  font: 700 9px var(--font-hand);
+  fill: var(--paper-sheet);
+}
 .board .halo {
   fill: none;
   stroke: var(--ink);
