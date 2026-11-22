@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent as RPointerEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent as RPointerEvent, useLayoutEffect } from 'react'
 import { KEYS, load, store } from '../../state/storage'
 import { Button, cx, Stepper } from '../../ui'
 import { Display } from './Display'
@@ -48,15 +48,24 @@ export function Metronome() {
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+  // the window changes size when it opens and when it switches between compact and full: place it again after that
+  useLayoutEffect(() => {
+    force((n) => n + 1)
+  }, [open, compact])
   const placed = (() => {
     if (!pos || window.innerWidth < 560 || !win.current) return undefined
+    // what is really visible: on a phone or tablet the address bar makes innerHeight too tall
+    const vw = window.visualViewport?.width ?? window.innerWidth
+    const vh = window.visualViewport?.height ?? window.innerHeight
     const w = win.current.offsetWidth
-    const h = win.current.offsetHeight
+    const h = Math.min(win.current.offsetHeight, vh - 8)
+    // never off screen: the top-left corner is clamped last, so the title bar (and its close button) always shows
     return {
-      left: Math.min(Math.max(0, pos.x), window.innerWidth - w),
-      top: Math.min(Math.max(0, pos.y), window.innerHeight - h),
+      left: Math.max(0, Math.min(pos.x, vw - w)),
+      top: Math.max(0, Math.min(pos.y, vh - h)),
       right: 'auto',
       bottom: 'auto',
+      maxHeight: vh - 8,
     }
   })()
 

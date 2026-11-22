@@ -38,7 +38,13 @@
   bottom: 158px;
   z-index: 31;
   width: 380px;
-  height: min(700px, calc(100vh - 96px));
+  max-width: calc(100vw - 16px);
+  /* it sits above the corner stack (158px), so it must leave that much room plus a margin at the top:
+     otherwise its title bar, with the close button, is pushed off the screen */
+  height: min(700px, calc(100vh - 174px));
+  /* dvh is the visible height on phones and tablets, where the address bar makes vh too tall */
+  height: min(700px, calc(100dvh - 174px));
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -647,15 +653,32 @@
   color: var(--pencil);
 }
 
+/* a short screen (a tablet or phone on its side, a small laptop): the full window takes the whole height,
+   over the corner notes, so nothing of it can fall off the screen */
+@media (max-height: 760px) {
+  .win {
+    top: 8px;
+    bottom: 8px;
+    height: auto;
+  }
+  .compact {
+    top: auto;
+    bottom: 158px;
+  }
+}
 @media (max-width: 560px) {
   .win {
     width: calc(100vw - 16px);
     right: 8px;
-    height: min(640px, calc(100vh - 84px));
+    top: 8px;
+    bottom: 8px;
+    height: auto;
   }
   .compact {
     left: 8px;
     right: 8px;
+    top: auto;
+    bottom: 158px;
     width: auto;
     height: auto;
   }
