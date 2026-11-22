@@ -46,9 +46,9 @@ export const useHandSize = () => usePref<HandSize>(KEYS.hand, () => (load<string
 
 export type ShapeStyle = 'a' | 'b' | 'c'
 
-/** How a chord shape is written inside text (see notation/ShapeRef): a tiny neck and the frets by default. */
+/** How a chord shape is written inside text (see notation/ShapeRef): five cells by default. */
 export const useShapeStyle = () =>
   usePref<ShapeStyle>(KEYS.shapeStyle, () => {
-    const v = load<string>(KEYS.shapeStyle, 'c')
-    return v === 'a' || v === 'b' ? v : 'c'
+    const v = load<string>(KEYS.shapeStyle, 'a')
+    return v === 'b' || v === 'c' ? v : 'a'
   })

@@ -561,12 +561,12 @@ export function DesignSystemPage() {
               id="shape-ref"
               name="ShapeRef"
               path="notation/ShapeRef"
-              text="A chord shape named inside a sentence or under a diagram, in place of bare mono text where the reader counts hyphens. Three looks, chosen in Settings (Chord shapes): C, the default = a tiny neck with the dots, then the frets; A = five cells, each string over its fret, muted strings in pencil; B = one line in the FretRef family, only the strings that sound are named and a muted string is a thin hatched slot. In lesson text a shape in backticks, or a {Cmaj7:x-8-x-9-9} chip (hover shows the diagram, click plays), renders as this."
+              text="A chord shape named inside a sentence or under a diagram, in place of bare mono text where the reader counts hyphens. Three looks, chosen in Settings (Chord shapes): A, the default = five cells, each string over its fret, muted strings in pencil; B = one line in the FretRef family, only the strings that sound are named and a muted string is a thin hatched slot; C = a tiny neck with the dots, then the frets. In lesson text a shape in backticks, or a {Cmaj7:x-8-x-9-9} chip (hover shows the diagram, click plays), renders as this."
               column
             >
-              {(['c', 'a', 'b'] as const).map((v) => (
+              {(['a', 'b', 'c'] as const).map((v) => (
                 <div key={v} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <Caption>Variant {v.toUpperCase()}{v === 'c' ? ' (default)' : ''}</Caption>
+                  <Caption>Variant {v.toUpperCase()}{v === 'a' ? ' (default)' : ''}</Caption>
                   <p style={{ margin: 0, maxWidth: '70ch', lineHeight: 'var(--ruled)' }}>
                     Try the 3rd next, <ShapeRef variant={v} shape="x-8-7-x-x" />: mud. Skip a string and you get form A, <ShapeRef variant={v} shape="x-8-x-9-9" />, or with the root an octave lower, <ShapeRef variant={v} shape="13-x-x-14-16" />.
                   </p>

@@ -90,9 +90,9 @@ function ShapeStyleControl() {
         label="Chord shapes in text"
         value={style}
         options={[
-          { value: 'c', label: 'tiny neck' },
           { value: 'a', label: 'five cells' },
           { value: 'b', label: 'one line' },
+          { value: 'c', label: 'tiny neck' },
         ]}
         onChange={setStyle}
       />
@@ -115,7 +115,7 @@ export const SETTINGS: SettingDef[] = [
     id: 'shapeStyle',
     group: 'Chord shapes',
     label: 'Shapes written in text',
-    help: 'How a shape such as x-8-x-9-9 (frets from the B string to the G string) is drawn inside sentences and under diagrams. Tiny neck: a small drawing of the dots, then the frets. Five cells: every string over its fret, muted strings in pencil. One line: only the strings that sound, a hatched slot for each muted string.',
+    help: 'How a shape such as x-8-x-9-9 (frets from the B string to the G string) is drawn inside sentences and under diagrams. Five cells: every string over its fret, muted strings in pencil. One line: only the strings that sound, a hatched slot for each muted string. Tiny neck: a small drawing of the dots, then the frets.',
     Control: ShapeStyleControl,
   },
   {

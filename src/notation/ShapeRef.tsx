@@ -6,7 +6,7 @@ const NAMES = ['B', 'E', 'A', 'D', 'G']
 export interface ShapeRefProps {
   /** Frets low string to high, e.g. "x-8-7-x-x"; "0" open, "h7" a harmonic. */
   shape: string
-  /** The look: c = a tiny neck and the frets, a = five cells, b = one line. Default: the notebook's setting (c). */
+  /** The look: a = five cells, b = one line, c = a tiny neck and the frets. Default: the notebook's setting (a). */
   variant?: 'a' | 'b' | 'c'
 }
 
@@ -54,7 +54,7 @@ export const IS_SHAPE = /^(?:x|h?\d{1,2})(?:-(?:x|h?\d{1,2})){4}$/
 
 /**
  * A chord shape named inside a sentence or under a diagram. One look for the whole notebook,
- * chosen in Settings: a tiny neck and the frets (default), five cells, or one line.
+ * chosen in Settings: five cells (default), one line, or a tiny neck and the frets.
  */
 export function ShapeRef({ shape, variant: given }: ShapeRefProps) {
   const [setting] = useShapeStyle()
