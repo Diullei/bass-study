@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import styles from './Fretboard.module.css'
 
 export interface VoiceChord {
@@ -15,6 +16,8 @@ export interface VoiceLinesProps {
   chords: VoiceChord[]
   /** The column sounding now (red pen). */
   at?: number | null
+  /** The column to keep in view when the drawing is wider than its box: it scrolls sideways to follow it. Default: `at`. */
+  focus?: number | null
   /** Join the bottom voice too (off when it is the root line, which jumps by design). */
   bass?: boolean
   className?: string
@@ -25,7 +28,25 @@ export interface VoiceLinesProps {
  * A flat line is a held note (a common tone), a short step marked ½ is a half-step pull, the top line is the melody.
  * Voices are paired from the top down, because the ear follows the top.
  */
-export function VoiceLines({ chords, at = null, bass = false, className }: VoiceLinesProps) {
+export function VoiceLines({ chords, at = null, focus, bass = false, className }: VoiceLinesProps) {
+  const svg = useRef<SVGSVGElement>(null)
+  const seen = at ?? focus ?? null
+  // a long progression is wider than its box: follow the column, sideways only (the page itself must not jump)
+  useEffect(() => {
+    const el = svg.current
+    if (seen == null || !el || !chords.length) return
+    let box = el.parentElement
+    while (box && !(box.scrollWidth > box.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(box).overflowX))) box = box.parentElement
+    if (!box) return
+    const r = el.getBoundingClientRect()
+    const b = box.getBoundingClientRect()
+    // the middle of the column, measured inside the scrolling box
+    const mid = r.left - b.left + box.scrollLeft + ((seen + 0.5) / chords.length) * r.width
+    const view = box.clientWidth
+    // leave it alone while the column sits comfortably inside the view; otherwise bring it to a third from the left
+    if (mid > box.scrollLeft + view * 0.2 && mid < box.scrollLeft + view * 0.75) return
+    box.scrollTo({ left: Math.max(0, mid - view / 3), behavior: 'smooth' })
+  }, [seen, chords.length])
   const all = chords.flatMap((c) => c.midis)
   if (!all.length) return null
   const lo = Math.min(...all)
@@ -42,7 +63,7 @@ export function VoiceLines({ chords, at = null, bass = false, className }: Voice
   // voice v counted from the top (0 = top voice)
   const voice = (c: VoiceChord, v: number) => (v < c.midis.length ? c.midis.length - 1 - v : -1)
   return (
-    <svg className={`${styles.lines} ${className ?? ''}`} viewBox={`0 0 ${W} ${H}`} width={W * 1.15} role="img" aria-label="Voice leading">
+    <svg ref={svg} className={`${styles.lines} ${className ?? ''}`} viewBox={`0 0 ${W} ${H}`} width={W * 1.15} role="img" aria-label="Voice leading">
       {chords.map((c, i) => (
         <g key={i} className={at === i ? styles.linesNow : undefined}>
           {at === i && <rect className={styles.linesCol} x={x(i) - colW / 2 + 4} y={2} width={colW - 8} height={H - 4} rx={8} />}

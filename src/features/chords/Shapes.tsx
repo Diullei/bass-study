@@ -309,7 +309,13 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
   const F = useFingers()
   // step 0 is the first chord alone; each later step is the move into that chord
   const [pick, setPick] = useState(0)
-  const k = Math.min(at ?? pick, items.length - 1)
+  // a progression shown without a player of its own page (a generated one, a play-along's) plays itself
+  const own = !onPick
+  const P = useClip<number>()
+  const now = at ?? (own && P.playing ? P.cue : null)
+  const k = Math.min(now ?? pick, items.length - 1)
+  const playAll = () => (P.playing ? P.stop() : P.once(items.map((x, i) => shapeBar(x.I, 'block', 4, i, true)), 72))
+  const hear = (i: number) => (onPick ? onPick(i) : P.once([shapeBar(items[i].I, 'roll', 3, i, true)], 72))
   const cur = items[k].I
   const prev = k > 0 ? items[k - 1].I : null
   const moves = prev ? describeMove(prev, cur) : null
@@ -325,7 +331,8 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
       <div className={s.progLines}>
         <VoiceLines
           chords={items.map(({ I }) => ({ label: I.sym, midis: I.midis, names: I.a.notes.map((n) => n.name), degs: degsOf(I) }))}
-          at={at}
+          at={now}
+          focus={k}
         />
       </div>
       <div className={s.progMove}>
@@ -349,9 +356,12 @@ export function Progression({ items, at, onPick }: { items: { I: ShapeInfo }[]; 
           <Button size="sm" variant="pencil" disabled={k >= items.length - 1} onClick={() => setPick(Math.min(items.length - 1, k + 1))}>
             ▶
           </Button>
-          {onPick && (
-            <Button size="sm" variant="pencil" onClick={() => onPick(k)}>
-              hear {cur.sym}
+          <Button size="sm" variant="pencil" onClick={() => hear(k)}>
+            hear {cur.sym}
+          </Button>
+          {own && (
+            <Button size="sm" variant={P.playing ? 'ink' : 'default'} onClick={playAll}>
+              {P.playing ? '■ Stop' : '▶ Play in order'}
             </Button>
           )}
         </div>
