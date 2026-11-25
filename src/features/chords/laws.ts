@@ -101,8 +101,9 @@ export const LAWS: Law[] = [
       { t: 'h', text: 'When the answer does not fit the hand' },
       {
         t: 'p',
-        text: 'The arithmetic always gives an answer, but not always one you can play. There are only five strings, so a root has a limited number of strings above it: four from the B string, three from the E string, two from the A string. When the strings run out, the frets have to make up the rest, and more than three or four frets is out of reach.',
+        text: 'The arithmetic always gives an answer, but not always one you can play. There are only five strings, so a root has a limited number of strings above it: four from the B string, three from the E string, two from the A string. When the strings run out, the frets have to make up the rest, and the hand covers only so many: about three frets near the nut, four in the middle of the neck, five and more above the 12th fret, because the frets get narrower.',
       },
+      { t: 'handspan' },
       {
         t: 'p',
         text: 'Example: the root is C at E‑8 and you want the **13** (21 semitones). The E string has three strings above it, worth 15. That leaves 21 − 15 = **6 frets**: G‑14, far from a hand at fret 8. Do not tap it and do not give up on the note. Run Law 1 again, in one of three ways:',
@@ -283,12 +284,12 @@ export const LAWS: Law[] = [
   {
     n: 3,
     title: 'Three notes is a full chord',
-    short: 'You have four fingers and a four-fret reach, so you budget: the 3rd and 7th first, then the root, then a colour, and the 5th last.',
+    short: 'You have four fingers and a reach of about four frets (more high on the neck), so you budget: the 3rd and 7th first, then the root, then a colour, and the 5th last.',
     blocks: [
       { t: 'h', text: 'The idea' },
       {
         t: 'p',
-        text: 'A pianist has ten fingers; you have four, a comfortable reach of four frets, and Law 2 forbidding close notes at the bottom. So you cannot play every note of a chord. You do not need to: the ear identifies a chord from very few notes ([[R7]]).',
+        text: 'A pianist has ten fingers; you have four, a comfortable reach of about four frets (three near the nut, five and more above the 12th fret), and Law 2 forbidding close notes at the bottom. So you cannot play every note of a chord. You do not need to: the ear identifies a chord from very few notes ([[R7]]).',
       },
       { t: 'h', text: 'The logic: what each note tells the ear' },
       {
@@ -416,7 +417,7 @@ export const LAWS: Law[] = [
       {
         q: 'Why can root + 3rd + 7th + two tensions not sit under one hand?',
         a: 'Five notes need five strings and the root and 3rd end up a 3rd apart in the bass band, which Law 2 forbids.',
-        why: 'With the root at the bottom, the next voice must be a wide interval away; the tensions then push the top beyond a four-fret reach. Splitting in time removes both problems.',
+        why: 'With the root at the bottom, the next voice must be a wide interval away; the tensions then push the top beyond what the hand reaches. Splitting in time removes both problems.',
       },
       {
         q: 'In the split texture, the thumb plays on 1 and 3. Why does the chord still sound "complete" on 2 and 4 without a root?',

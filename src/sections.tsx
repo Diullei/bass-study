@@ -90,7 +90,7 @@ export const SECTIONS: NotebookSection[] = [
   },
   {
     id: 'chords',
-    title: 'Two Hands on One Neck',
+    title: 'Chords on Bass',
     blurb:
       'A chord method for 5-string bass, built by translating jazz piano voicing to the fretboard: five laws, shapes you can rebuild instead of memorize, the voice leading drawn on the neck, and play-along for every progression.',
     path: CHORDS_PATH,

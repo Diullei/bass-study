@@ -1025,3 +1025,45 @@ small.cardScale {
   justify-content: space-between;
   gap: var(--sp-3);
 }
+
+/* the hand's reach along the neck, to scale */
+.spanFig {
+  width: 100%;
+  max-width: 820px;
+  height: auto;
+}
+.spanNeck {
+  fill: var(--paper-sheet);
+  stroke: var(--pencil-light);
+  stroke-width: 1;
+}
+.spanNut {
+  stroke: var(--ink);
+  stroke-width: 4;
+}
+.spanWire {
+  stroke: var(--pencil);
+  stroke-width: 1.2;
+}
+.spanInlay {
+  fill: var(--pencil-light);
+}
+.spanNum {
+  font: 9px var(--font-mono);
+  fill: var(--pencil);
+}
+.spanMax {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.4;
+  stroke-dasharray: 4 3;
+}
+.spanEasy {
+  fill: var(--highlighter-strong);
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.spanWords {
+  font: 13px var(--font-body);
+  fill: var(--ink);
+}

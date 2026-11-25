@@ -44,6 +44,8 @@ export type CBlock =
   | { t: 'zones' }
   /** Chapter 1: the neck shaded by register (bass, chord, melody bands). */
   | { t: 'registers' }
+  /** The neck drawn to scale, with the width of your hand laid on it at four positions: the same hand, more frets the higher it sits. */
+  | { t: 'handspan' }
   /** Chapter 22: what each harmonic sounds on each string, computed. */
   | { t: 'harmonics' }
   /** One shape in comping textures or patterns, with a beat grid and playback. */

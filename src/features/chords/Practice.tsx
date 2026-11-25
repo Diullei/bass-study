@@ -4,14 +4,20 @@ import { KEYS as STORE, load, store } from '../../state/storage'
 import { Button, Checkbox, Field, FieldGrid, Section, SectionTitle, Segmented, Select, cx } from '../../ui'
 import { CText } from './CText'
 import { LAYERS, voiceLead, type Layer, type Style } from './finder'
-import { playableBy } from './OnBass'
 import { PRACTICE, type PracticePlan } from './practice'
 import { progById, progIn } from './progressions'
-import { Voiced } from './ToolPages'
+import { reachWords, Voiced } from './ToolPages'
 import s from './Chords.module.css'
 
 /** The twelve keys in the order of practice: each one a fourth above the last. */
 const CYCLE = ['C', 'F', 'B♭', 'E♭', 'A♭', 'D♭', 'F♯', 'B', 'E', 'A', 'D', 'G']
+
+/** Where the hand works: the fret the shapes are pulled towards. Higher up the hand covers more frets, so more shapes exist. */
+const REGIONS = [
+  { value: '5', label: 'low' },
+  { value: '9', label: 'middle' },
+  { value: '14', label: 'high' },
+]
 
 type PStyle = Exclude<Style, 'near'>
 const STYLES: { value: PStyle; label: string; what: string }[] = [
@@ -31,6 +37,7 @@ export function Practice({ chapter, plan: given }: { /** An id for remembering t
   const [layer, setLayer] = useState<Layer>(plan?.layers[0] ?? 'shell')
   const [style, setStyle] = useState<PStyle>(plan?.style ?? 'closed')
   const [key, setKey] = useState('C')
+  const [region, setRegion] = useState('9')
   const [bells, setBells] = useState(!!plan?.artificial)
   const [done, setDone] = useState<Record<string, string[]>>(() => load(STORE.chordsPractice, {}))
   const p = progById(pid)
@@ -38,9 +45,8 @@ export function Practice({ chapter, plan: given }: { /** An id for remembering t
   const played = done[slot] ?? []
   const out = useMemo(() => {
     if (!p) return null
-    const playable = playableBy(hand)
     const bars = progIn(p, key)
-    const run = (st: Style) => voiceLead(bars.flat(), layer, 'auto', 9, st, playable)
+    const run = (st: Style) => voiceLead(bars.flat(), layer, 'auto', +region, st, hand)
     // the harmonics chapter: every note above the lowest becomes an artificial harmonic of itself
     const asBells = (shape: string) => {
       let low = true
@@ -61,7 +67,7 @@ export function Practice({ chapter, plan: given }: { /** An id for remembering t
     // closed and open can land on the same shapes (two notes on two strings leave no choice): say so
     const twin = style !== 'jump' && run(style === 'closed' ? 'open' : 'closed').every((v, i) => v.shape === raw[i].shape)
     return { V, text, twin }
-  }, [p, key, layer, style, hand, bells])
+  }, [p, key, layer, style, hand, bells, region])
   if (!plan || !p || !out) return null
   const mark = () => {
     const next = { ...done, [slot]: played.includes(key) ? played : [...played, key] }
@@ -93,12 +99,20 @@ export function Practice({ chapter, plan: given }: { /** An id for remembering t
         <Field label="How the chords are laid out">
           <Segmented label="How the chords are laid out" value={style} options={STYLES.map(({ value, label }) => ({ value, label }))} onChange={setStyle} />
         </Field>
+        <Field label="Where on the neck">
+          <Segmented label="Where on the neck" value={region} options={REGIONS} onChange={setRegion} />
+        </Field>
       </FieldGrid>
       {plan.artificial && <Checkbox label="upper notes as artificial harmonics" checked={bells} onChange={setBells} />}
       <p className={s.caption}>
         <CText text={what} />
         {out.twin && ' In this key and voicing, closed and open give the same shapes.'}
       </p>
+      {region !== '9' && (
+        <p className={s.caption}>
+          <CText text={reachWords(+region, hand, true)} />
+        </p>
+      )}
       <div className={s.keyRow} role="radiogroup" aria-label="Key, in fourths">
         {CYCLE.map((k, i) => (
           <span key={k} className={s.keyStep}>

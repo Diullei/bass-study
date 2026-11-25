@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { Fretboard, type FretBand, type FretDot } from '../../notation/Fretboard'
 import { FretRef } from '../../notation/FretRef'
 import { BeatGrid, Button, FactList, Field, FieldGrid, Segmented, Select, StickyNote, cx } from '../../ui'
-import { fingerings } from '../../theory/fingering'
+import { fingerings, fretX, handReach, reachAt, tipX } from '../../theory/fingering'
 import { handOf } from './fingers'
 import { Along, patternRows } from './Along'
 import { CText } from './CText'
@@ -148,7 +148,7 @@ interface Place {
   su: number
   df: number
   iv: number
-  /** 'ok' within three frets, 'stretch' four, 'far' more. */
+  /** 'ok' inside the hand, 'stretch' near its limit, 'far' beyond it: measured where the notes are, so it changes along the neck. */
   reach: 'ok' | 'stretch' | 'far'
 }
 
@@ -156,8 +156,8 @@ function place(rs: number, rf: number, ts: number, iv: number, hand: 'average' |
   const tf = OPEN[rs] + rf + iv - OPEN[ts]
   if (tf < 0 || tf > 20) return null
   const df = tf - rf
-  const fits = tf === 0 || fingerings([{ str: rs, fret: rf }, { str: ts, fret: tf }], hand).length > 0
-  return { rs, rf, ts, tf, su: ts - rs, df, iv, reach: !fits ? 'far' : Math.abs(df) >= 4 ? 'stretch' : 'ok' }
+  const f = tf === 0 ? null : fingerings([{ str: rs, fret: rf }, { str: ts, fret: tf }], hand)[0]
+  return { rs, rf, ts, tf, su: ts - rs, df, iv, reach: tf > 0 && !f ? 'far' : f && f.stretch > 0.93 ? 'stretch' : 'ok' }
 }
 
 /**
@@ -380,6 +380,72 @@ function FloorsBlock({ rows }: { rows: { text: string; ivs?: number[] }[] }) {
       </ul>
       <p className={s.caption}>
         <span className={cx(s.sw, s.swChord)} /> <CText text="clear: the **lower** note of the pair can sit here. The ring is the floor on each string, with its fret. The same pitch is five frets higher on each lower string ([[Law1]]), so the clear part is a diagonal. Blank = mud." />
+      </p>
+    </figure>
+  )
+}
+
+// ───────────── the hand's reach along the neck ─────────────
+
+/**
+ * The neck to scale (a 34" bass, 20 frets) and one hand laid on it at four places. The bar has the same length in
+ * every row: it is the hand. The frets under it are counted, and the count grows up the neck.
+ */
+function HandSpanBlock() {
+  const [lefty] = useLefty()
+  const F = useFingers()
+  const END = fretX(20)
+  const W = END + 14
+  const X = (mm: number) => (lefty ? W - 7 - mm : mm + 7)
+  const reach = handReach(F.hand)
+  const rows = [1, 5, 9, 13].map((lo) => ({ lo, ...reachAt(lo, F.hand), x: tipX(lo) }))
+  const top = 30
+  const rowH = 30
+  const H = top + 22 + rows.length * rowH
+  const bar = (from: number, to: number, y: number, cls: string) => <rect className={cls} x={Math.min(X(from), X(to))} y={y} width={Math.abs(to - from)} height={12} rx={3} />
+  return (
+    <figure className={s.tableFig}>
+      <svg className={s.spanFig} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`The reach of ${F.hand === 'large' ? 'a large' : 'an average'} hand at four places on the neck: ${rows.map((r) => `index at fret ${r.lo}, frets ${r.lo} to ${Math.min(20, r.lo + r.max)}`).join('; ')}`}>
+        <rect className={s.spanNeck} x={Math.min(X(0), X(END))} y={4} width={END} height={top - 4} />
+        <line className={s.spanNut} x1={X(0)} x2={X(0)} y1={2} y2={top + 2} />
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
+          <g key={n}>
+            <line className={s.spanWire} x1={X(fretX(n))} x2={X(fretX(n))} y1={4} y2={top} />
+            <text className={s.spanNum} x={X((fretX(n) + fretX(n - 1)) / 2)} y={top + 14} textAnchor="middle">
+              {n}
+            </text>
+          </g>
+        ))}
+        {[3, 5, 7, 9, 15, 17, 19].map((n) => (
+          <circle key={n} className={s.spanInlay} cx={X((fretX(n) + fretX(n - 1)) / 2)} cy={top / 2 + 2} r={3} />
+        ))}
+        {[-5, 5].map((d) => (
+          <circle key={d} className={s.spanInlay} cx={X((fretX(12) + fretX(11)) / 2)} cy={top / 2 + 2 + d} r={3} />
+        ))}
+        {rows.map((r, i) => {
+          const y = top + 24 + i * rowH
+          const end = Math.min(END, r.x + reach)
+          const easyEnd = Math.min(END, r.x + reach * 0.85)
+          const last = Math.min(20, r.lo + r.max)
+          const lastEasy = Math.min(20, r.lo + r.easy)
+          const words = `frets ${r.lo}–${lastEasy}${last > lastEasy ? `, to ${last} at full stretch` : ''}`
+          // the words go where there is room: after the bar, or before it near the end of the neck
+          const after = END - end > 200
+          return (
+            <g key={r.lo}>
+              {bar(r.x, end, y, s.spanMax)}
+              {bar(r.x, easyEnd, y, s.spanEasy)}
+              <text className={s.spanWords} x={after ? X(end + (lefty ? 8 : 8)) : X(r.x - 8)} y={y + 11} textAnchor={after !== lefty ? 'start' : 'end'}>
+                {words}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+      <p className={s.caption}>
+        <CText
+          text={`The neck to scale, and **your hand** (${F.hand === 'large' ? 'large' : 'average'}; change it in ⚙ Settings) laid on it with the index finger at frets 1, 5, 9 and 13. The bar is the same length in every row: the hand does not grow. The frets get narrower, so more of them fit under it: **${rows[0].max + 1} frets at the nut, ${rows[3].max + 1} at fret 13**. Yellow is without effort; the open end is the full stretch. Every shape, fingering and voicing in this method is tested against this measure at the place where it sits, so the high positions offer wider shapes than the low ones. Past fret 16 the body is in the way, most of all on the low strings.`}
+        />
       </p>
     </figure>
   )
@@ -653,6 +719,8 @@ export function BlockView({ b }: { b: CBlock }) {
       return <FloorsBlock rows={b.rows} />
     case 'registers':
       return <RegistersBlock />
+    case 'handspan':
+      return <HandSpanBlock />
     case 'harmonics':
       return <HarmonicsBlock />
     case 'patterns':

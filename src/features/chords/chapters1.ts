@@ -874,6 +874,18 @@ export const CHAPTERS_1: Chapter[] = [
         title: "The fingers on the diagrams follow these six rules",
         text: "The finger tags are not typed in: a hand model measures every reach in millimetres on the real neck and, for a progression, chooses all the fingerings together. That is why a finger often stays down as a **pivot** (technique 3) or slides along its string as a **guide finger** (technique 2) where another fingering would be easier for one chord alone. Under each move you can read what every finger does. If your hands are large, say so in ⚙ Settings: wider reaches become available.",
       },
+      { t: "h", text: "The hand covers more frets the higher it sits" },
+      {
+        t: "p",
+        text: "The hand opens the same distance everywhere, but the frets do not stay the same width: the 1st is about 48 mm wide, the 12th about 24 mm. So the question is never *how many frets can I reach*. It is *how many frets fit under my hand here*, and the answer rises steadily as you go up the neck. A shape that is impossible near the nut becomes a stretch in the middle and comfortable above the 12th fret. The price is the pitch: higher shapes sit higher in the chord band ([[Ch1]]), and past fret 16 the body gets in the way.",
+      },
+      { t: "handspan" },
+      {
+        t: "shapes",
+        title: "Shapes that exist only high on the neck",
+        rows: ["Dm7 | x-x-12-15-17 | 5th, ♭3rd, ♭7th: an open voicing, five frets wide", "Cmaj7 | x-10-12-14-16 | 9, 13, 3rd, 7th in fourths and fifths: seven frets under four fingers, for a large hand"],
+        caption: "Slide the first grip down the neck and feel it close: the same grip for Gm7, `x-x-5-8-10`, is beyond any hand. Whether a shape is drawn, and which fingers it gets, is decided by the measure above, at the place where the shape sits.",
+      },
     ],
     drills: [
       "**Octave ladder on Cmaj7:** {Cmaj7:x-x-3-2-4} → {Cmaj7:x-8-x-9-9} → {Cmaj7:13-x-x-14-16} → {Cmaj7:x-x-15-14-16}. Slow, in time, using technique 4.",

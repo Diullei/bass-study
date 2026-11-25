@@ -63,7 +63,7 @@ const intervalName = (n: number) => {
 const placesOf = (m: number): Spot[] => OPEN.map((o, str) => ({ str, fret: m - o })).filter((p) => p.fret >= 1 && p.fret <= 20)
 
 function make(mode: Mode, level: Level, hand: 'average' | 'large'): Question {
-  const inReach = (a: Spot, b: Spot) => (a.str === b.str ? Math.abs(a.fret - b.fret) <= 4 : fingerings([a, b], hand).length > 0)
+  const inReach = (a: Spot, b: Spot) => fingerings([a, b], hand).length > 0
   for (let tries = 0; tries < 300; tries++) {
     const kind: Kind = mode === 'mixed' ? pick(['up', 'up', 'down', 'down', 'reach'] as const) : mode
     const degs = kind === 'reach' ? HIGH : level === 'basic' ? BASIC : [...BASIC, ...HIGH]
@@ -102,7 +102,7 @@ export function LawOneDrill() {
   const [hints, setHints] = useState(0)
   const [score, setScore] = useState({ right: 0, total: 0 })
 
-  const inReach = (a: Spot, b: Spot) => (a.str === b.str ? Math.abs(a.fret - b.fret) <= 4 : fingerings([a, b], F.hand).length > 0)
+  const inReach = (a: Spot, b: Spot) => fingerings([a, b], F.hand).length > 0
   const next = (m = mode, l = level) => {
     setQ(make(m, l, F.hand))
     setPicked(null)
@@ -171,7 +171,7 @@ export function LawOneDrill() {
       }
       if (q.start.str > 0) {
         const r2 = { str: q.start.str - 1, fret: q.start.fret + 5 }
-        const t2 = placesOf(q.target).find((p) => p.str > r2.str && Math.abs(p.fret - r2.fret) <= 3)
+        const t2 = placesOf(q.target).filter((p) => p.str > r2.str && inReach(r2, p)).sort((a, b) => Math.abs(a.fret - r2.fret) - Math.abs(b.fret - r2.fret))[0]
         if (r2.fret <= 17 && t2) out.push(`Or **buy a string**: the same root is at ${name(r2)}, and from there the ${short} is ${moveWords(r2, t2).text} (${name(t2)}).`)
       }
       return out

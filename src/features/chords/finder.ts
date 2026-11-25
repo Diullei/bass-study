@@ -3,7 +3,31 @@
  * ranked by clarity (Law 2). `voiceLead` picks one shape per chord of a progression so the hand
  * moves as little as possible and the voices move by small steps (Law 4).
  */
+import { fingerings, handReach, tipGap, type HandSize } from '../../theory/fingering'
 import { DEG, FAM, LIMITS, OPEN, parseSym, shapeOf, type ChordSym } from './voicing'
+
+/** The highest fret a shape may use. */
+export const TOP_FRET = 19
+/**
+ * Past about fret 16 the neck meets the body: the thumb leaves the back of the neck and the hand comes round the
+ * cutaway. The G string stays easy to reach; each lower string is further round, so it costs more.
+ */
+const heel = (S: number[], fs: number[]) => S.reduce((c, str, i) => c + (fs[i] > 16 ? (fs[i] - 16) * (0.3 + 0.25 * (4 - str)) : 0), 0)
+/** The width of a fret in the middle of the neck (frets 5 to 8), in mm: the unit the hand's width is counted in. */
+const MID_FRET = 35
+
+const holdCache = new Map<string, { cost: number; stretch: number } | null>()
+/** The most comfortable fingering of a set of frets for this hand (its effort and stretch), or null: the hand cannot hold it. */
+function hold(S: number[], fs: number[], hand: HandSize) {
+  const k = `${hand}|${S.join()}|${fs.join()}`
+  let h = holdCache.get(k)
+  if (h === undefined) {
+    const f = fingerings(S.map((str, i) => ({ str, fret: fs[i] })), hand)[0]
+    h = f ? { cost: f.cost, stretch: f.stretch } : null
+    holdCache.set(k, h)
+  }
+  return h
+}
 
 export type Layer = 'root2' | 'pair' | 'shell' | 'grand' | 'rootless' | 'grid' | 'quartal' | 'triad'
 
@@ -136,11 +160,13 @@ export interface Found {
   /** Degrees low to high. */
   degs: string[]
   midis: number[]
-  /** Clarity cost: how far neighbours sit below their clear floors (Law 2), plus span. Lower is better. */
+  /** Clarity cost: how far neighbours sit below their clear floors (Law 2), plus the width and strain of the hand. Lower is better. */
   score: number
   mud: number
   lo: number
   hi: number
+  /** The hand can hold it: four fingers, each reach measured in millimetres where the shape sits on the neck. */
+  held: boolean
 }
 
 function* combos(n: number, k: number, start = 0, acc: number[] = []): Generator<number[]> {
@@ -152,8 +178,14 @@ function* perms<T>(xs: T[]): Generator<T[]> {
   for (let i = 0; i < xs.length; i++) for (const p of perms([...xs.slice(0, i), ...xs.slice(i + 1)])) yield [xs[i], ...p]
 }
 
-/** Every playable placement of `degs` over `root` (pitch class), within frets lo–hi. */
-export function find(root: number, degs: string[], layer: Layer | null = null, lo = 1, hi = 15): Found[] {
+/**
+ * Every placement of `degs` over `root` (pitch class), within frets lo–hi, that is no wider than the hand.
+ * The width is measured in millimetres, not in frets: the frets get narrower up the neck, so the same hand
+ * covers three frets at the nut, four in the middle, five and more above the 12th fret. The count of possible
+ * shapes grows with the position. `held` says whether four fingers can really hold the shape.
+ */
+export function find(root: number, degs: string[], layer: Layer | null = null, lo = 1, hi = TOP_FRET, hand: HandSize = 'average'): Found[] {
+  const reach = handReach(hand)
   const pcs = degs.map((d) => (root + DEG[d]) % 12)
   const n = degs.length
   const out: Found[] = []
@@ -176,8 +208,10 @@ export function find(root: number, degs: string[], layer: Layer | null = null, l
       })
       const walk = (j: number, fs: number[]) => {
         if (j === n) {
-          const span = Math.max(...fs) - Math.min(...fs)
-          if (span > 4 || (span === 4 && Math.min(...fs) < 5)) return
+          const low = Math.min(...fs)
+          const high = Math.max(...fs)
+          const wide = tipGap(low, high)
+          if (wide > reach) return
           const ps = S.map((s, k) => OPEN[s] + fs[k])
           for (let k = 1; k < n; k++) if (ps[k] <= ps[k - 1]) return
           if (ps[n - 1] - ps[0] > 28) return
@@ -192,14 +226,19 @@ export function find(root: number, degs: string[], layer: Layer | null = null, l
           const frets: (number | null)[] = [null, null, null, null, null]
           S.forEach((s, k) => (frets[s] = fs[k]))
           const gaps = S[n - 1] - S[0] + 1 - n
+          const h = hold(S, fs, hand)
+          // the strain of the widest reach: free up to 80% of what the hand opens, then it climbs fast (the same curve as the fingering)
+          const r = h ? h.stretch : 1.1
+          const strain = r > 0.8 ? 60 * (r - 0.8) * (r - 0.8) : 0
           out.push({
             shape: shapeOf(frets),
             degs: order.map((o) => degs[o]),
             midis: ps,
-            score: mud + span * 0.6 + (hasRoot ? 0 : gaps * 2) + (span === 4 ? 2 : 0),
+            score: mud + (wide / MID_FRET) * 0.6 + (hasRoot ? 0 : gaps * 2) + strain + heel(S, fs),
             mud,
-            lo: Math.min(...fs),
-            hi: Math.max(...fs),
+            lo: low,
+            hi: high,
+            held: !!h,
           })
           return
         }
@@ -221,13 +260,13 @@ export interface Voiced {
 
 /** Cost of moving the hand and the voices from one shape to the next (Law 4). */
 function moveCost(a: Found, b: Found) {
-  const ca = (a.lo + a.hi) / 2
-  const cb = (b.lo + b.hi) / 2
+  // the hand's travel, in mid-neck frets: a shift of three frets is a shorter trip high on the neck than near the nut
+  const travel = tipGap((a.lo + a.hi) / 2, (b.lo + b.hi) / 2) / MID_FRET
   const k = Math.min(a.midis.length, b.midis.length)
   let voices = 0
   for (let i = 1; i <= k; i++) voices += Math.abs(a.midis[a.midis.length - i] - b.midis[b.midis.length - i])
   const top = Math.abs(a.midis[a.midis.length - 1] - b.midis[b.midis.length - 1])
-  return Math.abs(ca - cb) * 1.2 + voices * 0.35 + (top > 7 ? 4 : 0)
+  return travel * 1.2 + voices * 0.35 + (top > 7 ? 4 : 0)
 }
 
 /**
@@ -241,25 +280,27 @@ const formOf = (f: Found) =>
   f.shape.split('-').map((t) => (t === 'x' ? 'x' : 'o')).join('') +
   f.degs.map((d) => (d === 'R' ? 'R' : /3|4/.test(d) && !/13/.test(d) ? 'T' : /7|6/.test(d) ? 'S' : 'c')).join('')
 
-export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto', around = 9, style: Style = 'near', playable?: (f: Found) => boolean): Voiced[] {
+export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto', around = 9, style: Style = 'near', hand: HandSize = 'average'): Voiced[] {
   const C = syms.map(parseSym)
   const cands = C.map((c, i) => {
     const next = C.slice(i + 1).find((x) => x.sym !== c.sym) ?? C[0]
     const dc = kindOf(c) === '7' ? domColours(c, next === c ? null : next, pref) : null
     const sets = degreeSets(c, layer, dc?.degs ?? ['9', '13'])
-    const search = (S: string[][]) => S.flatMap((d) => find(c.root, d.filter((x) => FAM[c.fam][DEG[x]] != null || x === '6' || x === '°7'), layer))
+    const search = (S: string[][]) => S.flatMap((d) => find(c.root, d.filter((x) => FAM[c.fam][DEG[x]] != null || x === '6' || x === '°7'), layer, 1, TOP_FRET, hand))
     // a half-diminished shell shows its ♭5 when the hand can reach it: without it the shape is a plain m7
     const withB5 = kindOf(c) === 'hdim' && layer === 'shell' ? search(sets.filter((d) => d.includes('♭5'))) : []
     const every = withB5.length ? withB5 : search(sets)
     // shapes the hand cannot hold are left out, unless nothing else exists
-    const held = playable ? every.filter(playable) : every
+    const held = every.filter((f) => f.held)
     const all = held.length ? held : every
     const best = all
       .map((f) => {
         // closed packs the notes (small pitch span), open spreads them; both still move by the nearest way
         const wide = f.midis[f.midis.length - 1] - f.midis[0]
         const spread = style === 'closed' ? wide * 0.45 : style === 'open' ? (28 - wide) * 0.9 : 0
-        return { f, own: f.score + Math.abs((f.lo + f.hi) / 2 - around) * 0.25 + spread }
+        // the place on the neck asked for: a soft pull near it, a firm one beyond four frets, so "low" and "high" mean it
+        const away = Math.abs((f.lo + f.hi) / 2 - around)
+        return { f, own: f.score + away * 0.25 + Math.max(0, away - 4) + spread }
       })
       .sort((a, b) => a.own - b.own)
       .slice(0, 40)

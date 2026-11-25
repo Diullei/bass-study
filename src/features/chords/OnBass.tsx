@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useHandSize } from '../../state/prefs'
-import { fingerings } from '../../theory/fingering'
-import { voiceLead, type Found, type Layer } from './finder'
+import { voiceLead, type Layer } from './finder'
 import { chordScale, type ScaleId } from './scales'
 import { ShapesBlock } from './Shapes'
 import { parseSym } from './voicing'
@@ -16,12 +15,6 @@ const SCALE_ID: Record<string, ScaleId> = {
   melmin: 'melodic', harmmin: 'harmonic', wh: 'wholeHalf',
 }
 
-/** Can this hand hold the shape? */
-export const playableBy = (hand: 'average' | 'large') => (f: Found) => {
-  const fr = f.shape.split('-').map((t, str) => ({ str, fret: +t })).filter((n) => n.fret > 0)
-  return !fr.length || fingerings(fr, hand).length > 0
-}
-
 /**
  * A chord, or a row of chords, on the bass: each one in the clearest shape that keeps the hand and the voices
  * moving as little as possible (the chord method's engine). A symbol that names a colour (G13, Dm9) gets it.
@@ -34,7 +27,7 @@ export function OnBass({ chords, title, layer = 'shell', caption, row, scale }: 
       const syms = chords.map(normSym).filter((x, i, a) => i === 0 || x !== a[i - 1])
       syms.forEach(parseSym)
       // chords to compare are voiced one by one, around the same place on the neck
-      const V = row ? syms.flatMap((x) => voiceLead([x], layer, 'auto', 9, 'near', playableBy(hand))) : voiceLead(syms, layer, 'auto', 9, 'near', playableBy(hand))
+      const V = row ? syms.flatMap((x) => voiceLead([x], layer, 'auto', 9, 'near', hand)) : voiceLead(syms, layer, 'auto', 9, 'near', hand)
       if (V.some((v) => v.shape === 'x-x-x-x-x')) return null
       return V.slice(0, 16).map((v) => `${v.sym} | ${v.shape} | ${v.degs.join(' ')}`)
     } catch {

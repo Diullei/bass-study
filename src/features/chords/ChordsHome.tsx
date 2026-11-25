@@ -45,7 +45,7 @@ export function ChordsHome() {
       <main>
         <Section>
           <UnitLabel>Section V · a chord method for 5-string bass</UnitLabel>
-          <PageTitle>Two Hands on One Neck</PageTitle>
+          <PageTitle>Chords on Bass</PageTitle>
           <Lead>
             <CText text="Jazz piano voicing, translated to a B‑E‑A‑D‑G bass. The harmony course tells you **which** notes a chord needs; this method tells you **where** to put them, **which** to leave out, and **how** to move to the next chord with the least travel. It is the companion of the harmony course: [[R1]] to [[R7]] link back to it." />
           </Lead>

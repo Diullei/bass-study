@@ -4,8 +4,8 @@ import { NotebookHeader } from '../shell/NotebookHeader'
 import { Along } from './Along'
 import { CText } from './CText'
 import { fingerText, handOf, useFingers } from './fingers'
-import { fingerings } from '../../theory/fingering'
-import { find, LAYERS, voiceLead, type DomColour, type Layer } from './finder'
+import { fingerings, reachAt, type HandSize } from '../../theory/fingering'
+import { find, LAYERS, TOP_FRET, voiceLead, type DomColour, type Layer } from './finder'
 import { KEYS, progById, progIn, PROGS, TESTS } from './progressions'
 import { info } from './render'
 import { progressionScales } from './scales'
@@ -31,10 +31,18 @@ const Page = ({ label, title, lead, children }: { label: string; title: string; 
 
 const layerOpts = LAYERS.map((l) => ({ value: l.value, label: `${l.label} · Ch ${l.ch}` }))
 
+/** "With the index at fret 9 this hand covers frets 9 to 12…": what the hand reaches at a place on the neck, in words. */
+export function reachWords(at: number, hand: HandSize, short = false): string {
+  const lo = Math.max(1, at - 1)
+  const r = reachAt(lo, hand)
+  const upTo = (n: number) => `frets ${lo} to ${lo + n}`
+  return `With the index finger at fret ${lo}, ${hand === 'large' ? 'a large' : 'an average'} hand covers **${upTo(r.easy)}** without effort${r.max > r.easy ? ` and ${upTo(r.max)} at full stretch` : ''}.${short ? '' : ' The hand opens the same distance everywhere; the frets get narrower up the neck, so higher positions put more frets, and more shapes, under it ([[Ch10]]).'}`
+}
+
 /** Shapes of a progression for one layer, as "Sym:frets" bars for the play-along. */
-function voiced(bars: string[][], layer: Layer, dom: DomColour, around: number) {
+function voiced(bars: string[][], layer: Layer, dom: DomColour, around: number, hand: HandSize) {
   const flat = bars.flat()
-  const V = voiceLead(flat, layer, dom, around)
+  const V = voiceLead(flat, layer, dom, around, 'near', hand)
   let k = 0
   const out = bars.map((b) => b.map(() => V[k++]))
   return { V, bars: out, text: out.map((b) => b.map((v) => `${v.sym}:${v.shape}`).join(' ')).join(' | ') }
@@ -71,6 +79,7 @@ export function Voiced({ V, barsText, title, pattern, noKey }: { V: { sym: strin
 /** /chords/test-progressions — Appendix B, re-voiced with every layer. */
 export function TestsPage() {
   const [layer, setLayer] = useState<'base' | Layer>('base')
+  const F = useFingers()
   return (
     <Page
       label="The spiral"
@@ -91,7 +100,7 @@ export function TestsPage() {
       </Section>
       {TESTS.map((t) => {
         const bars = t.bars.split('|').map((b) => b.trim().split(/\s+/).map((x) => x.slice(0, x.indexOf(':'))))
-        const g = layer === 'base' ? null : voiced(bars, layer, 'auto', 9)
+        const g = layer === 'base' ? null : voiced(bars, layer, 'auto', 9, F.hand)
         const V = g ? g.V : t.bars.split('|').flatMap((b) => b.trim().split(/\s+/)).map((x) => ({ sym: x.slice(0, x.indexOf(':')), shape: x.slice(x.indexOf(':') + 1) }))
         return (
           <Section key={t.id + layer}>
@@ -115,6 +124,7 @@ export function GeneratorPage() {
   const [dom, setDom] = useState<DomColour>('auto')
   const [around, setAround] = useState(9)
   const [custom, setCustom] = useState('Dm7 G7 | Cmaj7 A7 | Dm7 G7 | Cmaj7')
+  const F = useFingers()
   const p = progById(pid)
   const bars = useMemo(() => {
     if (pid !== 'custom') return progIn(p!, key)
@@ -126,11 +136,11 @@ export function GeneratorPage() {
   const parsed = useMemo(() => {
     try {
       bars.flat().forEach(parseSym)
-      return voiced(bars, layer, dom, around)
+      return voiced(bars, layer, dom, around, F.hand)
     } catch (e) {
       return (e as Error).message
     }
-  }, [bars, layer, dom, around])
+  }, [bars, layer, dom, around, F.hand])
   return (
     <Page
       label="Tool"
@@ -154,9 +164,12 @@ export function GeneratorPage() {
             <Segmented label="Dominant colours" value={dom} options={[{ value: 'auto', label: 'by destination' }, { value: 'plain', label: '9 13' }, { value: 'altered', label: '♯9 ♭13' }]} onChange={setDom} />
           </Field>
           <Field label={`Hand around fret ${around}`}>
-            <Slider min={3} max={14} value={around} onChange={setAround} />
+            <Slider min={3} max={16} value={around} onChange={setAround} />
           </Field>
         </FieldGrid>
+        <p className={s.caption}>
+          <CText text={reachWords(around, F.hand)} />
+        </p>
         {pid === 'custom' && (
           <Field label="Chords (bars split by |, e.g. Dm7 G7 | Cmaj7)">
             <input className={s.input} value={custom} onChange={(e) => setCustom(e.target.value)} />
@@ -192,13 +205,15 @@ export function FinderPage() {
     const lab = FAM[c.fam][DEG[d]]
     return lab != null && (lab === d || (d === '6' && lab === '13') || (d === '13' && lab === '6') || (d === '11' && lab === '4') || (d === '4' && lab === '11'))
   })
-  const res = useMemo(() => (degs.length >= 2 && degs.length <= 5 ? find(c.root, degs, null, Math.max(1, lo), Math.min(17, lo + 11)).slice(0, 24) : []), [c.root, degs, lo])
+  const F = useFingers()
+  const top = Math.min(TOP_FRET, lo + 11)
+  const res = useMemo(() => (degs.length >= 2 && degs.length <= 5 ? find(c.root, degs, null, Math.max(1, lo), top, F.hand).filter((f) => f.held).slice(0, 24) : []), [c.root, degs, lo, top, F.hand])
   const toggle = (d: string) => setDegs((xs) => (xs.includes(d) ? xs.filter((x) => x !== d) : [...xs, d]))
   return (
     <Page
       label="Tool"
       title="Voicing finder"
-      lead="Choose a chord and the degrees you want. The finder tries every string and every order and keeps what one hand can hold (a four-fret reach, rising from string to string), ranked by clarity ([[Law2]]). This is how the four-string grid of [[Ch14]] was found: the search printed it."
+      lead="Choose a chord and the degrees you want. The finder tries every string and every order and keeps what your hand can hold (measured in millimetres where the shape sits, so higher frets allow wider shapes; notes rising from string to string), ranked by clarity ([[Law2]]) and ease. This is how the four-string grid of [[Ch14]] was found: the search printed it."
     >
       <Section>
         <FieldGrid>
@@ -208,10 +223,13 @@ export function FinderPage() {
           <Field label="Chord">
             <Select value={q} options={QUALS.map((x) => ({ value: x, label: x }))} onChange={(v) => (setQ(v), setDegs([]))} />
           </Field>
-          <Field label={`Frets ${lo}–${Math.min(17, lo + 11)}`}>
-            <Slider min={1} max={10} value={lo} onChange={setLo} />
+          <Field label={`Frets ${lo}–${top}`}>
+            <Slider min={1} max={12} value={lo} onChange={setLo} />
           </Field>
         </FieldGrid>
+        <p className={s.caption}>
+          <CText text={reachWords(lo + 1, F.hand)} />
+        </p>
         <Field label="Degrees (2 to 5): the root is optional, the thumb can play it first">
           <span className={s.degPick}>
             {legal.map((d) => (
@@ -256,7 +274,7 @@ export function CheckerPage() {
     <Page
       label="Tool"
       title="Shape checker"
-      lead="Type a chord and frets, low string to high (B‑E‑A‑D‑G). The checker works out every note and degree from the frets and tests the shape the way every shape in this method was tested: each note must belong to the chord, the hand must reach it (four frets, five only above fret 5 as a stretch), and neighbours below their clear floor are flagged ([[Law2]]). What it cannot test is how the shape feels in your hand and sounds through your rig: those two tests are yours."
+      lead="Type a chord and frets, low string to high (B‑E‑A‑D‑G). The checker works out every note and degree from the frets and tests the shape the way every shape in this method was tested: each note must belong to the chord, the hand must reach it (measured in millimetres at that place on the neck: about four frets in the middle, five and more above the 12th fret), and neighbours below their clear floor are flagged ([[Law2]]). What it cannot test is how the shape feels in your hand and sounds through your rig: those two tests are yours."
     >
       <Section>
         <FieldGrid>

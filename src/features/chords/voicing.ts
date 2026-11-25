@@ -3,6 +3,7 @@
  * Nothing in the method's tables is typed by hand: every note name and degree is computed here,
  * and a shape whose notes do not belong to its chord is an error.
  */
+import { fingerings, reachAt } from '../../theory/fingering'
 
 /** Open strings, low to high: B0 E1 A1 D2 G2 (MIDI). Each string is 5 above the last (Law 1). */
 export const OPEN = [23, 28, 33, 38, 43]
@@ -158,6 +159,7 @@ export interface Analysis {
   notes: VNote[]
   /** Fretted span (open strings and harmonics excluded). */
   span: number
+  /** Only a large hand holds it, or an average hand is near its limit. Measured where the shape sits: the same span is easy high on the neck and a stretch near the nut. */
   stretch: boolean
   /** Lowest and highest fretted fret. */
   lo: number
@@ -188,9 +190,14 @@ export function analyse(sym: string, shape: string): Analysis {
   const lo = fretted.length ? Math.min(...fretted) : 0
   const hi = fretted.length ? Math.max(...fretted) : 0
   const span = hi - lo
-  let stretch = false
-  if (span >= 5 || (span === 4 && lo < 5)) errors.push(`a span of ${span} frets${span === 4 ? ' below fret 5' : ''} is not playable`)
-  else if (span === 4) stretch = true
+  // the hand is measured in millimetres, so what it reaches depends on where it is: more frets the higher it sits
+  const pressed = raw.filter((n) => !n.harmonic && n.fret > 0).map((n) => ({ str: n.str, fret: n.fret }))
+  const own = pressed.length ? fingerings(pressed, 'average')[0] : null
+  const stretch = pressed.length > 0 && (!own || own.stretch > 0.93)
+  if (pressed.length && !own && !fingerings(pressed, 'large').length) {
+    const most = reachAt(lo, 'large').max
+    errors.push(span > most ? `a span of ${span} frets from fret ${lo} is not playable: there even a large hand covers ${most}` : 'four fingers cannot hold these notes together')
+  }
   const table = FAM[chord.fam]
   const notes: VNote[] = raw.map((n) => {
     const pc = (n.midi - chord.root + 120) % 12

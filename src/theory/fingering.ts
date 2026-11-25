@@ -26,7 +26,7 @@ const STRING_GAP = 5
 /** Distance of fret wire n from the nut. */
 export const fretX = (n: number) => SCALE * (1 - Math.pow(2, -n / 12))
 /** Where a fingertip sits for fret n: just behind the wire. */
-const tipX = (n: number) => fretX(n) - 0.28 * (fretX(n) - fretX(n - 1))
+export const tipX = (n: number) => fretX(n) - 0.28 * (fretX(n) - fretX(n - 1))
 
 export type HandSize = 'average' | 'large'
 
@@ -42,6 +42,24 @@ export type HandSize = 'average' | 'large'
  */
 const REACH: Record<string, number> = { '1-2': 70, '1-3': 98, '1-4': 130, '2-3': 50, '2-4': 92, '3-4': 54 }
 const SIZE: Record<HandSize, number> = { average: 1, large: 1.15 }
+
+/** Millimetres between the fingertips at two frets (along the neck). */
+export const tipGap = (a: number, b: number) => Math.abs(tipX(b) - tipX(a))
+/** The widest this hand opens along the neck, index to little finger, in mm. */
+export const handReach = (hand: HandSize) => REACH['1-4'] * SIZE[hand]
+/**
+ * How many frets the hand covers beyond the index finger at fret `lo`. The hand opens the same distance everywhere;
+ * the frets get narrower up the neck, so the same hand covers more of them: the count grows gradually with `lo`.
+ * `easy` is without effort (85% of the reach), `max` the limit.
+ */
+export function reachAt(lo: number, hand: HandSize = 'average'): { easy: number; max: number } {
+  const count = (mm: number) => {
+    let s = 0
+    while (s < 12 && tipGap(lo, lo + s + 1) <= mm) s++
+    return s
+  }
+  return { easy: count(handReach(hand) * 0.85), max: count(handReach(hand)) }
+}
 
 /** One note the fretting hand has to deal with. */
 export interface FNote {
