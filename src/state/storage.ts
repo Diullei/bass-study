@@ -38,6 +38,9 @@ export const KEYS = {
   chordsCurrent: 'bs.chords.current',
   /** Chord method: the keys already played for each chapter's practice progressions. */
   chordsPractice: 'bs.chords.practice',
+  /** Chord exercise book: per-exercise progress (keys played, done), and the last exercise opened. */
+  bookProgress: 'bs.chordbook.progress',
+  bookCurrent: 'bs.chordbook.current',
   /** Widgets: whether the metronome is open and on which tab; the interval ruler's state and place. */
   metroOpen: 'bm2.metroOpen',
   metroTab: 'bm2.metroTab',

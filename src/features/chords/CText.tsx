@@ -5,6 +5,7 @@ import { MiniNeck } from '../../notation/MiniNeck'
 import { fretRefs } from '../../notation/FretRef'
 import { IS_SHAPE, ShapeRef } from '../../notation/ShapeRef'
 import { LessonRef, RuleRef } from '../harmony/HText'
+import { BOOK_PATH } from '../chordbook/paths'
 import { CHAPTERS } from './chapters'
 import { useFingers } from './fingers'
 import { LAWS } from './laws'
@@ -62,13 +63,14 @@ export function ShapeChip({ sym, shape }: { sym: string; shape: string }) {
   )
 }
 
-const TOKEN = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*|\[\[neck:(?:up|down):\d:-?\d:[^\]]+\]\]|\[\[(?:Law\d|Ch\d+|R\d|HL\d+|TP|GEN|FIND|CHECK)\]\]|\{[A-G][^:{}\s]*:[xha0-9-]+\})/g
+const TOKEN = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*|\[\[neck:(?:up|down):\d:-?\d:[^\]]+\]\]|\[\[(?:Law\d|Ch\d+|R\d|HL\d+|TP|GEN|FIND|CHECK|BOOK)\]\]|\{[A-G][^:{}\s]*:[xha0-9-]+\})/g
 
 const TOOLS: Record<string, [string, string]> = {
   TP: [TESTS_PATH, 'the four test progressions'],
   GEN: [GEN_PATH, 'progression generator'],
   FIND: [FIND_PATH, 'voicing finder'],
   CHECK: [CHECK_PATH, 'shape checker'],
+  BOOK: [BOOK_PATH, 'exercise book'],
 }
 
 /** Rich text of the chord method (see types.ts for the tokens). */

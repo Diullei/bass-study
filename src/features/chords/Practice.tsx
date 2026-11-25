@@ -19,6 +19,20 @@ const REGIONS = [
   { value: '14', label: 'high' },
 ]
 
+/** Every note above the lowest becomes an artificial harmonic of itself (the harmonics chapter). */
+export const asBells = (shape: string) => {
+  let low = true
+  return shape
+    .split('-')
+    .map((t) => {
+      if (t === 'x') return t
+      const first = low
+      low = false
+      return first || +t < 1 || +t > 12 ? t : `a${t}`
+    })
+    .join('-')
+}
+
 type PStyle = Exclude<Style, 'near'>
 const STYLES: { value: PStyle; label: string; what: string }[] = [
   { value: 'closed', label: 'closed', what: '**Closed:** the notes as close together as the neck allows, and the hand stays in one place. The lowest keys can get thick ([[Law2]]): a red ring marks a note in the mud.' },
@@ -47,19 +61,6 @@ export function Practice({ chapter, plan: given }: { /** An id for remembering t
     if (!p) return null
     const bars = progIn(p, key)
     const run = (st: Style) => voiceLead(bars.flat(), layer, 'auto', +region, st, hand)
-    // the harmonics chapter: every note above the lowest becomes an artificial harmonic of itself
-    const asBells = (shape: string) => {
-      let low = true
-      return shape
-        .split('-')
-        .map((t) => {
-          if (t === 'x') return t
-          const first = low
-          low = false
-          return first || +t < 1 || +t > 12 ? t : `a${t}`
-        })
-        .join('-')
-    }
     const raw = run(style)
     const V = raw.map((v) => (bells ? { ...v, shape: asBells(v.shape) } : v))
     let k = 0

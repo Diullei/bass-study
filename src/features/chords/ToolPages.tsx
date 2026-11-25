@@ -6,6 +6,7 @@ import { CText } from './CText'
 import { fingerText, handOf, useFingers } from './fingers'
 import { fingerings, reachAt, type HandSize } from '../../theory/fingering'
 import { find, LAYERS, TOP_FRET, voiceLead, type DomColour, type Layer } from './finder'
+import type { PatternId } from './patterns'
 import { KEYS, progById, progIn, PROGS, TESTS } from './progressions'
 import { info } from './render'
 import { progressionScales } from './scales'
@@ -48,7 +49,7 @@ function voiced(bars: string[][], layer: Layer, dom: DomColour, around: number, 
   return { V, bars: out, text: out.map((b) => b.map((v) => `${v.sym}:${v.shape}`).join(' ')).join(' | ') }
 }
 
-export function Voiced({ V, barsText, title, pattern, noKey }: { V: { sym: string; shape: string; why?: string }[]; barsText: string; title: string; pattern?: 'split' | 'four' | 'bossa' | 'charleston'; /** The pen key is already on the page. */ noKey?: boolean }) {
+export function Voiced({ V, barsText, title, pattern, noKey, tempo = 100 }: { V: { sym: string; shape: string; why?: string }[]; barsText: string; title: string; pattern?: PatternId; /** The pen key is already on the page. */ noKey?: boolean; tempo?: number }) {
   const seq = V.filter((v, i) => i === 0 || v.shape !== V[i - 1].shape || v.sym !== V[i - 1].sym)
   const items = seq.slice(0, 16).map((v) => ({ I: info(v.sym, v.shape) }))
   const F = useFingers()
@@ -64,7 +65,7 @@ export function Voiced({ V, barsText, title, pattern, noKey }: { V: { sym: strin
           <CText text={`Dominant colours, from where each one goes ([[R5]]): ${whys.join(' · ')}.`} />
         </p>
       )}
-      <Along key={barsText} title={title} bars={barsText} pattern={pattern ?? 'split'} tempo={100} noProg />
+      <Along key={barsText} title={title} bars={barsText} pattern={pattern ?? 'split'} tempo={tempo} noProg />
       <div className={s.cards}>
         {seq.map((v, i) => (
           <ShapeCard key={i} I={info(v.sym, v.shape)} compact sf={seqF[i]} scale={scales[i]} />

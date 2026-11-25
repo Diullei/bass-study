@@ -280,7 +280,7 @@ const formOf = (f: Found) =>
   f.shape.split('-').map((t) => (t === 'x' ? 'x' : 'o')).join('') +
   f.degs.map((d) => (d === 'R' ? 'R' : /3|4/.test(d) && !/13/.test(d) ? 'T' : /7|6/.test(d) ? 'S' : 'c')).join('')
 
-export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto', around = 9, style: Style = 'near', hand: HandSize = 'average'): Voiced[] {
+export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto', around = 9, style: Style = 'near', hand: HandSize = 'average', /** Keep only some of the shapes (an exercise about one interval, say). Ignored for a chord that would be left with none. */ keep?: (f: Found) => boolean): Voiced[] {
   const C = syms.map(parseSym)
   const cands = C.map((c, i) => {
     const next = C.slice(i + 1).find((x) => x.sym !== c.sym) ?? C[0]
@@ -289,7 +289,9 @@ export function voiceLead(syms: string[], layer: Layer, pref: DomColour = 'auto'
     const search = (S: string[][]) => S.flatMap((d) => find(c.root, d.filter((x) => FAM[c.fam][DEG[x]] != null || x === '6' || x === '°7'), layer, 1, TOP_FRET, hand))
     // a half-diminished shell shows its ♭5 when the hand can reach it: without it the shape is a plain m7
     const withB5 = kindOf(c) === 'hdim' && layer === 'shell' ? search(sets.filter((d) => d.includes('♭5'))) : []
-    const every = withB5.length ? withB5 : search(sets)
+    const found = withB5.length ? withB5 : search(sets)
+    const kept = keep ? found.filter(keep) : found
+    const every = kept.length ? kept : found
     // shapes the hand cannot hold are left out, unless nothing else exists
     const held = every.filter((f) => f.held)
     const all = held.length ? held : every

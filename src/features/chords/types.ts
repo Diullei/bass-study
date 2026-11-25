@@ -12,7 +12,7 @@ export type { Check }
  *   [[R1]] … [[R7]]       a rule of the harmony course
  *   [[HL2]]               a lesson of the harmony course
  *   [[TP]]                the four test progressions page · [[GEN]] the progression generator
- *   [[FIND]]              the voicing finder · [[CHECK]] the shape checker
+ *   [[FIND]]              the voicing finder · [[CHECK]] the shape checker · [[BOOK]] the exercise book
  *   {Cmaj7:x-8-x-9-9}     an inline shape: hover shows the diagram, click plays it. Checked like every other shape.
  */
 export type CBlock =

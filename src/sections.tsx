@@ -12,6 +12,10 @@ import { HARMONY_PATH } from './features/harmony/paths'
 import { ChordsRoutes } from './features/chords/ChordsRoutes'
 import { ChordsSummary } from './features/chords/ChordsSummary'
 import { CHORDS_PATH } from './features/chords/paths'
+import { BookRoutes } from './features/chordbook/BookRoutes'
+import { BookSummary } from './features/chordbook/BookSummary'
+import { EXERCISES } from './features/chordbook/exercises'
+import { BOOK_PATH } from './features/chordbook/paths'
 import { PENT_PATH } from './features/pentatonics/paths'
 import { PentRoutes } from './features/pentatonics/PentRoutes'
 import { PentSummary } from './features/pentatonics/PentSummary'
@@ -99,5 +103,17 @@ export const SECTIONS: NotebookSection[] = [
     meta: '24 chapters',
     tab: 'var(--tab-purple)',
     tabLabel: 'Chords',
+  },
+  {
+    id: 'chordbook',
+    title: 'Chord Exercise Book',
+    blurb:
+      'The practice book of the chord method: numbered exercises from two notes on one chord to long forms in twelve keys. Each one sets a progression, a voicing, the keys and two tempos, and links back to the chapters it practises.',
+    path: BOOK_PATH,
+    routes: <BookRoutes />,
+    Summary: BookSummary,
+    meta: `${EXERCISES.length} exercises`,
+    tab: 'var(--tab-teal)',
+    tabLabel: 'Exercises',
   },
 ]

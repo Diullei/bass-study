@@ -5,6 +5,11 @@ import { KEYS, store } from '../../state/storage'
 import { Button, Lead, Notebook, PageTitle, Section, SectionTitle, Select, StickyNote, UnitLabel, type OptionGroup } from '../../ui'
 import { NotebookHeader } from '../shell/NotebookHeader'
 import { Blocks, BlockView, CheckList } from './Blocks'
+import { Link } from 'react-router'
+import { exercisesFor, numberOf } from '../chordbook/exercises'
+import { exercisePath } from '../chordbook/paths'
+import { useBookProgress } from '../chordbook/progress'
+import B from '../chordbook/Book.module.css'
 import { Practice } from './Practice'
 import { chapterById, CHAPTERS, PARTS } from './chapters'
 import { ChordsQuiz } from './ChordsQuiz'
@@ -35,6 +40,8 @@ function ChapterView({ C }: { C: Chapter }) {
     window.scrollTo(0, 0)
   }, [])
   const links = linksIn(C)
+  const book = useBookProgress()
+  const exercises = exercisesFor(C.id)
   const groups: OptionGroup[] = PARTS.map((p, pi) => ({
     label: `Part ${pi} · ${p}`,
     options: CHAPTERS.map((x, i) => ({ x, i }))
@@ -106,6 +113,23 @@ function ChapterView({ C }: { C: Chapter }) {
           </Section>
         )}
         <Practice key={C.id} chapter={C.id} />
+        {exercises.length > 0 && (
+          <Section>
+            <SectionTitle>In the exercise book</SectionTitle>
+            <p className={s.caption}>
+              <CText text="The numbered exercises of the [[BOOK]] that practise this chapter, in order of difficulty. Read the chapter, then play these." />
+            </p>
+            <ul className={B.inBook}>
+              {exercises.map((e) => (
+                <li key={e.id}>
+                  <Link to={exercisePath(e.id)} className={book.done(e) ? B.isDone : undefined}>
+                    {book.done(e) ? '✓ ' : ''}Ex. {numberOf(e)} · {e.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Section>
+        )}
         {C.checks.length > 0 && (
           <Section>
             <SectionTitle>Check yourself</SectionTitle>

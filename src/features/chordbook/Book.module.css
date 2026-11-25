@@ -1,0 +1,91 @@
+.count {
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+}
+.about {
+  margin: 0 0 var(--sp-2);
+  color: var(--ink-soft);
+}
+/* the assignment: a small form filled in by hand */
+.sheet {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px var(--sp-4);
+  margin: 0 0 var(--sp-3);
+}
+.sheet dt {
+  font: 700 var(--fs-sm) var(--font-hand);
+  color: var(--pencil);
+  padding-top: 3px;
+}
+.sheet dd {
+  margin: 0;
+  min-width: 0;
+}
+/* the chord chart: bars between bar lines */
+.chart {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin-top: 4px;
+  font: 700 var(--fs-md) var(--font-hand);
+  color: var(--ink);
+}
+.bar {
+  padding: 0 12px;
+  border-left: 2px solid var(--ink-soft);
+  white-space: pre;
+}
+.bar:last-child {
+  border-right: 2px solid var(--ink-soft);
+}
+.places {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin: var(--sp-2) 0;
+}
+.blind {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3) var(--sp-4);
+  border: 2px dashed var(--pencil-light);
+  border-radius: var(--wobble-1);
+}
+.blind p {
+  margin: 0;
+}
+/* in a chapter of the method: its exercises in the book */
+.inBook {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.inBook a {
+  display: inline-block;
+  padding: 2px 10px;
+  font: 400 var(--fs-sm) var(--font-hand);
+  color: var(--ink);
+  text-decoration: none;
+  border: 1.5px solid var(--ink-soft);
+  border-radius: var(--wobble-2);
+}
+.inBook a:hover {
+  background: var(--highlighter);
+}
+.inBook .isDone {
+  border-color: var(--green-pen);
+  color: var(--green-pen);
+}
+@media (max-width: 640px) {
+  .sheet {
+    grid-template-columns: 1fr;
+  }
+}

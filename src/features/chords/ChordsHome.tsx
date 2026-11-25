@@ -1,6 +1,8 @@
 import { Link } from 'react-router'
 import { FactList, IndexEntry, IndexList, Lead, Notebook, PageTitle, Section, SectionTitle, StickyNote, UnitLabel } from '../../ui'
 import { NotebookHeader } from '../shell/NotebookHeader'
+import { EXERCISES } from '../chordbook/exercises'
+import { BOOK_PATH } from '../chordbook/paths'
 import { BlockView } from './Blocks'
 import { CHAPTERS, PART_WEEKS, PARTS } from './chapters'
 import { CText } from './CText'
@@ -144,6 +146,9 @@ export function ChordsHome() {
         <Section>
           <SectionTitle>Tools</SectionTitle>
           <IndexList>
+            <IndexEntry number="✎" title={<Link to={BOOK_PATH}>Chord Exercise Book</Link>} meta={`${EXERCISES.length} exercises`}>
+              <p>The practice book of this method: numbered exercises from easy to advanced. Every chapter lists its exercises at the end.</p>
+            </IndexEntry>
             <IndexEntry number="✎" title={<Link to={TESTS_PATH}>The four test progressions</Link>} meta="the spiral">
               <p>The same four progressions at the end of every part, each time with the new layer: you hear your progress because the tune stays the same.</p>
             </IndexEntry>
